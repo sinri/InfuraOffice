@@ -1,0 +1,8 @@
+#login_pane {
+
+}
+
+#login_pane > div {
+    margin: 20px;
+    text-align: center;
+}
