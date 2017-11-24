@@ -11,9 +11,15 @@ namespace sinri\InfuraOffice\security;
 
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\mvc\MiddlewareInterface;
+use sinri\InfuraOffice\library\SessionLibrary;
 
 class SiteAuthAgent extends MiddlewareInterface
 {
+    public function shouldKeepSameIpInOneSession()
+    {
+        return false;
+    }
+
     public function shouldAcceptRequest($path, $method, $params, &$preparedData = null)
     {
         //echo $path.PHP_EOL;//die();
@@ -27,8 +33,20 @@ class SiteAuthAgent extends MiddlewareInterface
 
         $token = LibRequest::getCookie("infura-office-token", null);
 
-        //TODO check token
+        // check token
+        $session_library = new SessionLibrary();
 
-        return false;
+        $sessionEntity = $session_library->loadSessionByToken($token);
+        if (!$sessionEntity) return false;
+        if ($sessionEntity->expiration <= time()) {
+            return false;
+        }
+        if ($this->shouldKeepSameIpInOneSession() && $sessionEntity->ip != LibRequest::ip_address()) {
+            return false;
+        }
+
+        $preparedData['current_user'] = $session_library->getUserEntity($sessionEntity->username);
+
+        return true;
     }
 }

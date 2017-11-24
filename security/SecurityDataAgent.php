@@ -14,11 +14,47 @@ class SecurityDataAgent
     /**
      * @param string $aspect
      * @param string $object_id
+     * @param bool $object_id_hashed
      * @return string
      */
-    protected static function getObjectFilePath($aspect, $object_id)
+    protected static function getObjectFilePath($aspect, $object_id, $object_id_hashed = false)
     {
-        return __DIR__ . '/../data/' . $aspect . '/' . md5($object_id) . 'db';
+        return __DIR__ . '/../data/' . $aspect . '/' . ($object_id_hashed ? $object_id : md5($object_id)) . '.data';
+    }
+
+    /**
+     * @param $aspect
+     * @param bool $returnFullPath
+     * @return array
+     */
+    public static function getObjectList($aspect, $returnFullPath = true)
+    {
+        $prefix = __DIR__ . '/../data/' . $aspect . '/';
+        $tail = '.data';
+        $list = glob($prefix . '*' . $tail);
+
+        if ($returnFullPath) {
+            return $list;
+        }
+
+        $ids = [];
+        foreach ($list as $item) {
+            $ids[] = substr($item, strlen($prefix), strlen($item) - strlen($prefix) - strlen($tail));
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param string $aspect
+     * @param string $object_id
+     * @param bool $object_id_has_hashed
+     * @return bool
+     */
+    public static function removeObject($aspect, $object_id, $object_id_has_hashed = false)
+    {
+        $path = self::getObjectFilePath($aspect, $object_id, $object_id_has_hashed);
+        return @unlink($path);
     }
 
     /**
@@ -45,11 +81,12 @@ class SecurityDataAgent
     /**
      * @param string $aspect
      * @param string $object_id
+     * @param bool $object_id_hashed
      * @return array|bool|int|null|string
      */
-    public static function readObject($aspect, $object_id)
+    public static function readObject($aspect, $object_id, $object_id_hashed = false)
     {
-        $path = self::getObjectFilePath($aspect, $object_id);
+        $path = self::getObjectFilePath($aspect, $object_id, $object_id_hashed);
         if (!file_exists($path)) return null;
 
         $encoded_content = file_get_contents($path);

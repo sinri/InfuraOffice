@@ -33,6 +33,8 @@ $(document).ready(function () {
                     }
 
                     let token = response.data.token;
+                    let life_seconds = response.data.life;
+                    let username = response.data.username;
                     let last_login_time = response.data.last_login_time;
                     let last_login_ip = response.data.last_login_ip;
 
@@ -42,7 +44,7 @@ $(document).ready(function () {
                         last_login_text = "Your last login was from " + last_login_ip + " on " + t + ".";
                     }
 
-                    CookieHelper.setToken(token);
+                    CookieHelper.setToken(token, username, life_seconds);
 
                     this.has_error = false;
                     this.error_message = '';

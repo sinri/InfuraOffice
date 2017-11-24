@@ -13,10 +13,79 @@
     <link rel="stylesheet" type="text/css" href="node_modules/iview/dist/styles/iview.css"/>
 
     <script src="static/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index.css"/>
+
+    <script src="static/index_components/dashboard.js"></script>
+
+    <script src="static/index_components/user_manage.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/user_manage.css"/>
+    <script src="static/index_components/server_manage.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/server_manage.css"/>
 </head>
 <body>
 <div id="app_index">
-    <h1>InfuraOffice</h1>
+    <div id="head_bar">
+        <template>
+            <Row type="flex" justify="center" align="middle">
+                <i-col span="8"><h1>InfuraOffice</h1></i-col>
+                <i-col span="8">
+                    &nbsp;
+                </i-col>
+                <i-col span="8">
+                    <i-button class="right" icon="log-out" shape="circle" size="small" v-on:click="logout">Logout
+                    </i-button>
+                    <i-button class="right" type="text" size="small" style="color: white">{{current_username}}
+                    </i-button>
+                    <Avatar class="right" icon="person" size="small"></Avatar>
+                </i-col>
+            </Row>
+        </template>
+    </div>
+    <div id="menu_div">
+        <template>
+            <Row>
+                <i-col span="4">
+                    <i-menu :theme="menu_theme" active-name="1" accordion width="auto"
+                            @on-select="on_menu_item_selected">
+                        <!--
+                        <menu-item name="menu_full_switch" id="menu_full_switch">
+                            <template v-if="menu_full">
+                                <Icon type="arrow-left-b"></Icon>
+                            </template>
+                            <template v-else>
+                                <Icon type="arrow-right-b"></Icon>
+                            </template>
+                        </menu-item>
+                        -->
+                        <menu-item name="dashboard">
+                            <Icon type="ios-speedometer-outline"></Icon>
+                            Dashboard
+                        </menu-item>
+                        <menu-group title="Settings">
+                            <menu-item name="user_manage">
+                                <Icon type="person-stalker"></Icon>
+                                User Manage
+                            </menu-item>
+                            <menu-item name="server_manage">
+                                <Icon type="cube"></Icon>
+                                Server Manage
+                            </menu-item>
+                        </menu-group>
+                    </i-menu>
+                </i-col>
+                <i-col span="20">
+                    <div id="work_div">
+                        <div id="dashboard" v-if="menu_item_selected=='dashboard'">
+                            Dashboard
+                        </div>
+                        <user_manage id="user_manage" v-else-if="menu_item_selected=='user_manage'"></user_manage>
+                        <server_manage id="server_manage"
+                                       v-else-if="menu_item_selected=='server_manage'"></server_manage>
+                    </div>
+                </i-col>
+            </Row>
+        </template>
+    </div>
 </div>
 </body>
 </html>
