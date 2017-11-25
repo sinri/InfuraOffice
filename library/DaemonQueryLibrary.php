@@ -9,6 +9,7 @@
 namespace sinri\InfuraOffice\library;
 
 
+use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\daemon\DaemonHelper;
 use sinri\InfuraOffice\cli\daemon\SocketAgent;
 use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
@@ -31,27 +32,37 @@ class DaemonQueryLibrary
      * @param int $timeoutInSeconds
      * @return array|string
      */
-    public function query($content, $timeoutInSeconds = 20)
+    public function query($content, $timeoutInSeconds = 5)
     {
         return $this->socketAgent->runClient(function ($client) use ($content, $timeoutInSeconds) {
             $pairName = stream_socket_get_name($client, true);
             DaemonHelper::clientLog("INFO", "Client linked to " . $pairName);
             //stream_set_timeout($client, 0, 100000);
-            stream_set_timeout($client, $timeoutInSeconds);//timeout as 20seconds by default
+            stream_set_timeout($client, $timeoutInSeconds);//timeout as five seconds by default
 
             $content = json_encode($content);
             fwrite($client, $content);
             fflush($client);
             $response = '';
             DaemonHelper::clientLog("INFO", "Request Sent");
+            $one_month_size = 1024;
             while (!feof($client)) {
-                DaemonHelper::clientLog("DEBUG", "Waiting for response...");
+                DaemonHelper::clientLog("DEBUG", "Waiting for response... one month size = {$one_month_size}");
                 $meta = stream_get_meta_data($client);
-                DaemonHelper::clientLog('DEBUG', 'read once meta: ' . json_encode($meta));
+                DaemonHelper::clientLog('DEBUG', 'read once meta before: ' . json_encode($meta));
 
-                $got = fread($client, 1024);
+                $got = fread($client, $one_month_size);
                 $response .= $got;
                 DaemonHelper::clientLog("DEBUG", "read from [{$pairName}] : " . json_encode($got));
+
+                $meta = stream_get_meta_data($client);
+                DaemonHelper::clientLog('DEBUG', 'read once meta after: ' . json_encode($meta));
+
+                if ($meta['unread_bytes'] == 0) {
+                    DaemonHelper::clientLog('DEBUG', 'meta unread bytes zero now!');
+                } elseif ($meta['unread_bytes'] < $one_month_size) {
+                    $one_month_size = $meta['unread_bytes'];
+                }
 
                 $json = json_decode($response, true);
                 if (is_array($json)) {
@@ -67,5 +78,31 @@ class DaemonQueryLibrary
 
             return $response;
         });
+    }
+
+    /**
+     * @param $response
+     * @param null $error
+     * @return bool|mixed|null
+     */
+    public function parseResponse($response, &$error = null)
+    {
+        $error = null;
+        $parsed = json_decode($response, true);
+        if (!$parsed) {
+            $error = 'response is not json';
+            return false;
+        }
+        $query_code = CommonHelper::safeReadArray($parsed, 'code', 600);
+        $return_var = CommonHelper::safeReadNDArray($parsed, ['data', 'return_var'], 255);
+        $output = CommonHelper::safeReadNDArray($parsed, ['data', 'output'], []);
+        if ($query_code != 200) {
+            $error = CommonHelper::safeReadArray($parsed, 'data', 'code is not 200');
+            return false;
+        }
+        if ($return_var != 0) {
+            $error = "command not exit with 0";
+        }
+        return $output;
     }
 }

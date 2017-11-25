@@ -6,6 +6,7 @@
     margin: 0;
     padding: 5px;
     background-color: dodgerblue;
+    z-index: 999;
 }
 
 #head_bar h1 {

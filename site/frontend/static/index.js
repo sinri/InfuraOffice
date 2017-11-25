@@ -22,7 +22,8 @@ $(document).ready(function () {
         },
         components: {
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
-            server_manage: handlerOfIndexComponentServerManage.componentDefinition
+            server_manage: handlerOfIndexComponentServerManage.componentDefinition,
+            server_work: handlerOfIndexComponentServerWork.componentDefinition
         },
         methods: {
             logout: function () {

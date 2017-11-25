@@ -269,4 +269,4 @@ const handlerOfIndexComponentServerManage = {
         }
     },
 
-}
+};

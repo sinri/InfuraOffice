@@ -1,0 +1,26 @@
+#server_work {
+
+}
+
+#server_work h2 {
+    margin: 10px 0;
+}
+
+#server_work h3 {
+    margin: 5px 0;
+}
+
+#server_work h4 {
+    margin: 5px 0;
+}
+
+#server_work div.ivu-tabs-tabpane > div {
+    margin: 5px;
+}
+
+div.shell_output_box {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid lightblue;
+    overflow: scroll;
+}

@@ -61,19 +61,101 @@ class ServerWorkController extends BaseController
     public function checkDF()
     {
         try {
-            $server_name = LibRequest::getRequest("server_name");
-            $entity = $this->serverLibrary->getServerEntityByName($server_name);
-            if (!$entity) {
-                throw new \Exception('No such server');
+            $server_name_list = LibRequest::getRequest("server_name_list", []);
+            $server_df_results = [];
+            foreach ($server_name_list as $server_name) {
+                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                if (!$entity) {
+                    throw new \Exception('No such server');
+                }
+
+                $command = 'sudo df -h';
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+
+                $daemonQueryLibrary = new DaemonQueryLibrary();
+                $result = $daemonQueryLibrary->query($query);
+
+                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+                $output = implode(PHP_EOL, $output);
+
+                $server_df_results[] = [
+                    'server_name' => $server_name,
+                    'output' => $output,
+                    'error' => $parse_error,
+                ];
             }
 
-            $command = 'sudo df -h';
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+            $this->_sayOK(['df_list' => $server_df_results]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
 
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-            $result = $daemonQueryLibrary->query($query);
+    public function checkDU()
+    {
+        try {
+            $server_name_list = LibRequest::getRequest("server_name_list", []);
+            $dir = LibRequest::getRequest("dir", "/");
 
-            $this->_sayOK(['result' => json_decode($result), 'plain_result' => $result]);
+            $server_du_results = [];
+            foreach ($server_name_list as $server_name) {
+                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                if (!$entity) {
+                    throw new \Exception('No such server');
+                }
+
+                $command = 'sudo du -h -d1 ' . escapeshellarg($dir);
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+
+                $daemonQueryLibrary = new DaemonQueryLibrary();
+                $result = $daemonQueryLibrary->query($query);
+
+                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+                $output = implode(PHP_EOL, $output);
+
+                $server_du_results[] = [
+                    'server_name' => $server_name,
+                    'dir' => $dir,
+                    'output' => $output,
+                    'error' => $parse_error,
+                ];
+            }
+            $this->_sayOK(['du_list' => $server_du_results]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function checkLS()
+    {
+        try {
+            $server_name_list = LibRequest::getRequest("server_name_list", []);
+            $dir = LibRequest::getRequest("dir", "/");
+
+            $server_ls_results = [];
+            foreach ($server_name_list as $server_name) {
+                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                if (!$entity) {
+                    throw new \Exception('No such server');
+                }
+
+                $command = 'sudo ls -alh ' . escapeshellarg($dir);
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+
+                $daemonQueryLibrary = new DaemonQueryLibrary();
+                $result = $daemonQueryLibrary->query($query);
+
+                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+                $output = implode(PHP_EOL, $output);
+
+                $server_ls_results[] = [
+                    'server_name' => $server_name,
+                    'dir' => $dir,
+                    'output' => $output,
+                    'error' => $parse_error,
+                ];
+            }
+            $this->_sayOK(['ls_list' => $server_ls_results]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }

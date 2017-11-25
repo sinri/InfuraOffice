@@ -21,6 +21,8 @@
     <link rel="stylesheet" type="text/css" href="static/index_components/user_manage.css"/>
     <script src="static/index_components/server_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_manage.css"/>
+    <script src="static/index_components/server_work.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/server_work.css"/>
 </head>
 <body>
 <div id="app_index">
@@ -71,6 +73,12 @@
                                 Server Manage
                             </menu-item>
                         </menu-group>
+                        <menu-group title="Work">
+                            <menu-item name="server_work">
+                                <Icon type="ios-medical-outline"></Icon>
+                                Server Work
+                            </menu-item>
+                        </menu-group>
                     </i-menu>
                 </i-col>
                 <i-col span="20">
@@ -81,6 +89,7 @@
                         <user_manage id="user_manage" v-else-if="menu_item_selected=='user_manage'"></user_manage>
                         <server_manage id="server_manage"
                                        v-else-if="menu_item_selected=='server_manage'"></server_manage>
+                        <server_work id="server_work" v-else-if="menu_item_selected=='server_work'"></server_work>
                     </div>
                 </i-col>
             </Row>
