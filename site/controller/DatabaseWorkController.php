@@ -11,6 +11,7 @@ namespace sinri\InfuraOffice\site\controller;
 
 use sinri\enoch\core\LibPDO;
 use sinri\enoch\core\LibRequest;
+use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DatabaseLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
@@ -21,6 +22,7 @@ class DatabaseWorkController extends BaseController
     public function __construct($initData = null)
     {
         parent::__construct($initData);
+        $this->isCurrentUserRole([UserEntity::ROLE_ADMIN, UserEntity::ROLE_WORKER], true);
         $this->databaseLibrary = new DatabaseLibrary();
     }
 

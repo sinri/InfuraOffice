@@ -12,6 +12,7 @@ namespace sinri\InfuraOffice\site\controller;
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\entity\DatabaseEntity;
+use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DatabaseLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
@@ -22,6 +23,7 @@ class DatabaseManageController extends BaseController
     public function __construct($initData = null)
     {
         parent::__construct($initData);
+        $this->isCurrentUserRole(UserEntity::ROLE_ADMIN, true);
         $this->databaseLibrary = new DatabaseLibrary();
     }
 
