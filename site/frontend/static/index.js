@@ -23,6 +23,7 @@ $(document).ready(function () {
         components: {
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
             server_manage: handlerOfIndexComponentServerManage.componentDefinition,
+            database_manage: handlerOfIndexComponentDatabaseManage.componentDefinition,
             server_work: handlerOfIndexComponentServerWork.componentDefinition
         },
         methods: {
@@ -53,6 +54,18 @@ $(document).ready(function () {
                 }
                 console.log('updated...', this.menu_item_selected);
             }
+        },
+        mounted: function () {
+            //$('body').css({'height':$(window).height()});
+            $('#main_div').css({
+                'height': $(window).height() - 50,
+            });
+            $('#menu_pane').css({
+                'height': $(window).height() - 50
+            });
+            $('#work_div').css({
+                'height': $(window).height() - 50
+            });
         }
     });
 

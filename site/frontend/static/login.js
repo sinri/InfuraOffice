@@ -68,7 +68,7 @@ $(document).ready(function () {
                 this.has_error = false;
                 this.error_message = '';
             }
-        }
+        },
     });
     console.log(vueLogin);
 });

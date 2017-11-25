@@ -13,16 +13,22 @@
     color: #aee6ff;
 }
 
-#menu_div {
+#main_div {
     margin-top: 50px;
+    overflow: hidden;
 }
 
 #menu_full_switch {
     text-align: center;
 }
 
+#menu_pane {
+    overflow: scroll;
+}
+
 #work_div {
     padding: 10px;
+    overflow: scroll;
 }
 
 .left {

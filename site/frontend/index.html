@@ -21,6 +21,8 @@
     <link rel="stylesheet" type="text/css" href="static/index_components/user_manage.css"/>
     <script src="static/index_components/server_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_manage.css"/>
+    <script src="static/index_components/database_manage.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/database_manage.css"/>
     <script src="static/index_components/server_work.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_work.css"/>
 </head>
@@ -43,11 +45,11 @@
             </Row>
         </template>
     </div>
-    <div id="menu_div">
+    <div id="main_div">
         <template>
             <Row>
                 <i-col span="4">
-                    <i-menu :theme="menu_theme" active-name="1" accordion width="auto"
+                    <i-menu id="menu_pane" :theme="menu_theme" active-name="1" accordion width="auto"
                             @on-select="on_menu_item_selected">
                         <!--
                         <menu-item name="menu_full_switch" id="menu_full_switch">
@@ -69,8 +71,12 @@
                                 User Manage
                             </menu-item>
                             <menu-item name="server_manage">
-                                <Icon type="cube"></Icon>
+                                <Icon type="android-desktop"></Icon>
                                 Server Manage
+                            </menu-item>
+                            <menu-item name="database_manage">
+                                <Icon type="soup-can-outline"></Icon>
+                                Database Manage
                             </menu-item>
                         </menu-group>
                         <menu-group title="Work">
@@ -89,6 +95,8 @@
                         <user_manage id="user_manage" v-else-if="menu_item_selected=='user_manage'"></user_manage>
                         <server_manage id="server_manage"
                                        v-else-if="menu_item_selected=='server_manage'"></server_manage>
+                        <database_manage id="database_manage"
+                                         v-else-if="menu_item_selected=='database_manage'"></database_manage>
                         <server_work id="server_work" v-else-if="menu_item_selected=='server_work'"></server_work>
                     </div>
                 </i-col>
