@@ -25,6 +25,8 @@
     <link rel="stylesheet" type="text/css" href="static/index_components/database_manage.css"/>
     <script src="static/index_components/server_work.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_work.css"/>
+    <script src="static/index_components/database_work.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/database_work.css"/>
 </head>
 <body>
 <div id="app_index">
@@ -84,6 +86,10 @@
                                 <Icon type="ios-medical-outline"></Icon>
                                 Server Work
                             </menu-item>
+                            <menu-item name="database_work">
+                                <Icon type="ios-glasses-outline"></Icon>
+                                Database Work
+                            </menu-item>
                         </menu-group>
                     </i-menu>
                 </i-col>
@@ -98,6 +104,8 @@
                         <database_manage id="database_manage"
                                          v-else-if="menu_item_selected=='database_manage'"></database_manage>
                         <server_work id="server_work" v-else-if="menu_item_selected=='server_work'"></server_work>
+                        <database_work id="database_work"
+                                       v-else-if="menu_item_selected='database_work'"></database_work>
                     </div>
                 </i-col>
             </Row>

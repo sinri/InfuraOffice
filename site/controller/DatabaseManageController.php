@@ -27,16 +27,6 @@ class DatabaseManageController extends BaseController
         $this->databaseLibrary = new DatabaseLibrary();
     }
 
-    public function databases()
-    {
-        try {
-            $list = $this->databaseLibrary->databaseList();
-            $this->_sayOK(['list' => $list]);
-        } catch (\Exception $exception) {
-            $this->_sayFail($exception->getMessage());
-        }
-    }
-
     public function updateDatabase()
     {
         try {

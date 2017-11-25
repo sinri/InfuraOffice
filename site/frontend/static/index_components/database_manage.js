@@ -110,7 +110,7 @@ const handlerOfIndexComponentDatabaseManage = {
                 vueIndex.$Loading.start();
 
                 $.ajax({
-                    url: '../api/DatabaseManageController/databases',
+                    url: '../api/DatabaseWorkController/databases',
                     method: 'get',
                     dataType: 'json'
                 }).done((response) => {

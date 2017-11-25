@@ -24,7 +24,8 @@ $(document).ready(function () {
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
             server_manage: handlerOfIndexComponentServerManage.componentDefinition,
             database_manage: handlerOfIndexComponentDatabaseManage.componentDefinition,
-            server_work: handlerOfIndexComponentServerWork.componentDefinition
+            server_work: handlerOfIndexComponentServerWork.componentDefinition,
+            database_work: handlerOfIndexComponentDatabaseWork.componentDefinition
         },
         methods: {
             logout: function () {

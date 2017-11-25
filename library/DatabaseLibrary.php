@@ -9,6 +9,7 @@
 namespace sinri\InfuraOffice\library;
 
 
+use sinri\enoch\core\LibPDO;
 use sinri\InfuraOffice\entity\DatabaseEntity;
 use sinri\InfuraOffice\security\SecurityDataAgent;
 
@@ -75,5 +76,41 @@ class DatabaseLibrary
     public function removeDatabase($databaseName)
     {
         return SecurityDataAgent::removeObject(self::STORE_ASPECT_DATABASE, $databaseName);
+    }
+
+    /**
+     * @param $databaseName
+     * @param $username
+     * @return LibPDO
+     * @throws \Exception
+     */
+    public function getDatabaseClient($databaseName, $username = null)
+    {
+        $databaseEntity = $this->getDatabaseEntityByName($databaseName);
+        if (!$databaseEntity) {
+            throw new \Exception("no such database: " . $databaseName);
+        }
+        if (empty($databaseEntity->accounts)) {
+            throw new \Exception("no accounts registered");
+        }
+        if ($username === null) {
+            $username = array_rand($databaseEntity->accounts);
+        }
+        if (!isset($databaseEntity->accounts[$username])) {
+            throw new \Exception("no such user: " . $username);
+        }
+        $params = [];
+        switch ($databaseEntity->server_type) {
+            case 'mysql':
+            default:
+                $params['host'] = $databaseEntity->host;
+                $params['port'] = $databaseEntity->port;
+                $params['username'] = $username;
+                $params['password'] = $databaseEntity->accounts[$username];
+                $params['engine'] = 'mysql';
+                break;
+        }
+        $db = new LibPDO($params);
+        return $db;
     }
 }

@@ -9,8 +9,8 @@
 namespace sinri\InfuraOffice\site\controller;
 
 
-use sinri\enoch\core\LibPDO;
 use sinri\enoch\core\LibRequest;
+use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DatabaseLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
@@ -26,41 +26,16 @@ class DatabaseWorkController extends BaseController
         $this->databaseLibrary = new DatabaseLibrary();
     }
 
-    /**
-     * @param $databaseName
-     * @param $username
-     * @return LibPDO
-     * @throws \Exception
-     */
-    protected function getDatabaseClient($databaseName, $username = null)
+    public function databases()
     {
-        $databaseEntity = $this->databaseLibrary->getDatabaseEntityByName($databaseName);
-        if (!$databaseEntity) {
-            throw new \Exception("no such database");
+        try {
+            $list = $this->databaseLibrary->databaseList();
+            $this->_sayOK(['list' => $list]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
         }
-        if (empty($databaseEntity->accounts)) {
-            throw new \Exception("no accounts registered");
-        }
-        if ($username === null) {
-            $username = array_rand($databaseEntity->accounts);
-        }
-        if (!isset($databaseEntity->accounts[$username])) {
-            throw new \Exception("no such user");
-        }
-        $params = [];
-        switch ($databaseEntity->server_type) {
-            case 'mysql':
-            default:
-                $params['host'] = $databaseEntity->host;
-                $params['port'] = $databaseEntity->port;
-                $params['username'] = $username;
-                $params['password'] = $databaseEntity->accounts[$username];
-                $params['engine'] = 'mysql';
-                break;
-        }
-        $db = new LibPDO($params);
-        return $db;
     }
+
 
     public function ping()
     {
@@ -68,13 +43,54 @@ class DatabaseWorkController extends BaseController
             $database_name = LibRequest::getRequest("database_name", '');
             $username = LibRequest::getRequest("username", null);
 
-            $db = $this->getDatabaseClient($database_name, $username);
+            $db = $this->databaseLibrary->getDatabaseClient($database_name, $username);
             $result = $db->safeQueryOne("select version()");
             if (!$result) {
                 $this->_sayFail("done");
-                return false;
+                return;
             }
             $this->_sayOK(["result" => $result]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function showFullProcessList()
+    {
+        try {
+            $database_name = LibRequest::getRequest("database_name", '');
+            $username = LibRequest::getRequest("username", null);
+
+            $db = $this->databaseLibrary->getDatabaseClient($database_name, $username);
+
+            $process_list = $db->getAll("show full processlist");
+
+            if (!is_array($process_list)) {
+                $this->_sayFail("database response error");
+                return;
+            }
+            $this->_sayOK(['process_list' => $process_list]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function killProcess()
+    {
+        try {
+            $database_name = LibRequest::getRequest("database_name");
+            $username = LibRequest::getRequest("username");
+            $pid = LibRequest::getRequest("pid", null, '/^\d+$/');
+
+            CommonHelper::assertNotEmpty($database_name, 'database name should not be empty');
+            CommonHelper::assertNotEmpty($username, 'username should not be empty');
+            CommonHelper::assertNotEmpty($pid, 'process id should not be empty');
+
+            $db = $this->databaseLibrary->getDatabaseClient($database_name, $username);
+
+            $afw = $db->exec("kill " . intval($pid));
+
+            $this->_sayOK(['afw' => $afw]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }
