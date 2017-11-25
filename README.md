@@ -1,6 +1,33 @@
 # InfuraOffice
 A Mix of Infura Management
 
+## Third Party Library Declaration
+
+Packagist
+
+* sinri/enoch 
+
+Node Package Manager
+
+* iview 
+* jquery
+* js-cookie 
+* vue 
+
+See the package config file for more details.
+
+## Functions
+
+* Check server disk space usage with `df` and `du` commands;
+* See file system details of server with `ls` command.
+* See the process list of database and kill any of them if permitted.
+
+## Install
+
+1. Get the source code from GitHub
+1. Run `php composer.phar install` in the project root directory
+1. Run `npm install` in the `site/frontend` directory
+
 ## Config
 
 The config file is `config/config.php`. A sample file given for reference.
