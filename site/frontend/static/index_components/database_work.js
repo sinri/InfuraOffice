@@ -48,13 +48,40 @@ const handlerOfIndexComponentDatabaseWork = {
                 process_list_result_last_update: 'N/A',
                 process_list_fields: [
                     {key: 'Id', title: 'Id', sortable: true},
-                    {key: 'Host', title: 'Host', sortable: true},
-                    {key: 'User', title: 'User', sortable: true},
+                    //{key: 'Host', title: 'Host', sortable: true},
+                    //{key: 'User', title: 'User', sortable: true},
+                    {key: 'login_info', title: 'Login', sortable: true},
                     {key: 'db', title: 'Scheme', sortable: true},
-                    {key: 'Command', title: 'Command', sortable: true},
-                    {key: 'State', title: 'State', sortable: true},
+                    //{key: 'Command', title: 'Command', sortable: true},
+                    //{key: 'State', title: 'State', sortable: true},
+                    {key: 'command_state', title: 'Status'},
                     {key: 'Time', title: 'Time', sortable: true},
-                    {key: 'Info', title: 'SQL'},
+                    //{key: 'Info', title: 'SQL'},
+                    {
+                        key: 'sql', title: 'SQL',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Poptip', {
+                                        props: {
+                                            trigger: 'hover',
+                                            title: 'Detail',
+                                            //content: params.row.Info,
+                                            width: '300px',
+                                            transfer: true
+                                        },
+                                        //style:{'white-space': 'normal'}
+                                    },
+                                    //(params.row.Info?params.row.Info:'').substr(0,20)+((params.row.Info?params.row.Info:'').length>20?'...':'')
+                                    [
+                                        h('pre', {slot: "content"}, params.row.Info),
+                                        h('span', {}, params.row.sql
+                                            //(params.row.Info?params.row.Info:'').substr(0,20)+((params.row.Info?params.row.Info:'').length>20?'...':'')
+                                        )
+                                    ]
+                                )
+                            ]);
+                        }
+                    },
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
@@ -148,6 +175,10 @@ const handlerOfIndexComponentDatabaseWork = {
                     for (let i = 0; i < response.data.process_list.length; i++) {
                         let item = response.data.process_list[i];
                         if (!this.is_show_sleep_process && item.Command === 'Sleep') continue;
+                        item.login_info = item.User + "@" + item.Host;
+                        item.sql = item.Info ? item.Info : '';
+                        item.sql = item.sql.substr(0, 300) + (item.sql.length > 300 ? '...' : '');
+                        item.command_state = item.Command + " / " + item.State;
                         item.clicked_kill_btn = false;
                         item.is_killing = false;
                         process_list_data.push(item);
