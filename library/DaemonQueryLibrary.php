@@ -32,7 +32,7 @@ class DaemonQueryLibrary
      * @param int $timeoutInSeconds
      * @return array|string
      */
-    public function query($content, $timeoutInSeconds = 5)
+    public function query($content, $timeoutInSeconds = 1)
     {
         return $this->socketAgent->runClient(function ($client) use ($content, $timeoutInSeconds) {
             $pairName = stream_socket_get_name($client, true);
@@ -101,7 +101,7 @@ class DaemonQueryLibrary
             return false;
         }
         if ($return_var != 0) {
-            $error = "command not exit with 0";
+            $error = "command not exit with 0 ({$return_var})";
         }
         return $output;
     }

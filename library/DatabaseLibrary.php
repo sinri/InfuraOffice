@@ -11,71 +11,119 @@ namespace sinri\InfuraOffice\library;
 
 use sinri\enoch\core\LibPDO;
 use sinri\InfuraOffice\entity\DatabaseEntity;
-use sinri\InfuraOffice\security\SecurityDataAgent;
 
-class DatabaseLibrary
+class DatabaseLibrary extends AbstractEntityLibrary
 {
-    const STORE_ASPECT_DATABASE = "database";
+    //const STORE_ASPECT_DATABASE = "database";
+
+//    /**
+//     * @deprecated
+//     * @return array
+//     */
+//    public function databaseList()
+//    {
+//        $database_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
+//        $databases = [];
+//        foreach ($database_names as $database_name_hashed) {
+//            $databaseEntity = $this->readEntityByNameHashed($database_name_hashed);
+//            if (!$databaseEntity) continue;
+//            $databases[] = [
+//                "database_name" => $databaseEntity->database_name,
+//                "server_type" => $databaseEntity->server_type,
+//                "host" => $databaseEntity->host,
+//                "port" => $databaseEntity->port,
+//                "accounts" => $databaseEntity->accounts,
+//            ];
+//        }
+//        return $databases;
+//    }
+
+//    /**
+//     * @deprecated
+//     * @param $database_name
+//     * @return bool|DatabaseEntity
+//     */
+//    public function getDatabaseEntityByName($database_name)
+//    {
+//        $info = SecurityDataAgent::readObject($this->getAspectName(), $database_name);
+//        if (empty($info)) return false;
+//        return new DatabaseEntity($info);
+//    }
+
+//    /**
+//     * @deprecated
+//     * @param $database_name_hash
+//     * @return bool|DatabaseEntity
+//     */
+//    public function getDatabaseEntityByNameHash($database_name_hash)
+//    {
+//        $info = SecurityDataAgent::readObject($this->getAspectName(), $database_name_hash, true);
+//        if (empty($info)) return false;
+//        return new DatabaseEntity($info);
+//    }
+
+//    /**
+//     * @deprecated
+//     * @param DatabaseEntity $databaseEntity
+//     * @return bool
+//     */
+//    public function updateDatabase($databaseEntity)
+//    {
+//        return SecurityDataAgent::writeObject($this->getAspectName(), $databaseEntity->database_name, $databaseEntity->toJsonObject());
+//    }
+
+//    /**
+//     * @deprecated
+//     * @param $databaseName
+//     * @return bool
+//     */
+//    public function removeDatabase($databaseName)
+//    {
+//        return SecurityDataAgent::removeObject($this->getAspectName(), $databaseName);
+//    }
 
     /**
-     * @return array
+     * @return DatabaseEntity[]
      */
-    public function databaseList()
+    public function entityList()
     {
-        $database_names = SecurityDataAgent::getObjectList(self::STORE_ASPECT_DATABASE, false);
-        $databases = [];
-        foreach ($database_names as $database_name_hashed) {
-            $databaseEntity = $this->getDatabaseEntityByNameHash($database_name_hashed);
-            if (!$databaseEntity) continue;
-            $databases[] = [
-                "database_name" => $databaseEntity->database_name,
-                "server_type" => $databaseEntity->server_type,
-                "host" => $databaseEntity->host,
-                "port" => $databaseEntity->port,
-                "accounts" => $databaseEntity->accounts,
-            ];
-        }
-        return $databases;
+        return parent::entityList();
     }
 
     /**
-     * @param $database_name
+     * @param $name
      * @return bool|DatabaseEntity
      */
-    public function getDatabaseEntityByName($database_name)
+    public function readEntityByName($name)
     {
-        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_DATABASE, $database_name);
-        if (empty($info)) return false;
-        return new DatabaseEntity($info);
+        return parent::readEntityByName($name);
     }
 
     /**
-     * @param $database_name_hash
+     * @param $name_hashed
      * @return bool|DatabaseEntity
      */
-    public function getDatabaseEntityByNameHash($database_name_hash)
+    public function readEntityByNameHashed($name_hashed)
     {
-        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_DATABASE, $database_name_hash, true);
-        if (empty($info)) return false;
-        return new DatabaseEntity($info);
+        return parent::readEntityByNameHashed($name_hashed);
     }
 
     /**
-     * @param DatabaseEntity $databaseEntity
+     * @param DatabaseEntity $entity
      * @return bool
      */
-    public function updateDatabase($databaseEntity)
+    public function writeEntity($entity)
     {
-        return SecurityDataAgent::writeObject(self::STORE_ASPECT_DATABASE, $databaseEntity->database_name, $databaseEntity->toJsonObject());
+        return parent::writeEntity($entity);
     }
 
     /**
-     * @param $databaseName
+     * @param string $name
      * @return bool
      */
-    public function removeDatabase($databaseName)
+    public function removeEntity($name)
     {
-        return SecurityDataAgent::removeObject(self::STORE_ASPECT_DATABASE, $databaseName);
+        return parent::removeEntity($name);
     }
 
     /**
@@ -86,7 +134,7 @@ class DatabaseLibrary
      */
     public function getDatabaseClient($databaseName, $username = null)
     {
-        $databaseEntity = $this->getDatabaseEntityByName($databaseName);
+        $databaseEntity = $this->readEntityByName($databaseName);
         if (!$databaseEntity) {
             throw new \Exception("no such database: " . $databaseName);
         }
@@ -112,5 +160,10 @@ class DatabaseLibrary
         }
         $db = new LibPDO($params);
         return $db;
+    }
+
+    public function getAspectName()
+    {
+        return "Database";
     }
 }

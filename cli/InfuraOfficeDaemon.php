@@ -8,6 +8,8 @@
 
 require_once __DIR__ . '/../autoload.php';
 
+date_default_timezone_set("Asia/Shanghai");
+
 $address = \sinri\InfuraOffice\toolkit\InfuraOfficeToolkit::readConfig(['daemon', 'address'], '127.0.0.1');
 $port = \sinri\InfuraOffice\toolkit\InfuraOfficeToolkit::readConfig(['daemon', 'port'], '12345');
 

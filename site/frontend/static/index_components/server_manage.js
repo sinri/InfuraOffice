@@ -19,13 +19,17 @@ const handlerOfIndexComponentServerManage = {
         '<p>First, you should confirm the existence of the id_rsa and id_rsa.pub files on the server this site deployed. If not there, create them.</p>' +
         '<p>Second, set the path of id_rsa to config file with keychain [daemon,ssh_key_file].</p>' +
         '<p>Third, register id_rsa.pub content to target server. Use ssh and cat or ssh-copy-id can do this.</p>' +
-        '<p>All the steps you can read this <a href="https://window.everstray.com/archives/88" target="_blank">blog</a>. </p>' +
+        '<p>For all the steps you can read this <a href="https://window.everstray.com/archives/88" target="_blank">blog</a>. </p>' +
         '<p>Generally you should make the ssh user of the remote server registered hold the sudo privilege.</p>' +
         '</div>' +
         '<Modal v-model="show_edit_server" title="Update Server" @on-ok="modal_edit_server" @on-cancel="modal_close" :loading="modal_loading">' +
         '<i-input style="margin: 5px" v-model="edit_server_name"><span slot="prepend">Server Name</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_connect_ip"><span slot="prepend">Connect IP</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_ssh_user"><span slot="prepend">SSH User</span></i-input>' +
+        '<Select v-model="edit_platform_name" placeholder="Select Platform Account..." transfer>' +
+        '<Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">{{item.platform_type}} - {{item.platform_name}}</Option>' +
+        '</Select>' +
+        '<i-input style="margin: 5px" v-model="edit_platform_device_id"><span slot="prepend">Platform Device ID</span></i-input>' +
         '</Modal>' +
         '</div>',
         data: function () {
@@ -34,6 +38,8 @@ const handlerOfIndexComponentServerManage = {
                     {key: 'server_name', title: 'Server Name'},
                     {key: 'connect_ip', title: 'Connect IP'},
                     {key: 'ssh_user', title: 'SSH User'},
+                    {key: 'platform_name', title: 'Platform Account'},
+                    {key: 'platform_device_id', title: 'Device ID'},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
@@ -95,12 +101,36 @@ const handlerOfIndexComponentServerManage = {
                 has_error: false,
                 error_message: '',
                 show_edit_server: false,
+                platform_list: [],
                 edit_server_name: '',
                 edit_connect_ip: '',
                 edit_ssh_user: '',
+                edit_platform_name: '',
+                edit_platform_device_id: '',
             }
         },
         methods: {
+            refresh_platform_accounts: function () {
+                //vueIndex.$Loading.start();
+                $.ajax({
+                    url: '../api/PlatformWorkController/platforms',
+                    method: 'post',
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code === 'OK') {
+                        //vueIndex.$Loading.finish();
+                        //this.refresh_platform_accounts();
+
+                        this.platform_list = response.data.list;
+                    } else {
+                        this.$Message.error("Loading platforms: " + response.data);
+                        //vueIndex.$Loading.error();
+                    }
+                }).fail(() => {
+                    this.$Message.error("Loading platforms: " + 'ajax failed');
+                    vueIndex.$Loading.error();
+                });
+            },
             refreshServerList: function () {
                 console.log('refresh server list');
 
@@ -126,11 +156,12 @@ const handlerOfIndexComponentServerManage = {
                     } else {
                         for (let i = 0; i < response.data.list.length; i++) {
                             let server_item = response.data.list[i];
-                            servers.push({
-                                server_name: server_item.server_name,
-                                connect_ip: server_item.connect_ip,
-                                ssh_user: server_item.ssh_user
-                            });
+                            servers.push(server_item);
+                            // servers.push({
+                            //     server_name: server_item.server_name,
+                            //     connect_ip: server_item.connect_ip,
+                            //     ssh_user: server_item.ssh_user
+                            // });
                         }
                         this.servers = servers;
                     }
@@ -147,12 +178,16 @@ const handlerOfIndexComponentServerManage = {
                 this.edit_server_name = '';
                 this.edit_connect_ip = '';
                 this.edit_ssh_user = '';
+                this.edit_platform_name = '';
+                this.edit_platform_device_id = '';
                 this.show_edit_server = true;
             },
             edit_server: function (row) {
                 this.edit_server_name = row.server_name;
                 this.edit_connect_ip = row.connect_ip;
                 this.edit_ssh_user = row.ssh_user;
+                this.edit_platform_name = row.platform_name;
+                this.edit_platform_device_id = row.platform_device_id;
                 this.show_edit_server = true;
             },
             modal_edit_server: function () {
@@ -165,7 +200,9 @@ const handlerOfIndexComponentServerManage = {
                     data: {
                         "server_name": this.edit_server_name,
                         "connect_ip": this.edit_connect_ip,
-                        "ssh_user": this.edit_ssh_user
+                        "ssh_user": this.edit_ssh_user,
+                        "platform_name": this.edit_platform_name,
+                        "platform_device_id": this.edit_platform_device_id,
                     },
                     dataType: 'json'
                 }).done((response) => {
@@ -212,15 +249,17 @@ const handlerOfIndexComponentServerManage = {
                         vueIndex.$Loading.finish();
                         this.refreshServerList();
                     } else {
-                        this.has_error = true;
-                        this.error_message = response.data;
+                        //this.has_error = true;
+                        //this.error_message = response.data;
+                        this.$Message.error(response.data);
                         vueIndex.$Loading.error();
                     }
 
                 }).fail(() => {
                     vueIndex.$Loading.error();
-                    this.has_error = true;
-                    this.error_message = "Ajax Failed";
+                    //this.has_error = true;
+                    //this.error_message = "Ajax Failed";
+                    this.$Message.error("Ajax Failed");
                 }).always(() => {
                     //console.log("guhehe");
                 });
@@ -245,9 +284,13 @@ const handlerOfIndexComponentServerManage = {
                         vueIndex.$Loading.finish();
                         //this.refreshServerList();
                     } else {
-                        this.has_error = true;
-                        this.error_message = response.data;
+                        //this.has_error = true;
+                        //this.error_message = response.data;
                         vueIndex.$Loading.error();
+                        vueIndex.$Notice.error({
+                            title: 'Server ' + server_name + " died:",
+                            desc: response.data
+                        });
                     }
 
                 }).fail(() => {
@@ -266,6 +309,7 @@ const handlerOfIndexComponentServerManage = {
         mounted: function () {
             console.log(".....");
             this.refreshServerList();
+            this.refresh_platform_accounts();
         }
     },
 

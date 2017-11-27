@@ -32,7 +32,7 @@ class ShellCommandHandler implements RequestHandlerInterface
         DaemonHelper::log(LibLog::LOG_INFO, "Run command on server " . $server_name . " : " . $command);
 
         $server_library = new ServerLibrary();
-        $server_entity = $server_library->getServerEntityByName($server_name);
+        $server_entity = $server_library->readEntityByName($server_name);
         if (!$server_entity) {
             DaemonHelper::log(LibLog::LOG_ERROR, "No such server: " . $server_name);
             return false;
@@ -53,13 +53,14 @@ class ShellCommandHandler implements RequestHandlerInterface
     /**
      * @param $server_name
      * @param $command
+     * @param bool $mixErrOutput
      * @return array
      */
-    public static function buildQueryForSync($server_name, $command)
+    public static function buildQueryForSync($server_name, $command, $mixErrOutput = false)
     {
         return [
             'type' => self::HANDLER_TYPE,
-            'data' => ["method" => 'sync', 'server_name' => $server_name, 'command' => $command],
+            'data' => ["method" => 'sync', 'server_name' => $server_name, 'command' => $command . ($mixErrOutput ? " 2>&1" : '')],
         ];
     }
 

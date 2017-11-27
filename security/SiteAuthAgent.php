@@ -12,6 +12,7 @@ namespace sinri\InfuraOffice\security;
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\mvc\MiddlewareInterface;
 use sinri\InfuraOffice\library\SessionLibrary;
+use sinri\InfuraOffice\library\UserLibrary;
 
 class SiteAuthAgent extends MiddlewareInterface
 {
@@ -36,7 +37,7 @@ class SiteAuthAgent extends MiddlewareInterface
         // check token
         $session_library = new SessionLibrary();
 
-        $sessionEntity = $session_library->loadSessionByToken($token);
+        $sessionEntity = $session_library->readEntityByName($token);
         if (!$sessionEntity) return false;
         if ($sessionEntity->expiration <= time()) {
             return false;
@@ -45,7 +46,9 @@ class SiteAuthAgent extends MiddlewareInterface
             return false;
         }
 
-        $preparedData['current_user'] = $session_library->getUserEntity($sessionEntity->username);
+        $user_library = new UserLibrary();
+
+        $preparedData['current_user'] = $user_library->readEntityByName($sessionEntity->username);
 
         return true;
     }

@@ -11,32 +11,37 @@ namespace sinri\InfuraOffice\site\controller;
 
 use sinri\enoch\core\LibRequest;
 use sinri\InfuraOffice\library\SessionLibrary;
-use sinri\InfuraOffice\security\SecurityDataAgent;
+use sinri\InfuraOffice\library\UserLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
 class LoginController extends BaseController
 {
     protected $sessionLibrary;
+    protected $userLibrary;
 
     public function __construct($initData = null)
     {
         parent::__construct($initData);
 
         $this->sessionLibrary = new SessionLibrary();
+        $this->userLibrary = new UserLibrary();
     }
 
     /**
      * http://localhost/PHPStorm/InfuraOffice/site/api/LoginController/initializeAdminUser
+     * @param bool $quietMode
+     * @return bool
      */
-    public function initializeAdminUser()
+    public function initializeAdminUser($quietMode = false)
     {
-        if ($this->sessionLibrary->initializeAdminUser()) {
-            $this->_sayOK('User [admin] confirmed existing!');
+        if ($this->userLibrary->initializeAdminUser()) {
+            if (!$quietMode) $this->_sayOK('User [admin] confirmed existing!');
+            return true;
         } else {
-            $this->_sayFail("Failed to initialize the user [admin]!");
+            if (!$quietMode) $this->_sayFail("Failed to initialize the user [admin]!");
+            return false;
         }
     }
-
 
     /**
      * http://localhost/PHPStorm/InfuraOffice/site/api/LoginController/loginWithUsernameAndPassword
@@ -51,7 +56,11 @@ class LoginController extends BaseController
                 throw new \Exception("Username Empty!");
             }
 
-            $user_entity = $this->sessionLibrary->getUserEntity($username);
+            if ($username === 'admin') {
+                $this->initializeAdminUser(true);
+            }
+
+            $user_entity = $this->userLibrary->readEntityByName($username);
             if (!$user_entity) {
                 throw new \Exception("User does not exists!");
             }
@@ -74,9 +83,9 @@ class LoginController extends BaseController
             if (!$done) {
                 throw new \Exception("Cannot create session!");
             }
-            $done = $this->sessionLibrary->storeUser($user_entity);
+            $done = $this->userLibrary->writeEntity($user_entity);
             if (!$done) {
-                SecurityDataAgent::removeObject(SessionLibrary::STORE_ASPECT_SESSION, $token);
+                $this->sessionLibrary->removeEntity($token);
                 throw new \Exception("Cannot update user info with last session info!");
             }
 

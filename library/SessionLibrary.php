@@ -10,71 +10,56 @@ namespace sinri\InfuraOffice\library;
 
 
 use sinri\InfuraOffice\entity\SessionEntity;
-use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\security\SecurityDataAgent;
 
-class SessionLibrary
+class SessionLibrary extends AbstractEntityLibrary
 {
-    const STORE_ASPECT_USER = "user";
-    const STORE_ASPECT_SESSION = "session";
+    //const STORE_ASPECT_USER = "User";
+    //const STORE_ASPECT_SESSION = "Session";
 
-    /**
-     * @param UserEntity $userEntity
-     * @return bool
-     */
-    public function storeUser($userEntity)
-    {
-        $json = $userEntity->toJsonObject();
-        return SecurityDataAgent::writeObject(self::STORE_ASPECT_USER, $userEntity->username, $json);
-    }
+//    /**
+//     * @deprecated
+//     * @param UserEntity $userEntity
+//     * @return bool
+//     */
+//    public function storeUser($userEntity)
+//    {
+//        $json = $userEntity->toJsonObject();
+//        return SecurityDataAgent::writeObject(self::STORE_ASPECT_USER, $userEntity->username, $json);
+//    }
 
-    /**
-     * @param string $username
-     * @return bool
-     */
-    public function removeUserByName($username)
-    {
-        return SecurityDataAgent::removeObject(self::STORE_ASPECT_USER, $username);
-    }
+//    /**
+//     * @param string $username
+//     * @return bool
+//     */
+//    public function removeUserByName($username)
+//    {
+//        return SecurityDataAgent::removeObject(self::STORE_ASPECT_USER, $username);
+//    }
 
-    /**
-     * @param $username
-     * @return bool|UserEntity
-     */
-    public function getUserEntity($username)
-    {
-        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username);
-        if (empty($info)) return false;
-        return new UserEntity($info);
-    }
+//    /**
+//     * @param $username
+//     * @return bool|UserEntity
+//     */
+//    public function getUserEntity($username)
+//    {
+//        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username);
+//        if (empty($info)) return false;
+//        return new UserEntity($info);
+//    }
 
-    /**
-     * @param $username_hash
-     * @return bool|UserEntity
-     */
-    public function getUserEntityByNameHash($username_hash)
-    {
-        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username_hash, true);
-        if (empty($info)) return false;
-        return new UserEntity($info);
-    }
+//    /**
+//     * @param $username_hash
+//     * @return bool|UserEntity
+//     */
+//    public function getUserEntityByNameHash($username_hash)
+//    {
+//        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username_hash, true);
+//        if (empty($info)) return false;
+//        return new UserEntity($info);
+//    }
 
-    /**
-     * @return bool If the admin user entity written
-     */
-    public function initializeAdminUser()
-    {
-        $admin_entity = $this->getUserEntity("admin");
-        if (!$admin_entity) {
-            $admin_entity = new UserEntity([
-                'username' => 'admin',
-                'role' => UserEntity::ROLE_ADMIN,
-            ]);
-            $admin_entity->updateAuthHashForPassword("InGodWeTrust");
-            return $this->storeUser($admin_entity);
-        }
-        return true;
-    }
+
 
     /**
      * @param string $username
@@ -92,17 +77,67 @@ class SessionLibrary
             'ip' => $ip,
         ]);
         $json = $session_entity->toJsonObject();
-        return SecurityDataAgent::writeObject(self::STORE_ASPECT_SESSION, $session_entity->token, $json);
+        return SecurityDataAgent::writeObject($this->getAspectName(), $session_entity->token, $json);
     }
 
     /**
+     * @deprecated use readEntityByName instead
      * @param $token
      * @return bool|SessionEntity
      */
     public function loadSessionByToken($token)
     {
-        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_SESSION, $token);
+        $info = SecurityDataAgent::readObject($this->getAspectName(), $token);
         if (empty($info)) return false;
         return new SessionEntity($info);
+    }
+
+    public function getAspectName()
+    {
+        return "Session";
+    }
+
+    /**
+     * @return SessionEntity[]
+     */
+    public function entityList()
+    {
+        return parent::entityList();
+    }
+
+    /**
+     * @param $platform_name
+     * @return bool|SessionEntity
+     */
+    public function readEntityByName($platform_name)
+    {
+        return parent::readEntityByName($platform_name);
+    }
+
+    /**
+     * @param $platform_name_hash
+     * @return bool|SessionEntity
+     */
+    public function readEntityByNameHashed($platform_name_hash)
+    {
+        return parent::readEntityByNameHashed($platform_name_hash);
+    }
+
+    /**
+     * @param SessionEntity $entity
+     * @return bool
+     */
+    public function writeEntity($entity)
+    {
+        return parent::writeEntity($entity);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function removeEntity($name)
+    {
+        return parent::removeEntity($name);
     }
 }

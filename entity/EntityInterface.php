@@ -14,15 +14,18 @@ use sinri\enoch\helper\CommonHelper;
 abstract class EntityInterface
 {
     /**
+     * @param null $keyChain
      * @return array
      */
-    abstract protected function propertiesAndDefaults();
+    abstract public function propertiesAndDefaults($keyChain = null);
+
+    abstract public function primaryKey();
 
     protected $properties = [];
 
     public function __get($name)
     {
-        return CommonHelper::safeReadArray($this->properties, $name);
+        return CommonHelper::safeReadArray($this->properties, $name, $this->propertiesAndDefaults([$name]));
     }
 
     public function __isset($name)

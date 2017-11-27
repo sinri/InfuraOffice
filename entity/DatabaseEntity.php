@@ -18,6 +18,8 @@ use sinri\enoch\helper\CommonHelper;
  * @property string host
  * @property int port
  * @property array accounts
+ * @property string platform_name
+ * @property string platform_device_id
  */
 class DatabaseEntity extends EntityInterface
 {
@@ -25,15 +27,21 @@ class DatabaseEntity extends EntityInterface
     /**
      * @return array
      */
-    protected function propertiesAndDefaults()
+    public function propertiesAndDefaults($keyChain = null)
     {
-        return [
+        static $dic = [
             "database_name" => null,
             "server_type" => "mysql",
             "host" => null,
             "port" => 3306,
             "accounts" => [],
+            "platform_name" => null,
+            "platform_device_id" => null,
         ];
+        if ($keyChain === null) {
+            return $dic;
+        }
+        return CommonHelper::safeReadNDArray($dic, $keyChain);
     }
 
     /**
@@ -53,5 +61,10 @@ class DatabaseEntity extends EntityInterface
         if (isset($this->accounts[$username])) {
             unset($this->accounts[$username]);
         }
+    }
+
+    public function primaryKey()
+    {
+        return $this->database_name;
     }
 }

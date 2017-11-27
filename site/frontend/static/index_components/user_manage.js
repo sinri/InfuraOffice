@@ -19,7 +19,7 @@ const handlerOfIndexComponentUserManage = {
         '</Row>' +
         '<i-table :columns="user_fields" :data="users"></i-table>' +
         '<Modal v-model="show_edit_user" title="Update User" @on-ok="model_edit_user" @on-cancel="modal_close" :loading="modal_loading">' +
-        '<i-input style="margin: 5px" v-model="edit_username"><span slot="prepend">Username</span></i-input>' +
+        '<i-input style="margin: 5px" v-model="edit_username" :readonly="modal_for_editing"><span slot="prepend">Username</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_password" placeholder="Keep empty here if you do not want to change password." type="password"><span slot="prepend">Password</span></i-input>' +
         '<i-select v-model="edit_role" size="small" style="margin:5px">' +
         '<i-option v-for="item in role_options" :value="item.value" :key="item.value">{{ item.label }}</i-option>' +
@@ -33,6 +33,7 @@ const handlerOfIndexComponentUserManage = {
                 users: [],
                 show_edit_user: false,
                 modal_loading: true,
+                modal_for_editing: false,
                 edit_username: '',
                 edit_password: '',
                 edit_role: 'WATCHER',
@@ -99,10 +100,10 @@ const handlerOfIndexComponentUserManage = {
                                                     click: () => {
                                                         //this.show(params.index)
                                                         console.log("click edit", params);
-                                                        if (params.row.username === 'admin') {
-                                                            vueIndex.$Message.error("Cannot edit admin!");
+                                                        //if (params.row.username === 'admin') {
+                                                        //    vueIndex.$Message.error("Cannot edit admin!");
                                                             //return;
-                                                        }
+                                                        //}
                                                         this.edit_user(params.row.username, params.row.role);
                                                     }
                                                 }
@@ -112,12 +113,16 @@ const handlerOfIndexComponentUserManage = {
                                                     type: 'error',
                                                     size: 'small'
                                                 },
+                                                style: {
+                                                    margin: '5px'
+                                                },
                                                 on: {
                                                     click: () => {
                                                         //this.remove(params.index)
                                                         console.log("click remove", params);
                                                         if (params.row.username === 'admin') {
                                                             vueIndex.$Message.error("Cannot delete admin!");
+                                                            return;
                                                         }
                                                         this.remove_user(params.row.username);
                                                     }
@@ -130,9 +135,11 @@ const handlerOfIndexComponentUserManage = {
                             users: []
                         };
 
-                        for (let username in response.data.list) {
-                            if (!response.data.list.hasOwnProperty(username)) continue;
-                            let item = response.data.list[username];
+                        //for (let username in response.data.list) {
+                        for (let user_index = 0; user_index < response.data.list.length; user_index++) {
+                            //if (!response.data.list.hasOwnProperty(username)) continue;
+                            //let item = response.data.list[username];
+                            let item = response.data.list[user_index];
                             UserManageData.users.push({
                                 username: item.username,
                                 role: item.role,
@@ -167,6 +174,8 @@ const handlerOfIndexComponentUserManage = {
                 this.edit_username = '';
                 this.edit_password = '';
                 this.edit_role = 'WORKER';
+
+                this.modal_for_editing = false;
             },
             edit_user: function (username, role) {
                 console.log('edit_user', arguments);
@@ -174,6 +183,8 @@ const handlerOfIndexComponentUserManage = {
                 this.edit_username = username;
                 this.edit_password = '';
                 this.edit_role = role;
+
+                this.modal_for_editing = true;
             },
             remove_user: function (username) {
                 console.log("remove user ...", username);

@@ -19,10 +19,13 @@
 
     <script src="static/index_components/user_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/user_manage.css"/>
+    <script src="static/index_components/platform_manage.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/platform_manage.css"/>
     <script src="static/index_components/server_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_manage.css"/>
     <script src="static/index_components/database_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/database_manage.css"/>
+
     <script src="static/index_components/server_work.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_work.css"/>
     <script src="static/index_components/database_work.js"></script>
@@ -72,6 +75,10 @@
                                 <Icon type="person-stalker"></Icon>
                                 User Manage
                             </menu-item>
+                            <menu-item name="platform_manage">
+                                <Icon type="android-cloud-outline"></Icon>
+                                Platform Manage
+                            </menu-item>
                             <menu-item name="server_manage">
                                 <Icon type="android-desktop"></Icon>
                                 Server Manage
@@ -99,6 +106,8 @@
                             Dashboard
                         </div>
                         <user_manage id="user_manage" v-else-if="menu_item_selected=='user_manage'"></user_manage>
+                        <platform_manage id="platform_manage"
+                                         v-else-if="menu_item_selected=='platform_manage'"></platform_manage>
                         <server_manage id="server_manage"
                                        v-else-if="menu_item_selected=='server_manage'"></server_manage>
                         <database_manage id="database_manage"

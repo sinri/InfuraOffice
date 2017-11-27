@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Sinri
- * Date: 2017/11/23
- * Time: 23:53
+ * Date: 2017/11/27
+ * Time: 09:11
  */
 
 namespace sinri\InfuraOffice\entity;
@@ -11,16 +11,18 @@ namespace sinri\InfuraOffice\entity;
 use sinri\enoch\helper\CommonHelper;
 
 /**
- * Class ServerEntity
+ * Class HardwarePlatformEntity
  * @package sinri\InfuraOffice\entity
- * @property string server_name
- * @property string connect_ip
- * @property string ssh_user
  * @property string platform_name
- * @property string platform_device_id
+ * @property string platform_type
+ * @property string auth_id
+ * @property string auth_key
  */
-class ServerEntity extends EntityInterface
+class PlatformEntity extends EntityInterface
 {
+
+    const PLATFORM_IDC = "IDC";
+    const PLATFORM_ALIYUN = "Aliyun";
 
     /**
      * @param null $keyChain
@@ -29,11 +31,10 @@ class ServerEntity extends EntityInterface
     public function propertiesAndDefaults($keyChain = null)
     {
         static $dic = [
-            "server_name" => null,
-            "connect_ip" => null,
-            "ssh_user" => null,
             "platform_name" => null,
-            "platform_device_id" => null,
+            "platform_type" => self::PLATFORM_IDC,
+            "auth_id" => '',
+            "auth_key" => '',
         ];
         if ($keyChain === null) {
             return $dic;
@@ -43,6 +44,6 @@ class ServerEntity extends EntityInterface
 
     public function primaryKey()
     {
-        return $this->server_name;
+        return $this->platform_name;
     }
 }

@@ -36,6 +36,9 @@ class DatabaseManageController extends BaseController
             $port = LibRequest::getRequest("port", 3306);
             $accounts = LibRequest::getRequest("accounts", []);
 
+            $platform_device_id = LibRequest::getRequest("platform_device_id");
+            $platform_name = LibRequest::getRequest("platform_name");
+
             CommonHelper::assertNotEmpty($database_name, 'database number should not be empty');
 
             $databaseEntity = new DatabaseEntity([
@@ -44,9 +47,11 @@ class DatabaseManageController extends BaseController
                 "host" => $host,
                 "port" => $port,
                 "accounts" => $accounts,
+                "platform_name" => $platform_name,
+                "platform_device_id" => $platform_device_id,
             ]);
 
-            $done = $this->databaseLibrary->updateDatabase($databaseEntity);
+            $done = $this->databaseLibrary->writeEntity($databaseEntity);
             if (!$done) {
                 throw new \Exception("cannot update database");
             }
@@ -61,7 +66,7 @@ class DatabaseManageController extends BaseController
         try {
             $database_name = LibRequest::getRequest("database_name", '');
             CommonHelper::assertNotEmpty($database_name, 'database number should not be empty');
-            $done = $this->databaseLibrary->removeDatabase($database_name);
+            $done = $this->databaseLibrary->removeEntity($database_name);
             if (!$done) {
                 throw new \Exception("cannot remove database");
             }

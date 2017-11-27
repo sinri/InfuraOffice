@@ -164,7 +164,7 @@ class SocketAgent
         $client = stream_socket_client($this->socketAddress(), $errNumber, $errorMessage, $this->listenTimeout);
 
         if ($client === false) {
-            throw new \UnexpectedValueException("Failed to connect: $errorMessage");
+            throw new \UnexpectedValueException("Failed to connect, check Daemon logs for details: {$errorMessage}");
         }
         if ($callback) {
             $response = call_user_func_array($callback, [$client]);

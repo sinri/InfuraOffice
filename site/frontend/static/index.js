@@ -22,6 +22,7 @@ $(document).ready(function () {
         },
         components: {
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
+            platform_manage: handlerOfIndexComponentPlatformManage.componentDefinition,
             server_manage: handlerOfIndexComponentServerManage.componentDefinition,
             database_manage: handlerOfIndexComponentDatabaseManage.componentDefinition,
             server_work: handlerOfIndexComponentServerWork.componentDefinition,

@@ -19,6 +19,10 @@ const handlerOfIndexComponentDatabaseManage = {
         '<i-input style="margin: 5px" v-model="edit_server_type"><span slot="prepend">Type</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_host"><span slot="prepend">Host</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_port"><span slot="prepend">Port</span></i-input>' +
+        '<Select v-model="edit_platform_name" placeholder="Select Platform Account..." transfer>' +
+        '<Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">{{item.platform_type}} - {{item.platform_name}}</Option>' +
+        '</Select>' +
+        '<i-input style="margin: 5px" v-model="edit_platform_device_id"><span slot="prepend">Platform Device ID</span></i-input>' +
         '<div>' +
         '<Button type="text">Accounts: </Button>' +
         '</div>' +
@@ -43,6 +47,8 @@ const handlerOfIndexComponentDatabaseManage = {
                     {key: 'database_name', title: 'Database Name'},
                     {key: 'server_type', title: 'Server Type'},
                     {key: 'connection', title: 'Connection'},
+                    {key: 'platform_name', title: 'Platform Account'},
+                    {key: 'platform_device_id', title: 'Device ID'},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
@@ -84,6 +90,9 @@ const handlerOfIndexComponentDatabaseManage = {
                                         type: 'error',
                                         size: 'small'
                                     },
+                                    style: {
+                                        margin: '5px'
+                                    },
                                     on: {
                                         click: () => {
                                             //this.remove(params.index)
@@ -98,14 +107,38 @@ const handlerOfIndexComponentDatabaseManage = {
                 ],
                 databases: [],
                 //
+                platform_list: [],
                 edit_database_name: '',
                 edit_server_type: 'mysql',
                 edit_host: '',
                 edit_port: 3306,
-                edit_accounts: []
+                edit_accounts: [],
+                edit_platform_name: '',
+                edit_platform_device_id: '',
             }
         },
         methods: {
+            refresh_platform_accounts: function () {
+                //vueIndex.$Loading.start();
+                $.ajax({
+                    url: '../api/PlatformWorkController/platforms',
+                    method: 'post',
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code === 'OK') {
+                        //vueIndex.$Loading.finish();
+                        //this.refresh_platform_accounts();
+
+                        this.platform_list = response.data.list;
+                    } else {
+                        this.$Message.error("Loading platforms: " + response.data);
+                        //vueIndex.$Loading.error();
+                    }
+                }).fail(() => {
+                    this.$Message.error("Loading platforms: " + 'ajax failed');
+                    vueIndex.$Loading.error();
+                });
+            },
             refresh_database_list: function () {
                 vueIndex.$Loading.start();
 
@@ -129,14 +162,16 @@ const handlerOfIndexComponentDatabaseManage = {
                     } else {
                         for (let i = 0; i < response.data.list.length; i++) {
                             let database_item = response.data.list[i];
-                            databases.push({
-                                database_name: database_item.database_name,
-                                server_type: database_item.server_type,
-                                connection: database_item.host + ":" + database_item.port,
-                                host: database_item.host,
-                                port: database_item.port,
-                                accounts: database_item.accounts
-                            });
+                            database_item.connection = database_item.host + ":" + database_item.port;
+                            databases.push(database_item);
+                            // databases.push({
+                            //     database_name: database_item.database_name,
+                            //     server_type: database_item.server_type,
+                            //     connection: database_item.host + ":" + database_item.port,
+                            //     host: database_item.host,
+                            //     port: database_item.port,
+                            //     accounts: database_item.accounts
+                            // });
                         }
                         this.databases = databases;
                     }
@@ -195,16 +230,19 @@ const handlerOfIndexComponentDatabaseManage = {
                     dataType: 'json'
                 }).done((response) => {
                     if (response.code !== 'OK') {
-                        this.has_error = true;
-                        this.error_message = response.data;
+                        //this.has_error = true;
+                        //this.error_message = response.data;
+                        this.$Message.error(response.data);
+                        vueIndex.$Loading.error();
                     } else {
                         this.refresh_database_list();
+                        vueIndex.$Loading.finish();
                     }
-                    vueIndex.$Loading.finish();
                 }).fail(() => {
                     vueIndex.$Loading.error();
-                    this.has_error = true;
-                    this.error_message = "Ajax Failed";
+                    //this.has_error = true;
+                    //this.error_message = "Ajax Failed";
+                    this.$Message.error("Ajax Failed");
                 }).always(() => {
                     //console.log("guhehe");
                 });
@@ -226,7 +264,9 @@ const handlerOfIndexComponentDatabaseManage = {
                         server_type: this.edit_server_type,
                         host: this.edit_host,
                         port: this.edit_port,
-                        accounts: edit_accounts
+                        accounts: edit_accounts,
+                        platform_name: this.edit_platform_name,
+                        platform_device_id: this.edit_platform_device_id,
                     },
                     dataType: 'json'
                 }).done((response) => {
@@ -312,6 +352,7 @@ const handlerOfIndexComponentDatabaseManage = {
             }
         },
         mounted: function () {
+            this.refresh_platform_accounts();
             this.refresh_database_list();
         }
     }

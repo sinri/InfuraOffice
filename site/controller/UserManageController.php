@@ -12,18 +12,20 @@ namespace sinri\InfuraOffice\site\controller;
 use sinri\enoch\core\LibRequest;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\SessionLibrary;
-use sinri\InfuraOffice\security\SecurityDataAgent;
+use sinri\InfuraOffice\library\UserLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
 class UserManageController extends BaseController
 {
     protected $sessionLibrary;
+    protected $userLibrary;
 
     public function __construct($initData = null)
     {
         parent::__construct($initData);
         $this->isCurrentUserRole(UserEntity::ROLE_ADMIN, true);
         $this->sessionLibrary = new SessionLibrary();
+        $this->userLibrary = new UserLibrary();
     }
 
     /**
@@ -31,21 +33,23 @@ class UserManageController extends BaseController
      */
     public function users()
     {
-        $list = SecurityDataAgent::getObjectList(SessionLibrary::STORE_ASPECT_USER, false);
+        $users = $this->userLibrary->entityList();
 
-        $users = [];
-        foreach ($list as $hashed_user_id) {
-            $user_entity = $this->sessionLibrary->getUserEntityByNameHash($hashed_user_id);
-            if ($user_entity) {
-                $users[$user_entity->username] = [
-                    'username' => $user_entity->username,
-                    'role' => $user_entity->role,
-                    'privileges' => $user_entity->privileges,
-                    'last_login_ip' => $user_entity->last_login_ip,
-                    'last_login_time' => $user_entity->last_login_time,
-                ];
-            }
-        }
+//        $list = SecurityDataAgent::getObjectList(SessionLibrary::STORE_ASPECT_USER, false);
+//
+//        $users = [];
+//        foreach ($list as $hashed_user_id) {
+//            $user_entity = $this->sessionLibrary->getUserEntityByNameHash($hashed_user_id);
+//            if ($user_entity) {
+//                $users[$user_entity->username] = [
+//                    'username' => $user_entity->username,
+//                    'role' => $user_entity->role,
+//                    'privileges' => $user_entity->privileges,
+//                    'last_login_ip' => $user_entity->last_login_ip,
+//                    'last_login_time' => $user_entity->last_login_time,
+//                ];
+//            }
+//        }
 
         $this->_sayOK(['list' => $users]);
     }
@@ -58,13 +62,15 @@ class UserManageController extends BaseController
             $role = LibRequest::getRequest("role", '');
             $privileges = LibRequest::getRequest('privileges', []);
 
-            if (!is_string($username) || $username === '' || $username === 'admin') {
+            if (!is_string($username) || $username === '') {
                 throw new \Exception("Field username not correct!");
             }
 
-            $session_library = new SessionLibrary();
+            if ($username === 'admin' && $role != UserEntity::ROLE_ADMIN) {
+                throw new \Exception("Admin is admin. Rebellion?");
+            }
 
-            $user_entity = $session_library->getUserEntity($username);
+            $user_entity = $this->userLibrary->readEntityByName($username);
             if (!$user_entity) {
                 $user_entity = new UserEntity(['username' => $username]);
             }
@@ -72,7 +78,7 @@ class UserManageController extends BaseController
             $user_entity->role = $role;
             $user_entity->privileges = $privileges;
 
-            $done = $session_library->storeUser($user_entity);
+            $done = $this->userLibrary->writeEntity($user_entity);
             if (!$done) {
                 throw new \Exception("cannot update user");
             }
@@ -89,8 +95,7 @@ class UserManageController extends BaseController
             if (!is_string($username) || $username === '' || $username === 'admin') {
                 throw new \Exception("Field username not correct!");
             }
-            $session_library = new SessionLibrary();
-            $done = $session_library->removeUserByName($username);
+            $done = $this->userLibrary->removeEntity($username);
             if (!$done) {
                 throw new \Exception("cannot remove user");
             }

@@ -33,7 +33,7 @@ const handlerOfIndexComponentDatabaseWork = {
         '<Button type="primary" v-on:click="refresh_process_list">Refresh</Button>' +
         '</div>' +
         '<h3>Process List of {{process_list_result_database_name}}, {{process_list_result_last_update}}</h3>' +
-        '<i-table :columns="process_list_fields" :data="process_list_data"></i-table>' +
+        '<i-table :columns="process_list_fields" :data="process_list_data" stripe></i-table>' +
         '</TabPane>' +
         '</Tabs>' +
         '</div>',
@@ -47,29 +47,25 @@ const handlerOfIndexComponentDatabaseWork = {
                 process_list_result_database_name: null,
                 process_list_result_last_update: 'N/A',
                 process_list_fields: [
-                    {key: 'Id', title: 'Id', sortable: true},
-                    //{key: 'Host', title: 'Host', sortable: true},
-                    //{key: 'User', title: 'User', sortable: true},
-                    {key: 'login_info', title: 'Login', sortable: true},
-                    {key: 'db', title: 'Scheme', sortable: true},
-                    //{key: 'Command', title: 'Command', sortable: true},
-                    //{key: 'State', title: 'State', sortable: true},
-                    {key: 'command_state', title: 'Status'},
-                    {key: 'Time', title: 'Time', sortable: true},
-                    //{key: 'Info', title: 'SQL'},
+                    {key: 'Id', title: 'Id', width: 100, sortable: true},
+                    {key: 'login_info', title: 'Login', width: 150, sortable: true},
+                    {key: 'db', title: 'Scheme', width: 100, sortable: true},
                     {
-                        key: 'sql', title: 'SQL',
+                        key: 'sql', title: 'SQL',//width:400,
                         render: (h, params) => {
                             return h('div', [
                                 h('Poptip', {
                                         props: {
                                             trigger: 'hover',
-                                            title: 'Detail',
+                                            title: 'Detail for ' + params.row.Id,
                                             //content: params.row.Info,
-                                            width: '300px',
+                                            width: 800,
                                             transfer: true
                                         },
                                         //style:{'white-space': 'normal'}
+                                        // style: {
+                                        //     width: '400px',
+                                        // }
                                     },
                                     //(params.row.Info?params.row.Info:'').substr(0,20)+((params.row.Info?params.row.Info:'').length>20?'...':'')
                                     [
@@ -82,8 +78,10 @@ const handlerOfIndexComponentDatabaseWork = {
                             ]);
                         }
                     },
+                    {key: 'command_state', title: 'Status', width: 150},
+                    {key: 'Time', title: 'Time', width: 100, sortable: true},
                     {
-                        key: 'action', title: 'Action',
+                        key: 'action', title: 'Action', width: 100,
                         render: (h, params) => {
                             return h('div', [
                                 h('Button', {

@@ -31,7 +31,7 @@ class ServerWorkController extends BaseController
     public function servers()
     {
         try {
-            $servers = $this->serverLibrary->serverList();
+            $servers = $this->serverLibrary->entityList();
             $this->_sayOK(['list' => $servers]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
@@ -42,7 +42,7 @@ class ServerWorkController extends BaseController
     {
         try {
             $server_name = LibRequest::getRequest("server_name");
-            $entity = $this->serverLibrary->getServerEntityByName($server_name);
+            $entity = $this->serverLibrary->readEntityByName($server_name);
             if (!$entity) {
                 throw new \Exception('No such server');
             }
@@ -50,7 +50,7 @@ class ServerWorkController extends BaseController
             $query = ShellCommandHandler::buildQueryForSync($server_name, "sudo uname -a");
 
             $daemonQueryLibrary = new DaemonQueryLibrary();
-            $result = $daemonQueryLibrary->query($query);
+            $result = @$daemonQueryLibrary->query($query);
 
             $this->_sayOK(['result' => json_decode($result), 'plain_result' => $result]);
         } catch (\Exception $exception) {
@@ -64,7 +64,7 @@ class ServerWorkController extends BaseController
             $server_name_list = LibRequest::getRequest("server_name_list", []);
             $server_df_results = [];
             foreach ($server_name_list as $server_name) {
-                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                $entity = $this->serverLibrary->readEntityByName($server_name);
                 if (!$entity) {
                     throw new \Exception('No such server');
                 }
@@ -73,7 +73,7 @@ class ServerWorkController extends BaseController
                 $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
 
                 $daemonQueryLibrary = new DaemonQueryLibrary();
-                $result = $daemonQueryLibrary->query($query);
+                $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
                 $output = implode(PHP_EOL, $output);
@@ -99,16 +99,16 @@ class ServerWorkController extends BaseController
 
             $server_du_results = [];
             foreach ($server_name_list as $server_name) {
-                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                $entity = $this->serverLibrary->readEntityByName($server_name);
                 if (!$entity) {
                     throw new \Exception('No such server');
                 }
 
                 $command = 'sudo du -h -d1 ' . escapeshellarg($dir);
-                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
                 $daemonQueryLibrary = new DaemonQueryLibrary();
-                $result = $daemonQueryLibrary->query($query);
+                $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
                 $output = implode(PHP_EOL, $output);
@@ -134,16 +134,16 @@ class ServerWorkController extends BaseController
 
             $server_ls_results = [];
             foreach ($server_name_list as $server_name) {
-                $entity = $this->serverLibrary->getServerEntityByName($server_name);
+                $entity = $this->serverLibrary->readEntityByName($server_name);
                 if (!$entity) {
                     throw new \Exception('No such server');
                 }
 
                 $command = 'sudo ls -alh ' . escapeshellarg($dir);
-                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
                 $daemonQueryLibrary = new DaemonQueryLibrary();
-                $result = $daemonQueryLibrary->query($query);
+                $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
                 $output = implode(PHP_EOL, $output);

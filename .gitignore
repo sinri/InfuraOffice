@@ -11,3 +11,4 @@ composer.phar
 /log/
 /config/config.php
 /cli/daemon/daemon_test.php
+/debug/

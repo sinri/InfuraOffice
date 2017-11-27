@@ -8,6 +8,8 @@
 
 namespace sinri\InfuraOffice\entity;
 
+use sinri\enoch\helper\CommonHelper;
+
 /**
  * Class SessionEntity
  * @package sinri\InfuraOffice\entity
@@ -20,15 +22,25 @@ class SessionEntity extends EntityInterface
 {
 
     /**
+     * @param null $keyChain
      * @return array
      */
-    protected function propertiesAndDefaults()
+    public function propertiesAndDefaults($keyChain = null)
     {
-        return [
+        static $dic = [
             "username" => null,
             "token" => null,
             "expiration" => 0,
             "ip" => null,
         ];
+        if ($keyChain === null) {
+            return $dic;
+        }
+        return CommonHelper::safeReadNDArray($dic, $keyChain);
+    }
+
+    public function primaryKey()
+    {
+        return $this->token;
     }
 }
