@@ -13,12 +13,14 @@ use sinri\enoch\core\LibRequest;
 use sinri\InfuraOffice\cli\handler\ShellCommandHandler;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DaemonQueryLibrary;
+use sinri\InfuraOffice\library\ServerGroupLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
 class ServerWorkController extends BaseController
 {
     protected $serverLibrary;
+    protected $serverGroupLibrary;
 
     public function __construct($initData = null)
     {
@@ -26,12 +28,23 @@ class ServerWorkController extends BaseController
         $this->isCurrentUserRole([UserEntity::ROLE_ADMIN, UserEntity::ROLE_WORKER], true);
 
         $this->serverLibrary = new ServerLibrary();
+        $this->serverGroupLibrary = new ServerGroupLibrary();
     }
 
     public function servers()
     {
         try {
             $servers = $this->serverLibrary->entityList();
+            $this->_sayOK(['list' => $servers]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function serverGroups()
+    {
+        try {
+            $servers = $this->serverGroupLibrary->entityList();
             $this->_sayOK(['list' => $servers]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
@@ -76,7 +89,7 @@ class ServerWorkController extends BaseController
                 $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-                $output = implode(PHP_EOL, $output);
+                //$output = implode(PHP_EOL, $output);
 
                 $server_df_results[] = [
                     'server_name' => $server_name,
@@ -111,7 +124,7 @@ class ServerWorkController extends BaseController
                 $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-                $output = implode(PHP_EOL, $output);
+                //$output = implode(PHP_EOL, $output);
 
                 $server_du_results[] = [
                     'server_name' => $server_name,
@@ -146,7 +159,7 @@ class ServerWorkController extends BaseController
                 $result = @$daemonQueryLibrary->query($query);
 
                 $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-                $output = implode(PHP_EOL, $output);
+                //$output = implode(PHP_EOL, $output);
 
                 $server_ls_results[] = [
                     'server_name' => $server_name,

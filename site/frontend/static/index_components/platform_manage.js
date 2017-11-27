@@ -83,6 +83,10 @@ const handlerOfIndexComponentPlatformManage = {
                                         type: 'error',
                                         size: 'small'
                                     },
+                                    style: {
+                                        //marginRight: '5px'
+                                        margin: '5px'
+                                    },
                                     on: {
                                         click: () => {
                                             //this.remove(params.index)

@@ -54,4 +54,28 @@ You should determine a directory to store logs.
 
 ## CLI
 
-Run `php cli/InfuraOfficeDaemon.php` . You might use `nohup` in product environment. 
+Run `php cli/InfuraOfficeDaemon.php` . You might use `nohup` in product environment.
+
+## Job Config
+
+### ShellCommand
+
+* command
+* script
+
+### ExplodeLog
+
+* file
+* left_tail_lines
+* keep_backup
+
+### RemoveAntiquity
+
+* file
+* keep_days
+* date_format : Y-m-d, Ymd
+
+### RemoveZombie
+
+* file
+* keep_days 

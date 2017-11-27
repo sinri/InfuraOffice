@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>InfuraOffice</title>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="node_modules/vue/dist/vue.min.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
     <script src="node_modules/js-cookie/src/js.cookie.js"></script>
 
     <script src="static/CookieHelper.js"></script>
@@ -23,6 +23,8 @@
     <link rel="stylesheet" type="text/css" href="static/index_components/platform_manage.css"/>
     <script src="static/index_components/server_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/server_manage.css"/>
+    <script src="static/index_components/server_group_manage.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/server_group_manage.css"/>
     <script src="static/index_components/database_manage.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/database_manage.css"/>
 
@@ -83,6 +85,10 @@
                                 <Icon type="android-desktop"></Icon>
                                 Server Manage
                             </menu-item>
+                            <menu-item name="server_group_manage">
+                                <Icon type="ios-pricetags-outline"></Icon>
+                                Server Group Manage
+                            </menu-item>
                             <menu-item name="database_manage">
                                 <Icon type="soup-can-outline"></Icon>
                                 Database Manage
@@ -110,6 +116,8 @@
                                          v-else-if="menu_item_selected=='platform_manage'"></platform_manage>
                         <server_manage id="server_manage"
                                        v-else-if="menu_item_selected=='server_manage'"></server_manage>
+                        <server_group_manage id="server_group_manage"
+                                             v-else-if="menu_item_selected=='server_group_manage'"></server_group_manage>
                         <database_manage id="database_manage"
                                          v-else-if="menu_item_selected=='database_manage'"></database_manage>
                         <server_work id="server_work" v-else-if="menu_item_selected=='server_work'"></server_work>

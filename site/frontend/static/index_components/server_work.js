@@ -1,9 +1,9 @@
 const handlerOfIndexComponentServerWork = {
     componentDefinition: {
         template: '<div>' +
+        '<div>' +
         '<Row>' +
         '<i-col span="12"><h2>Server Work</h2></i-col>' +
-        //'<i-col span="12"><i-button icon="android-add" class="right" v-on:click="add_server">Add Server</i-button></i-col>' +
         '</Row>' +
         '<Row>' +
         '<i-col span="24">' +
@@ -13,12 +13,32 @@ const handlerOfIndexComponentServerWork = {
         '</Alert>' +
         '</i-col>' +
         '</Row>' +
-        '<div>' +
+        '</div>' +
         '<h3>Select Servers ...</h3>' +
-        //'<Transfer :data="full_server_list" :target-keys="target_server_list" filterable :filter-method="server_filter" @on-change="server_transfer_changed"></Transfer>' +
+        '<div>' +
         '<Select v-model="target_server_list" multiple style="width:260px">' +
         '<Option v-for="item in full_server_list" :value="item.key" :key="item.key">{{ item.label }}</Option>' +
         '</Select>' +
+        '</div>' +
+        '<div>' +
+        '<Dropdown @on-click="on_server_group_dropdown_item_click">' +
+        '   <a href="javascript:void(0)">' +
+        '       Use Server Group ' +
+        '       <Icon type="arrow-down-b"></Icon>' +
+        '   </a>' +
+        '   <DropdownMenu slot="list">' +
+        '       <Dropdown placement="right-start" v-for="group in full_server_group_list" :key="group.group_name">' +
+        '           <DropdownItem>' +
+        '               {{group.group_name}} ' +
+        '               <Icon type="ios-arrow-right"></Icon>' +
+        '           </DropdownItem>' +
+        '           <DropdownMenu slot="list">' +
+        '               <DropdownItem :name="\'append-\'+group.group_name">Append {{group.group_name}}</DropdownItem>' +
+        '               <DropdownItem :name="\'remove-\'+group.group_name">Remove {{group.group_name}}</DropdownItem>' +
+        '           </DropdownMenu>' +
+        '       </Dropdown>' +
+        '   </DropdownMenu>' +
+        '</Dropdown>' +
         '</div>' +
         '<div>' +
         '<h3>Select a Task Type ...</h3>' +
@@ -42,14 +62,12 @@ const handlerOfIndexComponentServerWork = {
         '<Button slot="append" icon="pie-graph" v-on:click="click_du_btn">du</Button>' +
         '</Input>' +
         '</div>' +
-        //'<div>' +
-        //'<Button type="primary" v-on:click="click_du_btn">Check Folder Disk Space with du</Button>' +
-        //'</div>' +
         '<div>' +
         '<div class="shell_output_box" v-for="du_of_server in du_list">' +
         '<h4>{{du_of_server.server_name}}:{{du_of_server.dir}}</h4>' +
         '<pre>{{du_of_server.output}}</pre>' +
         '<Alert type="error" v-if="du_of_server.error">{{du_of_server.error}}</Alert>' +
+        '</div>' +
         '</div>' +
         '</TabPane>' +
         '<TabPane label="File System">' +
@@ -70,6 +88,7 @@ const handlerOfIndexComponentServerWork = {
         '</div>',
         data: function () {
             return {
+                full_server_group_list: [],
                 full_server_list: [],
                 target_server_list: [],
                 has_error: false,
@@ -83,6 +102,33 @@ const handlerOfIndexComponentServerWork = {
             }
         },
         methods: {
+            load_server_group_list: function () {
+                //vueIndex.$Loading.start();
+                $.ajax({
+                    url: '../api/ServerWorkController/serverGroups',
+                    method: 'post',
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code === 'OK') {
+                        //vueIndex.$Loading.finish();
+
+                        let group_data = response.data.list;
+                        for (let i = 0; i < group_data.length; i++) {
+                            //group_data[i].key=group_data[i].group_name;
+                            group_data[i].server_name_list_readable = group_data[i].server_name_list.join(', ');
+                        }
+                        this.full_server_group_list = group_data;
+
+                        this.show_edit_group = false;
+                    } else {
+                        this.$Message.error(response.data);
+                        //vueIndex.$Loading.error();
+                    }
+                }).fail(() => {
+                    this.$Message.error('ajax failed for server group loading');
+                    //vueIndex.$Loading.error();
+                });
+            },
             load_server_list: function () {
                 vueIndex.$Loading.start();
 
@@ -252,9 +298,46 @@ const handlerOfIndexComponentServerWork = {
                         desc: 'when calling df'
                     });
                 });
+            },
+            on_server_group_dropdown_item_click: function (action_group_name) {
+                console.log('on_server_group_dropdown_item_click', action_group_name);
+                let group_name = action_group_name.substring(7);
+                let servers = [];
+                for (let i = 0; i < this.full_server_group_list.length; i++) {
+                    if (this.full_server_group_list[i].group_name === group_name) {
+                        servers = this.full_server_group_list[i].server_name_list;
+                        break;
+                    }
+                }
+                console.log('found servers in group ' + group_name, servers);
+                if (servers.length <= 0) {
+                    return;
+                }
+                let action = '';
+                if (action_group_name.startsWith("append-")) {
+                    //append
+                    for (let i = 0; i < servers.length; i++) {
+                        if (this.target_server_list.indexOf(servers[i]) < 0) {
+                            this.target_server_list.push(servers[i]);
+                            console.log("pushed", servers[i]);
+                        }
+                    }
+                } else if (action_group_name.startsWith("remove-")) {
+                    //remove
+                    for (let i = servers.length - 1; i >= 0; i--) {
+                        if (this.target_server_list.indexOf(servers[i]) >= 0) {
+                            this.target_server_list.splice(i, 1);
+                            console.log("removed", servers[i]);
+                        }
+                    }
+                } else {
+                    //do nothing
+                }
             }
         },
         mounted: function () {
+            //console.log(handlerOfIndexComponentServerWork.componentDefinition.template);
+            this.load_server_group_list();
             this.load_server_list();
         }
     }

@@ -9,6 +9,9 @@
 namespace sinri\InfuraOffice\cli\daemon;
 
 
+use sinri\enoch\core\LibLog;
+use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
+
 class Daemon
 {
     /**
@@ -16,9 +19,14 @@ class Daemon
      */
     protected $socketAgent;
 
+    protected $workers = [];
+    protected $max_workers = 0;
+
     public function __construct($socketAgent)
     {
         $this->socketAgent = $socketAgent;
+        $this->workers = [];
+        $this->max_workers = InfuraOfficeToolkit::readConfig(['daemon', 'max_workers'], 0);
     }
 
     public function listen()
@@ -64,6 +72,23 @@ class Daemon
 
             if ($code == '300') {
                 DaemonHelper::log("INFO", "For [{$pairName}] has forked a client [{$responseBody}] to handle, parent leaves.");
+                if ($this->max_workers <= count($this->workers)) {
+                    $options = 0;
+                    while (count($this->workers) > 0) {
+                        DaemonHelper::log(LibLog::LOG_WARNING, "Reached MAX-WORKERS (limit is {$this->max_workers}), waiting...", count($this->workers));
+                        $done_pid = pcntl_wait($status, $options);//(WNOHANG | WUNTRACED));
+                        DaemonHelper::log(LibLog::LOG_INFO, "WAITED and saw pid " . $done_pid . " exited with status ", $status);
+                        if ($done_pid == 0) {
+                            DaemonHelper::log(LibLog::LOG_INFO, "WNOHANG so zero returned... break");
+                            break;
+                        }
+                        if ($done_pid && isset($this->workers[$done_pid])) {
+                            unset($this->workers[$done_pid]);
+                        }
+                        DaemonHelper::log(LibLog::LOG_INFO, "After unset worker set, current workers", count($this->workers));
+                        $options = (WNOHANG | WUNTRACED);
+                    }
+                }
                 return SocketAgent::SERVER_CALLBACK_COMMAND_NONE;
             } elseif ($code == '200') {
                 fwrite($client, json_encode(['code' => $code, 'data' => $responseBody]));
@@ -95,6 +120,7 @@ class Daemon
         } elseif ($pid) {
             //as parent
             DaemonHelper::log("INFO", "YomiSingle Created child process [{$pid}]!");
+            $this->workers[$pid] = $pid;
             $body = $pid;
             return '300';
         } else {

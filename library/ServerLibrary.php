@@ -143,6 +143,11 @@ class ServerLibrary extends AbstractEntityLibrary
      */
     public function removeEntity($name)
     {
-        return parent::removeEntity($name);
+        $done = parent::removeEntity($name);
+        if ($done) {
+            $lib = new ServerGroupLibrary();
+            $lib->whenOneServerRemoved($name);
+        }
+        return $done;
     }
 }

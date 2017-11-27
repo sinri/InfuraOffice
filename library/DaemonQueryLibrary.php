@@ -83,7 +83,7 @@ class DaemonQueryLibrary
     /**
      * @param $response
      * @param null $error
-     * @return bool|mixed|null
+     * @return bool|string|null
      */
     public function parseResponse($response, &$error = null)
     {
@@ -95,7 +95,7 @@ class DaemonQueryLibrary
         }
         $query_code = CommonHelper::safeReadArray($parsed, 'code', 600);
         $return_var = CommonHelper::safeReadNDArray($parsed, ['data', 'return_var'], 255);
-        $output = CommonHelper::safeReadNDArray($parsed, ['data', 'output'], []);
+        $output = CommonHelper::safeReadNDArray($parsed, ['data', 'output'], '');
         if ($query_code != 200) {
             $error = CommonHelper::safeReadArray($parsed, 'data', 'code is not 200');
             return false;

@@ -15,6 +15,7 @@ use sinri\enoch\helper\CommonHelper;
  * @package sinri\InfuraOffice\entity
  * @property string server_name
  * @property string connect_ip
+ * @property int connect_port
  * @property string ssh_user
  * @property string platform_name
  * @property string platform_device_id
@@ -31,6 +32,7 @@ class ServerEntity extends EntityInterface
         static $dic = [
             "server_name" => null,
             "connect_ip" => null,
+            "connect_port" => 22,
             "ssh_user" => null,
             "platform_name" => null,
             "platform_device_id" => null,

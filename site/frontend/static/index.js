@@ -24,6 +24,7 @@ $(document).ready(function () {
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
             platform_manage: handlerOfIndexComponentPlatformManage.componentDefinition,
             server_manage: handlerOfIndexComponentServerManage.componentDefinition,
+            server_group_manage: handlerOfIndexComponentServerGroupManage.componentDefinition,
             database_manage: handlerOfIndexComponentDatabaseManage.componentDefinition,
             server_work: handlerOfIndexComponentServerWork.componentDefinition,
             database_work: handlerOfIndexComponentDatabaseWork.componentDefinition
