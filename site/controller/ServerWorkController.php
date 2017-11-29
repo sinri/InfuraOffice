@@ -34,7 +34,7 @@ class ServerWorkController extends BaseController
     public function servers()
     {
         try {
-            $servers = $this->serverLibrary->entityList();
+            $servers = $this->serverLibrary->entityArrayList();
             $this->_sayOK(['list' => $servers]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
@@ -44,7 +44,7 @@ class ServerWorkController extends BaseController
     public function serverGroups()
     {
         try {
-            $servers = $this->serverGroupLibrary->entityList();
+            $servers = $this->serverGroupLibrary->entityArrayList();
             $this->_sayOK(['list' => $servers]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());

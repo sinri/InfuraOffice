@@ -13,6 +13,7 @@ use sinri\enoch\helper\CommonHelper;
 /**
  * Class SessionEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string username
  * @property string token
  * @property int expiration

@@ -51,7 +51,7 @@ $(document).ready(function () {
 
                     this.$Message.success({
                         content: 'User validated. ' + last_login_text + " Soon open main page.",
-                        duration: 2,
+                        duration: 1,
                         onClose: () => {
                             window.location.href = "index.html";
                         }

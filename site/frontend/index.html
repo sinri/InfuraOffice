@@ -12,6 +12,8 @@
     <script src="node_modules/iview/dist/iview.min.js"></script>
     <link rel="stylesheet" type="text/css" href="node_modules/iview/dist/styles/iview.css"/>
 
+    <script src="static/general_components/infura_server_select.js"></script>
+
     <script src="static/index.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index.css"/>
 
@@ -32,6 +34,15 @@
     <link rel="stylesheet" type="text/css" href="static/index_components/server_work.css"/>
     <script src="static/index_components/database_work.js"></script>
     <link rel="stylesheet" type="text/css" href="static/index_components/database_work.css"/>
+
+    <script src="static/index_components/job_config.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/job_config.css"/>
+    <script src="static/index_components/update_shell_command_job.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/update_shell_command_job.css"/>
+    <script src="static/index_components/update_explode_log_job.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/update_explode_log_job.css"/>
+    <script src="static/index_components/update_remove_antiquity_job.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/index_components/update_remove_antiquity_job.css"/>
 </head>
 <body>
 <div id="app_index">
@@ -75,33 +86,51 @@
                         <menu-group title="Settings">
                             <menu-item name="user_manage">
                                 <Icon type="person-stalker"></Icon>
-                                User Manage
+                                User
                             </menu-item>
                             <menu-item name="platform_manage">
                                 <Icon type="android-cloud-outline"></Icon>
-                                Platform Manage
+                                Platform
                             </menu-item>
                             <menu-item name="server_manage">
                                 <Icon type="android-desktop"></Icon>
-                                Server Manage
+                                Server
                             </menu-item>
                             <menu-item name="server_group_manage">
                                 <Icon type="ios-pricetags-outline"></Icon>
-                                Server Group Manage
+                                Server Group
                             </menu-item>
                             <menu-item name="database_manage">
                                 <Icon type="soup-can-outline"></Icon>
-                                Database Manage
+                                Database
                             </menu-item>
                         </menu-group>
                         <menu-group title="Work">
                             <menu-item name="server_work">
                                 <Icon type="ios-medical-outline"></Icon>
-                                Server Work
+                                Server
                             </menu-item>
                             <menu-item name="database_work">
-                                <Icon type="ios-glasses-outline"></Icon>
-                                Database Work
+                                <Icon type="social-buffer-outline"></Icon>
+                                Database
+                            </menu-item>
+                        </menu-group>
+                        <menu-group title="Schedule">
+                            <menu-item name="job_config">
+                                <Icon type="ios-alarm-outline"></Icon>
+                                Overview
+                            </menu-item>
+                            <menu-item name="update_shell_command_job">
+                                <Icon type="android-list"></Icon>
+                                Shell Job
+                            </menu-item>
+                            <menu-item name="update_explode_log_job">
+                                <Icon type="paintbucket"></Icon>
+                                Explosion Job
+                            </menu-item>
+                            <menu-item name="update_remove_antiquity_job">
+                                <Icon type="funnel"></Icon>
+                                Remove Antiquity Job
                             </menu-item>
                         </menu-group>
                     </i-menu>
@@ -122,7 +151,14 @@
                                          v-else-if="menu_item_selected=='database_manage'"></database_manage>
                         <server_work id="server_work" v-else-if="menu_item_selected=='server_work'"></server_work>
                         <database_work id="database_work"
-                                       v-else-if="menu_item_selected='database_work'"></database_work>
+                                       v-else-if="menu_item_selected=='database_work'"></database_work>
+                        <job_config id="job_config" v-else-if="menu_item_selected=='job_config'"></job_config>
+                        <update_shell_command_job id="update_shell_command_job"
+                                                  v-else-if="menu_item_selected=='update_shell_command_job'"></update_shell_command_job>
+                        <update_explode_log_job id="update_explode_log_job"
+                                                v-else-if="menu_item_selected=='update_explode_log_job'"></update_explode_log_job>
+                        <update_remove_antiquity_job id="update_remove_antiquity_job"
+                                                     v-else-if="menu_item_selected=='update_remove_antiquity_job'"></update_remove_antiquity_job>
                     </div>
                 </i-col>
             </Row>

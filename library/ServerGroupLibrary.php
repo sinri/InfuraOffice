@@ -23,11 +23,11 @@ class ServerGroupLibrary extends AbstractEntityLibrary
     }
 
     /**
-     * @return ServerGroupEntity[]
+     * @return array
      */
-    public function entityList()
+    public function entityArrayList()
     {
-        return parent::entityList();
+        return parent::entityArrayList();
     }
 
     /**
@@ -71,7 +71,7 @@ class ServerGroupLibrary extends AbstractEntityLibrary
      */
     public function whenOneServerRemoved($server_name)
     {
-        $groups = $this->entityList();
+        $groups = $this->entityArrayList();
         foreach ($groups as $group) {
             if (in_array($server_name, $group->server_name_list)) {
                 $group->server_name_list = array_diff($group->server_name_list, [$server_name]);

@@ -65,9 +65,14 @@ class SSHToolkit
         }
     }
 
+    /**
+     * @param string $cmd
+     * @return string
+     * @throws \Exception
+     */
     public function exec($cmd)
     {
-        DaemonHelper::log(LibLog::LOG_INFO, __METHOD__ . "@" . __LINE__);
+        //DaemonHelper::log(LibLog::LOG_INFO, __METHOD__ . "@" . __LINE__);
         if (!($stream = ssh2_exec($this->connection, $cmd))) {
             throw new \Exception('SSH command failed: ' . $cmd);
         }
@@ -78,6 +83,36 @@ class SSHToolkit
         }
         fclose($stream);
         return $data;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastExecReturnVar()
+    {
+        $r = $this->exec("echo $?");
+        return intval($r, 10);
+    }
+
+    /**
+     * @param $localFilePath
+     * @param $remoteFilePath
+     * @param int $mask
+     * @return bool
+     */
+    public function scpSend($localFilePath, $remoteFilePath, $mask = 0777)
+    {
+        return ssh2_scp_send($this->connection, $localFilePath, $remoteFilePath, $mask);
+    }
+
+    /**
+     * @param $remoteFilePath
+     * @param $localFilePath
+     * @return bool
+     */
+    public function scpReceive($remoteFilePath, $localFilePath)
+    {
+        return ssh2_scp_recv($this->connection, $remoteFilePath, $localFilePath);
     }
 
     public function disconnect()
@@ -92,4 +127,103 @@ class SSHToolkit
         $this->disconnect();
     }
 
+    // try to use SFTP
+
+    protected $sftp;
+
+    /**
+     * @throws \Exception
+     */
+    public function establishSFTP()
+    {
+        $this->sftp = ssh2_sftp($this->connection);
+        if (!$this->sftp) {
+            throw new \Exception("Could not initialize SFTP subsystem.");
+        }
+    }
+
+    /**
+     * @param $localFilePath
+     * @param $remoteFilePath
+     * @param null|int $mask
+     * @return bool
+     * @throws \Exception
+     */
+    public function sftpSend($localFilePath, $remoteFilePath, $mask = null)
+    {
+        $data_to_send = @file_get_contents($localFilePath);
+        if ($data_to_send === false) {
+            throw new \Exception("Could not open local file: " . $localFilePath);
+        }
+
+        $stream = fopen("ssh2.sftp://" . intval($this->sftp) . $remoteFilePath, 'w');
+
+        if (!$stream) {
+            throw new \Exception("Could not open remote file: " . $remoteFilePath);
+        }
+
+        $written = fwrite($stream, $data_to_send);
+
+        fclose($stream);
+
+        if ($mask !== null) {
+            $this->sftpChmod($remoteFilePath, $mask);
+        }
+
+        return ($written !== false);
+    }
+
+    /**
+     * @param $remoteFilePath
+     * @param $localFilePath
+     * @param int $mask
+     * @return bool
+     * @throws \Exception
+     */
+    public function sftpReceive($remoteFilePath, $localFilePath, $mask = 0777)
+    {
+        $stream = fopen("ssh2.sftp://" . intval($this->sftp) . $remoteFilePath, 'r');
+        if (!$stream) {
+            throw new \Exception("Could not open file: " . $remoteFilePath);
+        }
+        $size = $this->sftpFileSize($remoteFilePath);
+        $contents = '';
+        $read = 0;
+        $len = $size;
+        while ($read < $len && ($buf = fread($stream, $len - $read))) {
+            $read += strlen($buf);
+            $contents .= $buf;
+        }
+        $written = file_put_contents($localFilePath, $contents);
+        fclose($stream);
+
+        if ($mask !== null) {
+            chmod($localFilePath, $mask);
+        }
+
+        return ($written !== false);
+    }
+
+    /**
+     * @param $remoteFilePath
+     * @return bool
+     */
+    public function sftpUnlink($remoteFilePath)
+    {
+        return ssh2_sftp_unlink($this->sftp, $remoteFilePath);
+    }
+
+    /**
+     * @param $file
+     * @return int
+     */
+    public function sftpFileSize($file)
+    {
+        return filesize("ssh2.sftp://" . intval($this->sftp) . $file);
+    }
+
+    public function sftpChmod($remoteFilePath, $mask)
+    {
+        return ssh2_sftp_chmod($this->sftp, $remoteFilePath, $mask);
+    }
 }

@@ -36,11 +36,11 @@ class PlatformLibrary extends AbstractEntityLibrary
 //    }
 
     /**
-     * @return PlatformEntity[]
+     * @return array
      */
-    public function entityList()
+    public function entityArrayList()
     {
-        return parent::entityList();
+        return parent::entityArrayList();
     }
 
     /**

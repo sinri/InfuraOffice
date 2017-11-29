@@ -8,9 +8,12 @@
 
 namespace sinri\InfuraOffice\entity;
 
+use sinri\enoch\helper\CommonHelper;
+
 /**
  * Class ServerGroupEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string group_name
  * @property string[] server_name_list
  */
@@ -23,10 +26,14 @@ class ServerGroupEntity extends EntityInterface
      */
     public function propertiesAndDefaults($keyChain = null)
     {
-        return [
+        static $dic = [
             "group_name" => null,
             "server_name_list" => [],
         ];
+        if ($keyChain === null) {
+            return $dic;
+        }
+        return CommonHelper::safeReadNDArray($dic, $keyChain);
     }
 
     public function primaryKey()

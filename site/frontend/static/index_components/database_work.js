@@ -1,42 +1,42 @@
 const handlerOfIndexComponentDatabaseWork = {
     componentDefinition: {
-        template: '<div>' +
-        '<Row>' +
-        '<i-col span="12"><h2>Database Work</h2></i-col>' +
-        '</Row>' +
-        '<Row>' +
-        '<i-col span="24">' +
-        '<Alert type="error" show-icon v-if="has_error">' +
-        'ERROR' +
-        '<span slot="desc">{{ error_message }}</span>' +
-        '</Alert>' +
-        '</i-col>' +
-        '</Row>' +
-        '<div>' +
-        '<h3>Select Database</h3>' +
-        //'<Transfer :data="full_server_list" :target-keys="target_server_list" filterable :filter-method="server_filter" @on-change="server_transfer_changed"></Transfer>' +
-        '<Select v-model="target_database_name" style="width:260px">' +
-        '<Option v-for="item in database_options" :value="item.key" :key="item.key">{{ item.label }}</Option>' +
-        '</Select>' +
-        '</div>' +
-        '<div>' +
-        '<h3>Select a Task Type ...</h3>' +
-        '<Tabs type="card" @on-click="tab_clicked">' +
-        '<TabPane label="Process List">' +
-        '<div>' +
-        'Should display sleep processes? ' +
-        '<i-switch v-model="is_show_sleep_process" @on-change="on_show_sleep_switch_change">' +
-        '<Icon type="eye" slot="open"></Icon>' +
-        '<Icon type="eye-disabled" slot="close"></Icon>' +
-        '</i-switch> ' +
-        '&nbsp;&nbsp;' +
-        '<Button type="primary" v-on:click="refresh_process_list">Refresh</Button>' +
-        '</div>' +
-        '<h3>Process List of {{process_list_result_database_name}}, {{process_list_result_last_update}}</h3>' +
-        '<i-table :columns="process_list_fields" :data="process_list_data" stripe></i-table>' +
-        '</TabPane>' +
-        '</Tabs>' +
-        '</div>',
+        template: '<div>\
+            <Row>\
+                <i-col span="12"><h2>Database Work</h2></i-col>\
+            </Row>\
+            <Row> \
+                <i-col span="24"> \
+                    <Alert type="error" show-icon v-if="has_error"> \
+                        ERROR \
+                        <span slot="desc">{{ error_message }}</span> \
+                    </Alert> \
+                </i-col> \
+            </Row> \
+            <div> \
+                <h3>Select Database</h3> \
+                <Select v-model="target_database_name" style="width:260px"> \
+                    <Option v-for="item in database_options" :value="item.key" :key="item.key">{{ item.label }}</Option> \
+                </Select> \
+            </div> \
+            <div> \
+                <h3>Select a Task Type ...</h3> \
+                <Tabs type="card" @on-click="tab_clicked"> \
+                    <TabPane label="Process List"> \
+                        <div> \
+                            Should display sleep processes?  \
+                            <i-switch v-model="is_show_sleep_process" @on-change="on_show_sleep_switch_change"> \
+                                <Icon type="eye" slot="open"></Icon> \
+                                <Icon type="eye-disabled" slot="close"></Icon> \
+                            </i-switch>  \
+                            &nbsp;&nbsp; \
+                            <Button type="primary" v-on:click="refresh_process_list">Refresh</Button> \
+                        </div> \
+                        <h3>Process List of {{process_list_result_database_name}}, {{process_list_result_last_update}}</h3> \
+                        <i-table :columns="process_list_fields" :data="process_list_data" stripe></i-table> \
+                    </TabPane> \
+                </Tabs> \
+            </div>\
+        </div>',
         data: function () {
             return {
                 has_error: false,

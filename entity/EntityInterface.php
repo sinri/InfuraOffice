@@ -60,4 +60,14 @@ abstract class EntityInterface
         }
         return $json;
     }
+
+    /**
+     * @param $array
+     */
+    public function updateFromArray($array)
+    {
+        foreach ($array as $key => $value) {
+            $this->$key = $value;
+        }
+    }
 }

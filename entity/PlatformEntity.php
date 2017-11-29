@@ -13,6 +13,7 @@ use sinri\enoch\helper\CommonHelper;
 /**
  * Class HardwarePlatformEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string platform_name
  * @property string platform_type
  * @property string auth_id

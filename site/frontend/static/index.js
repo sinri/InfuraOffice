@@ -1,5 +1,7 @@
 var vueIndex = null;
 
+Vue.component(GeneralComponentOfInfuraServerSelect.componentDefinition.name, GeneralComponentOfInfuraServerSelect.componentDefinition);
+
 $(document).ready(function () {
     if (!CookieHelper.isLogin()) {
         window.location.href = "login.html";
@@ -27,7 +29,11 @@ $(document).ready(function () {
             server_group_manage: handlerOfIndexComponentServerGroupManage.componentDefinition,
             database_manage: handlerOfIndexComponentDatabaseManage.componentDefinition,
             server_work: handlerOfIndexComponentServerWork.componentDefinition,
-            database_work: handlerOfIndexComponentDatabaseWork.componentDefinition
+            database_work: handlerOfIndexComponentDatabaseWork.componentDefinition,
+            job_config: handlerOfIndexComponentJobConfig.componentDefinition,
+            update_shell_command_job: handlerOfIndexComponentUpdateShellCommandJob.componentDefinition,
+            update_explode_log_job: handlerOfIndexComponentUpdateExplodeLogJob.componentDefinition,
+            update_remove_antiquity_job: handlerOfIndexComponentUpdateRemoveAntiquityJob.componentDefinition,
         },
         methods: {
             logout: function () {

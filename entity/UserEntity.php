@@ -14,6 +14,7 @@ use sinri\enoch\helper\CommonHelper;
 /**
  * Class UserEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string username
  * @property string auth_hash
  * @property string role

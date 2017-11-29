@@ -28,7 +28,10 @@ abstract class AbstractEntityLibrary
         return $class_name;
     }
 
-    public function entityList()
+    /**
+     * @return array
+     */
+    public function entityArrayList()
     {
         //echo "DEBUG : ".__METHOD__." aspect: ".$this->getAspectName().PHP_EOL;
         $entity_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
@@ -46,6 +49,27 @@ abstract class AbstractEntityLibrary
                 $entity_array[$key] = $entity->$key;
             }
             $entities[] = $entity_array;
+        }
+        return $entities;
+    }
+
+    /**
+     * @return EntityInterface[]
+     */
+    public function entityList()
+    {
+        //echo "DEBUG : ".__METHOD__." aspect: ".$this->getAspectName().PHP_EOL;
+        $entity_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
+        //print_r($entity_names);
+        $entities = [];
+        foreach ($entity_names as $entity_name_hashed) {
+            $entity = $this->readEntityByNameHashed($entity_name_hashed);
+
+            //echo "IN FOREACH ".$entity_name_hashed." -> ".PHP_EOL;var_dump($entity);
+
+            if (!$entity) continue;
+
+            $entities[] = $entity;
         }
         return $entities;
     }

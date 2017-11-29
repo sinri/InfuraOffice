@@ -13,6 +13,7 @@ use sinri\enoch\helper\CommonHelper;
 /**
  * Class ServerEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string server_name
  * @property string connect_ip
  * @property int connect_port

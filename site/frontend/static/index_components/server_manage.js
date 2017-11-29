@@ -279,7 +279,7 @@ const handlerOfIndexComponentServerManage = {
                     if (response.code === 'OK') {
                         vueIndex.$Notice.success({
                             title: 'Server ' + server_name + " answered:",
-                            desc: response.data.result.data.output.join('\n')
+                            desc: response.data.result.data.output
                         });
                         vueIndex.$Loading.finish();
                         //this.refreshServerList();

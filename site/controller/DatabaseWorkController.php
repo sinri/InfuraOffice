@@ -29,7 +29,7 @@ class DatabaseWorkController extends BaseController
     public function databases()
     {
         try {
-            $list = $this->databaseLibrary->entityList();
+            $list = $this->databaseLibrary->entityArrayList();
             $this->_sayOK(['list' => $list]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());

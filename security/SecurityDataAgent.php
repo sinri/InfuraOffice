@@ -75,6 +75,7 @@ class SecurityDataAgent
         }
 
         $done = file_put_contents($path, $encoded_content, LOCK_EX);
+        @chmod($path, 0777);
         return !!$done;
     }
 

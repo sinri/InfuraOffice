@@ -27,20 +27,32 @@ class InfuraOfficeToolkit
         }
         $config = [];
         require $file;
-        return CommonHelper::safeReadNDArray($config, $keyChain, $default);
+        $file_config_value = CommonHelper::safeReadNDArray($config, $keyChain, $default);
+
+        return RuntimeConfigToolkit::readRuntimeConfig($keyChain, $file_config_value);
+    }
+
+    /**
+     * @param null $subPath
+     * @return string
+     */
+    public static function tempPath($subPath = null)
+    {
+        return __DIR__ . '/../data/tmp' . ($subPath === null ? '' : DIRECTORY_SEPARATOR . $subPath);
     }
 
     private static $loggers = [];
 
     /**
      * @param string $prefix
+     * @param bool $cliUseStdOut
      * @return LibLog
      */
-    public static function logger($prefix = '')
+    public static function logger($prefix = '', $cliUseStdOut = true)
     {
         if (!isset(self::$loggers[$prefix])) {
             $dir = self::readConfig(['log', 'dir'], __DIR__ . '/../log');
-            self::$loggers[$prefix] = new LibLog($dir, $prefix);
+            self::$loggers[$prefix] = new LibLog($dir, $prefix, $cliUseStdOut);
         }
         return self::$loggers[$prefix];
     }

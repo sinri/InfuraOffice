@@ -3,7 +3,7 @@
   "description": "Infura Office Mix",
   "type": "project",
   "require": {
-    "sinri/enoch": "^2.1"
+    "sinri/enoch": "^2.1.18"
   },
   "license": "GPLv3",
   "authors": [

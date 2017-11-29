@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f6f84689b985edd899df76928cd9ab31",
+    "content-hash": "c9a4f01f804c80c895bde7d78a457460",
     "packages": [
         {
             "name": "ralouphie/getallheaders",
@@ -48,16 +48,16 @@
         },
         {
             "name": "sinri/enoch",
-            "version": "2.1.17",
+            "version": "2.1.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sinri/enoch.git",
-                "reference": "05d961720e72dbda8b86fa4bf2ac72b3ceadcac6"
+                "reference": "9b8176a2516d7b768e0128b7a5897b1374c814f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/sinri/enoch/05d961720e72dbda8b86fa4bf2ac72b3ceadcac6.zip",
-                "reference": "05d961720e72dbda8b86fa4bf2ac72b3ceadcac6",
+                "url": "https://files.phpcomposer.com/files/sinri/enoch/9b8176a2516d7b768e0128b7a5897b1374c814f0.zip",
+                "reference": "9b8176a2516d7b768e0128b7a5897b1374c814f0",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
             "keywords": [
                 "php-framework"
             ],
-            "time": "2017-11-23T01:56:45+00:00"
+            "time": "2017-11-29T08:47:03+00:00"
         },
         {
             "name": "sinri/smallphpmailer",

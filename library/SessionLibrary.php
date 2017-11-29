@@ -98,11 +98,11 @@ class SessionLibrary extends AbstractEntityLibrary
     }
 
     /**
-     * @return SessionEntity[]
+     * @return array
      */
-    public function entityList()
+    public function entityArrayList()
     {
-        return parent::entityList();
+        return parent::entityArrayList();
     }
 
     /**

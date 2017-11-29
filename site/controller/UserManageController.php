@@ -33,7 +33,7 @@ class UserManageController extends BaseController
      */
     public function users()
     {
-        $users = $this->userLibrary->entityList();
+        $users = $this->userLibrary->entityArrayList();
 
 //        $list = SecurityDataAgent::getObjectList(SessionLibrary::STORE_ASPECT_USER, false);
 //

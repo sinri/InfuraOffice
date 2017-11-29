@@ -1,3 +1,6 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
 #head_bar {
     position: fixed;
     top: 0;
@@ -5,12 +8,12 @@
     height: 50px;
     margin: 0;
     padding: 5px;
-    background-color: dodgerblue;
+    background-color: #5b6270;
     z-index: 999;
 }
 
 #head_bar h1 {
-    color: #aee6ff;
+    color: white;
 }
 
 #main_div {

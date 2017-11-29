@@ -13,6 +13,7 @@ use sinri\enoch\helper\CommonHelper;
 /**
  * Class DatabaseEntity
  * @package sinri\InfuraOffice\entity
+ *
  * @property string database_name
  * @property string server_type
  * @property string host

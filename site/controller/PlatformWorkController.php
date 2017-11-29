@@ -27,7 +27,7 @@ class PlatformWorkController extends BaseController
     public function platforms()
     {
         try {
-            $list = $this->platformLibrary->entityList();
+            $list = $this->platformLibrary->entityArrayList();
             $this->_sayOK(['list' => $list]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
