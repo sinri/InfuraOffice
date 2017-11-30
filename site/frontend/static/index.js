@@ -7,6 +7,12 @@ $(document).ready(function () {
         window.location.href = "login.html";
         return;
     }
+
+    // hljs.initHighlightingOnLoad();
+    // $('.highlighted_box textarea').each(function(i, block) {
+    //     hljs.highlightBlock(block);
+    // });
+
     vueIndex = new Vue({
         el: '#app_index',
         data: {

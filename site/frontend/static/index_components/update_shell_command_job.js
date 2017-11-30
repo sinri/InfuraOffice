@@ -42,7 +42,7 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
             <Row type="flex" justify="center" align="middle">\
                 <i-col span="3"><span>Shell Command: </span></i-col>\
                 <i-col span="20">\
-                    <i-input style="margin: 5px" v-model="draft.command_content"  type="textarea" :autosize="{minRows: 5}"></i-input>\
+                    <i-input class="highlighted_box" style="margin: 5px" v-model="draft.command_content"  type="textarea" :autosize="{minRows: 5}"></i-input>\
                 </i-col>\
             </Row>\
             <Row type="flex" align="middle">\
@@ -152,6 +152,17 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
         },
         mounted: function () {
             this.load_existed_shell_jobs();
+            // setTimeout(function(){
+            //     let hs=document.getElementsByClassName('highlighted_box');
+            //     console.log("hs",hs);
+            //     for(let key=0;key<hs.length;key++){
+            //         console.log(key);
+            //         console.log(hs[key]);
+            //         console.log(hs[key].childNodes);
+            //         let myCodeMirror = CodeMirror.fromTextArea(hs[key].childNodes[0]);
+            //     }
+            //     //let myCodeMirror = CodeMirror.fromTextArea(myTextArea);
+            // },1000);
         }
     }
 }
