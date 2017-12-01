@@ -90,7 +90,7 @@ class ShellCommandJobEntity extends AbstractJobEntity
                 }
 
                 // 2.2 run shell
-                $report[$server_name]['output'] = $ssh->exec("/bin/sh " . escapeshellarg($remote_sh_file_path) . " 2>&1");
+                $report[$server_name]['output'] = $ssh->exec("/bin/bash " . escapeshellarg($remote_sh_file_path) . " 2>&1");
 
                 $shell_return_var = $ssh->getLastExecReturnVar();// exec("echo $?");
                 if ($shell_return_var != 0) {

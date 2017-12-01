@@ -176,6 +176,25 @@ abstract class AbstractJobEntity extends EntityInterface
         InfuraOfficeToolkit::logger('cronjob_' . $this->job_name, false)
             ->log($level, "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message, $object);
     }
+
+    /**
+     * @param array $report
+     */
+    public function exportReportToLog($report)
+    {
+        $outputFile = InfuraOfficeToolkit::logger('cronjob_' . $this->job_name, false)->decideTargetFile();
+        $output = '';
+        $output .= "====== FINAL REPORT ======" . PHP_EOL;
+        foreach ($report as $serverName => $serverReport) {
+            $output .= "--- SERVER: " . $serverName . " ---" . PHP_EOL;
+            foreach ($serverReport as $partName => $part) {
+                $output .= "* PART " . $partName . " *" . PHP_EOL;
+                $output .= $part . PHP_EOL;
+            }
+        }
+        $output .= "======= REPORT FIN =======" . PHP_EOL;
+        file_put_contents($outputFile, $output, FILE_APPEND);
+    }
 }
 
 /*

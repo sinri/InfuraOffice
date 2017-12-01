@@ -19,6 +19,7 @@ const handlerOfIndexComponentDatabaseManage = {
         '<i-input style="margin: 5px" v-model="edit_server_type"><span slot="prepend">Type</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_host"><span slot="prepend">Host</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_port"><span slot="prepend">Port</span></i-input>' +
+        '<i-input style="margin: 5px" v-model="edit_dothan_port" placeholder="Keep it empty or -1 if not use Dothan"><span slot="prepend">Dothan Port</span></i-input>' +
         '<Select v-model="edit_platform_name" placeholder="Select Platform Account..." transfer>' +
         '<Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">{{item.platform_type}} - {{item.platform_name}}</Option>' +
         '</Select>' +
@@ -47,6 +48,7 @@ const handlerOfIndexComponentDatabaseManage = {
                     {key: 'database_name', title: 'Database Name'},
                     {key: 'server_type', title: 'Server Type'},
                     {key: 'connection', title: 'Connection'},
+                    {key: 'dothan_port', title: 'Dothan'},
                     {key: 'platform_name', title: 'Platform Account'},
                     {key: 'platform_device_id', title: 'Device ID'},
                     {
@@ -115,6 +117,7 @@ const handlerOfIndexComponentDatabaseManage = {
                 edit_accounts: [],
                 edit_platform_name: '',
                 edit_platform_device_id: '',
+                edit_dothan_port: '',
             }
         },
         methods: {
@@ -190,6 +193,7 @@ const handlerOfIndexComponentDatabaseManage = {
                 this.edit_host = '';
                 this.edit_port = '';
                 this.edit_accounts = [];
+                this.edit_dothan_port = '';
                 this.show_edit_database = true;
             },
             edit_database: function (database_name) {
@@ -205,6 +209,7 @@ const handlerOfIndexComponentDatabaseManage = {
                     this.edit_server_type = target_database.server_type;
                     this.edit_host = target_database.host;
                     this.edit_port = target_database.port;
+                    this.edit_dothan_port = target_database.dothan_port;
                     this.edit_accounts = [];
                     let item_id = 0;
                     for (let u in target_database.accounts) {
@@ -267,6 +272,7 @@ const handlerOfIndexComponentDatabaseManage = {
                         accounts: edit_accounts,
                         platform_name: this.edit_platform_name,
                         platform_device_id: this.edit_platform_device_id,
+                        dothan_port: this.edit_dothan_port,
                     },
                     dataType: 'json'
                 }).done((response) => {

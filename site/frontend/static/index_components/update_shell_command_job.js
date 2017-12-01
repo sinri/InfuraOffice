@@ -3,6 +3,7 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
         template: '<div>\
             <Row>\
                 <i-col span="24"><h2>Update Shell Job</h2></i-col>\
+                <i-col span="24"><p>Shell Job is to run a certain shell script on target remote servers.</p></i-col>\
             </Row>\
             <Row>\
                 <i-col span="16">\
@@ -18,7 +19,10 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
                 </i-col> \
             </Row>\
             <Row><i-col span="24"><div style="margin-top: 20px">&nbsp;</div></i-col> </Row>\
-            <Row><h3>{{ !is_draft_for_creation?"Update "+draft.job_name:"New Shell Job" }}</h3></Row>\
+            <Row type="flex" justify="end" align="middle">\
+                <i-col span="12"><h3>{{ !is_draft_for_creation?"Update "+draft.job_name:"New Shell Job" }}</h3></i-col>\
+                <i-col span="12"><Button class="right" v-on:click="on_save_btn">SAVE</Button></i-col>\
+            </Row>\
             <Row type="flex" justify="center" align="middle">\
                 <i-col span="3"><span>Job Name: </span></i-col>\
                 <i-col span="20">\
@@ -42,7 +46,14 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
             <Row type="flex" justify="center" align="middle">\
                 <i-col span="3"><span>Shell Command: </span></i-col>\
                 <i-col span="20">\
-                    <i-input class="highlighted_box" style="margin: 5px" v-model="draft.command_content"  type="textarea" :autosize="{minRows: 5}"></i-input>\
+                    <Tabs>\
+                        <TabPane label="Preview" icon="eye">\
+                            <pre><code class="bash" id="update_shell_command_job_command_content_hightlight"></code></pre>\
+                        </TabPane>\
+                        <TabPane label="Edit" icon="edit">\
+                            <i-input class="highlighted_box" style="margin: 5px" v-model="draft.command_content"  type="textarea" :autosize="{minRows: 5}"></i-input>\
+                        </TabPane>\
+                    </Tabs>\
                 </i-col>\
             </Row>\
             <Row type="flex" align="middle">\
@@ -150,19 +161,22 @@ const handlerOfIndexComponentUpdateShellCommandJob = {
                 this.draft.server_list = x;
             }
         },
+        watch: {
+            'draft.command_content': function (val) {
+                console.log("watching command_content changed:", val);
+                //this.draft.command_content_x=hljs.highlightAuto(val,["bash"]).value;
+                $("#update_shell_command_job_command_content_hightlight").html(val);
+                //hljs.highlightBlock(document.getElementById("update_shell_command_job_command_content_hightlight"));
+                $('pre code').each(function (i, block) {
+                    hljs.highlightBlock(block);
+                });
+                // $('.highlighted_box textarea').each(function(i, block) {
+                //     hljs.highlightBlock(block);
+                // });
+            }
+        },
         mounted: function () {
             this.load_existed_shell_jobs();
-            // setTimeout(function(){
-            //     let hs=document.getElementsByClassName('highlighted_box');
-            //     console.log("hs",hs);
-            //     for(let key=0;key<hs.length;key++){
-            //         console.log(key);
-            //         console.log(hs[key]);
-            //         console.log(hs[key].childNodes);
-            //         let myCodeMirror = CodeMirror.fromTextArea(hs[key].childNodes[0]);
-            //     }
-            //     //let myCodeMirror = CodeMirror.fromTextArea(myTextArea);
-            // },1000);
         }
     }
 }

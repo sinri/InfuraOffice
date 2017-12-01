@@ -6,7 +6,7 @@ echo explosion
 # modify these parameters
 explosion_file_patterns=('/tmp/explosion/*.out')
 explosion_left_tail_lines=10
-explosion_keep_backup=0
+explosion_keep_backup=1
 
 explosion_file_pattern_index=0
 while [ ${explosion_file_pattern_index} -lt ${#explosion_file_patterns[@]} ] ; do
@@ -19,8 +19,8 @@ while [ ${explosion_file_pattern_index} -lt ${#explosion_file_patterns[@]} ] ; d
         echo "Begin to explode " ${target_explosion_file}
 
         # explosion
-        if [ ${explosion_keep_backup} == 0 ]; then
-            target_explosion_file_backup=${target_explosion_file}.$(date +\%Y\%M\%d-\%H\%M).bak
+        if [ ${explosion_keep_backup} == 1 ]; then
+            target_explosion_file_backup=${target_explosion_file}.$(date +\%Y\%m\%d-\%H\%M).bak
             sudo cp ${target_explosion_file} ${target_explosion_file_backup}
             echo "Backup to " ${target_explosion_file_backup}
         fi

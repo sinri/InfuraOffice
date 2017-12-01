@@ -39,6 +39,11 @@ class DatabaseManageController extends BaseController
             $platform_device_id = LibRequest::getRequest("platform_device_id");
             $platform_name = LibRequest::getRequest("platform_name");
 
+            $dothan_port = LibRequest::getRequest("dothan_port", -1);
+            if ($dothan_port === '') {
+                $dothan_port = -1;
+            }
+
             CommonHelper::assertNotEmpty($database_name, 'database number should not be empty');
 
             $databaseEntity = new DatabaseEntity([
@@ -49,6 +54,7 @@ class DatabaseManageController extends BaseController
                 "accounts" => $accounts,
                 "platform_name" => $platform_name,
                 "platform_device_id" => $platform_device_id,
+                "dothan_port" => $dothan_port,
             ]);
 
             $done = $this->databaseLibrary->writeEntity($databaseEntity);

@@ -3,6 +3,7 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
         template: '<div>\
             <Row>\
                 <i-col span="24"><h2>Update Remove Antiquity Job</h2></i-col>\
+                <i-col span="24"><p>Remove Antiquity Job is to remove certain files with given file path pattern and filtered by a date formatter.</p></i-col>\
             </Row>\
             <Row>\
                 <i-col span="16">\
@@ -18,7 +19,12 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
                 </i-col> \
             </Row>\
             <Row><i-col span="24"><div style="margin-top: 20px">&nbsp;</div></i-col> </Row>\
-            <Row><h3>{{ !is_draft_for_creation?"Update "+draft.job_name:"New Explosion Job" }}</h3></Row>\
+            <Row type="flex" justify="end" align="middle">\
+                <i-col span="12">\
+                    <h3>{{ !is_draft_for_creation?"Update "+draft.job_name:"New Explosion Job" }}</h3>\
+                </i-col>\
+                <i-col span="12"><Button class="right" v-on:click="on_save_btn">SAVE</Button></i-col>\
+            </Row>\
             <Row type="flex" justify="center" align="middle">\
                 <i-col span="3"><span>Job Name: </span></i-col>\
                 <i-col span="20">\

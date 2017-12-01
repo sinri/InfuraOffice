@@ -81,6 +81,7 @@ while (true) {
                 try {
                     $report = $job->execute();
                     CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] executed", $report);
+                    $job->exportReportToLog($report);
                 } catch (Exception $exception) {
                     CronJobWorker::log(LibLog::LOG_ERROR, "Job [{$job_name}] failed", $exception->getMessage());
                 }
