@@ -14,73 +14,15 @@ use sinri\InfuraOffice\entity\DatabaseEntity;
 
 class DatabaseLibrary extends AbstractEntityLibrary
 {
-    //const STORE_ASPECT_DATABASE = "database";
-
-//    /**
-//     * @deprecated
-//     * @return array
-//     */
-//    public function databaseList()
-//    {
-//        $database_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
-//        $databases = [];
-//        foreach ($database_names as $database_name_hashed) {
-//            $databaseEntity = $this->readEntityByNameHashed($database_name_hashed);
-//            if (!$databaseEntity) continue;
-//            $databases[] = [
-//                "database_name" => $databaseEntity->database_name,
-//                "server_type" => $databaseEntity->server_type,
-//                "host" => $databaseEntity->host,
-//                "port" => $databaseEntity->port,
-//                "accounts" => $databaseEntity->accounts,
-//            ];
-//        }
-//        return $databases;
-//    }
-
-//    /**
-//     * @deprecated
-//     * @param $database_name
-//     * @return bool|DatabaseEntity
-//     */
-//    public function getDatabaseEntityByName($database_name)
-//    {
-//        $info = SecurityDataAgent::readObject($this->getAspectName(), $database_name);
-//        if (empty($info)) return false;
-//        return new DatabaseEntity($info);
-//    }
-
-//    /**
-//     * @deprecated
-//     * @param $database_name_hash
-//     * @return bool|DatabaseEntity
-//     */
-//    public function getDatabaseEntityByNameHash($database_name_hash)
-//    {
-//        $info = SecurityDataAgent::readObject($this->getAspectName(), $database_name_hash, true);
-//        if (empty($info)) return false;
-//        return new DatabaseEntity($info);
-//    }
-
-//    /**
-//     * @deprecated
-//     * @param DatabaseEntity $databaseEntity
-//     * @return bool
-//     */
-//    public function updateDatabase($databaseEntity)
-//    {
-//        return SecurityDataAgent::writeObject($this->getAspectName(), $databaseEntity->database_name, $databaseEntity->toJsonObject());
-//    }
-
-//    /**
-//     * @deprecated
-//     * @param $databaseName
-//     * @return bool
-//     */
-//    public function removeDatabase($databaseName)
-//    {
-//        return SecurityDataAgent::removeObject($this->getAspectName(), $databaseName);
-//    }
+    /**
+     * @return DatabaseEntity[]
+     */
+    public function entityList()
+    {
+        $list = parent::entityList();
+        $list = array_merge([], $list);
+        return $list;
+    }
 
     /**
      * @return array
@@ -165,5 +107,21 @@ class DatabaseLibrary extends AbstractEntityLibrary
     public function getAspectName()
     {
         return "Database";
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function refreshDothanConfig()
+    {
+        $entities = $this->entityList();
+        $content = "# Dothan Config File updated on " . date('Y-m-d H:i:s') . PHP_EOL;
+        foreach ($entities as $entity) {
+            if (empty($entity->dothan_port) || $entity->dothan_port < 0) continue;
+            $content .= "# " . $entity->database_name . " (" . $entity->platform_device_id . ") on " . $entity->platform_name . PHP_EOL;
+            $content .= $entity->dothan_port . " " . $entity->host . ":" . $entity->port . PHP_EOL;
+        }
+        $written = file_put_contents(__DIR__ . '/../data/dothan.config', $content);
+        return $written;
     }
 }

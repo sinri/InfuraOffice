@@ -48,6 +48,7 @@ abstract class AbstractEntityLibrary
             foreach ($entity->propertiesAndDefaults() as $key => $default_value) {
                 $entity_array[$key] = $entity->$key;
             }
+
             $entities[] = $entity_array;
         }
         return $entities;

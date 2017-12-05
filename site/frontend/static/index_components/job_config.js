@@ -29,6 +29,32 @@ const handlerOfIndexComponentJobConfig = {
                 job_fields: [
                     {key: 'job_name', title: 'Job Name', sortable: true},
                     {key: 'job_type', title: 'Job Type', sortable: true},
+                    {
+                        key: 'affection', title: 'Target Machines',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Poptip', {
+                                        props: {
+                                            //trigger: 'hover',
+                                            title: 'Affected these servers:' + params.row.job_name,
+                                            width: 400,
+                                            transfer: true
+                                        },
+                                    },
+                                    [
+                                        h('pre', {slot: "content"}, params.row.affection),
+                                        h('i-button', {
+                                            props: {
+                                                type: "ghost",
+                                                shape: "circle",
+                                                icon: "ios-glasses-outline"
+                                            }
+                                        })
+                                    ]
+                                )
+                            ]);
+                        }
+                    },
                     {key: 'cron_timer', title: 'Cron Timer'},
                     {key: 'last_run', title: 'Last Run'},
                     {key: 'running_status', title: 'Status'},
@@ -111,6 +137,15 @@ const handlerOfIndexComponentJobConfig = {
                                 ? oneDate + " (" + this.howLongBefore(oneDate) + ")"
                                 : 'Never';
                             job_list[i].running_status = job_list[i].stopped ? 'STOPPED' : 'NORMAL';
+                            job_list[i].affection = (
+                                job_list[i].server_list && job_list[i].server_list.length > 0 ?
+                                    "Servers: " + job_list[i].server_list.join(",") :
+                                    ''
+                            ) + "\n" + (
+                                job_list[i].server_group_list && job_list[i].server_group_list.length > 0 ?
+                                    "Groups: " + job_list[i].server_group_list.join(",") :
+                                    ''
+                            );
                         }
                         this.job_list = job_list;
                     } else {

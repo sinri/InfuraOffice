@@ -1,0 +1,16 @@
+#dashboard {
+
+}
+
+#dashboard div.dashboard_carouse_item {
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+    background: #506b9e;
+}
+
+#dashboard span.dashboard_carouse_item_bigger {
+    font-size: 40px;
+}

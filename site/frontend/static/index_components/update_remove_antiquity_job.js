@@ -32,9 +32,10 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
                 </i-col>\
             </Row>\
             <Row type="flex" justify="center" align="middle">\
-                <i-col span="3"><span>Servers: </span></i-col>\
+                <i-col span="3">\
+                    <span>Servers and Groups: </span></i-col>\
                 <i-col span="20">\
-                    <infura_server_select v-bind:value="draft.server_list" v-on:change="infura_server_select_changed"></infura_server_select>\
+                    <infura_server_and_group_select :servers="draft.server_list" :server_groups="draft.server_group_list" v-on:change="infura_server_and_group_select_changed"></infura_server_and_group_select>\
                 </i-col>\
             </Row>\
             <Row type="flex" justify="space-between" align="middle">\
@@ -97,6 +98,7 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
                     cron_time_day_of_week: '*',
                     last_run_timestamp: 0,
                     server_list: [],
+                    server_group_list: [],
                     files: [],
                     keep_days: 0,
                     date_format: 'Y-m-d',
@@ -153,6 +155,7 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
                     cron_time_day_of_week: '*',
                     last_run_timestamp: 0,
                     server_list: [],
+                    server_group_list: [],
                     files: [],
                     keep_days: 0,
                     date_format: 'Y-m-d',
@@ -185,9 +188,13 @@ const handlerOfIndexComponentUpdateRemoveAntiquityJob = {
                 console.log('infura_server_select_changed', arguments);
                 this.draft.server_list = x;
             },
+            infura_server_and_group_select_changed: function (target_servers, target_server_groups) {
+                this.draft.server_list = target_servers;
+                this.draft.server_group_list = target_server_groups;
+            },
             on_draft_file_add_btn: function () {
                 this.draft.files.push("");
-            }
+            },
         },
         mounted: function () {
             this.load_existed_explosion_jobs();

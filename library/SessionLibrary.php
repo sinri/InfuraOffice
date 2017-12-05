@@ -14,51 +14,6 @@ use sinri\InfuraOffice\security\SecurityDataAgent;
 
 class SessionLibrary extends AbstractEntityLibrary
 {
-    //const STORE_ASPECT_USER = "User";
-    //const STORE_ASPECT_SESSION = "Session";
-
-//    /**
-//     * @deprecated
-//     * @param UserEntity $userEntity
-//     * @return bool
-//     */
-//    public function storeUser($userEntity)
-//    {
-//        $json = $userEntity->toJsonObject();
-//        return SecurityDataAgent::writeObject(self::STORE_ASPECT_USER, $userEntity->username, $json);
-//    }
-
-//    /**
-//     * @param string $username
-//     * @return bool
-//     */
-//    public function removeUserByName($username)
-//    {
-//        return SecurityDataAgent::removeObject(self::STORE_ASPECT_USER, $username);
-//    }
-
-//    /**
-//     * @param $username
-//     * @return bool|UserEntity
-//     */
-//    public function getUserEntity($username)
-//    {
-//        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username);
-//        if (empty($info)) return false;
-//        return new UserEntity($info);
-//    }
-
-//    /**
-//     * @param $username_hash
-//     * @return bool|UserEntity
-//     */
-//    public function getUserEntityByNameHash($username_hash)
-//    {
-//        $info = SecurityDataAgent::readObject(self::STORE_ASPECT_USER, $username_hash, true);
-//        if (empty($info)) return false;
-//        return new UserEntity($info);
-//    }
-
 
 
     /**
@@ -103,6 +58,16 @@ class SessionLibrary extends AbstractEntityLibrary
     public function entityArrayList()
     {
         return parent::entityArrayList();
+    }
+
+    /**
+     * @return SessionEntity[]
+     */
+    public function entityList()
+    {
+        $list = parent::entityList();
+        $list = array_merge([], $list);
+        return $list;
     }
 
     /**

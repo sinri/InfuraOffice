@@ -13,27 +13,15 @@ use sinri\InfuraOffice\entity\PlatformEntity;
 
 class PlatformLibrary extends AbstractEntityLibrary
 {
-    //const STORE_ASPECT_PLATFORM='platform';
-
-//    /**
-//     * @deprecated
-//     * @return array
-//     */
-//    public function hardwarePlatformList(){
-//        $platform_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
-//        $platforms = [];
-//        foreach ($platform_names as $platform_name_hashed) {
-//            $platformEntity = $this->readEntityByNameHashed($platform_name_hashed);
-//            if (!$platformEntity) continue;
-//            $platforms[] = [
-//                "platform_name" => $platformEntity->platform_name,
-//                "platform_type" => $platformEntity->platform_type,
-//                "auth_id" => $platformEntity->auth_id,
-//                "auth_key" => $platformEntity->auth_key,
-//            ];
-//        }
-//        return $platforms;
-//    }
+    /**
+     * @return PlatformEntity[]
+     */
+    public function entityList()
+    {
+        $list = parent::entityList();
+        $list = array_merge([], $list);
+        return $list;
+    }
 
     /**
      * @return array

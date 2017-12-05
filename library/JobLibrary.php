@@ -44,6 +44,7 @@ class JobLibrary extends AbstractEntityLibrary
     /**
      * @param $name_hashed
      * @return bool|AbstractJobEntity
+     * @throws \sinri\enoch\mvc\BaseCodedException
      */
     public function readEntityByNameHashed($name_hashed)
     {
@@ -55,6 +56,7 @@ class JobLibrary extends AbstractEntityLibrary
     /**
      * @param $name
      * @return bool|AbstractJobEntity
+     * @throws \sinri\enoch\mvc\BaseCodedException
      */
     public function readEntityByName($name)
     {

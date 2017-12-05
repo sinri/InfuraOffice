@@ -61,6 +61,7 @@ class DatabaseManageController extends BaseController
             if (!$done) {
                 throw new \Exception("cannot update database");
             }
+
             $this->_sayOK();
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
@@ -75,6 +76,19 @@ class DatabaseManageController extends BaseController
             $done = $this->databaseLibrary->removeEntity($database_name);
             if (!$done) {
                 throw new \Exception("cannot remove database");
+            }
+            $this->_sayOK();
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function refreshDothanConfigFile()
+    {
+        try {
+            $done = $this->databaseLibrary->refreshDothanConfig();
+            if (!$done) {
+                throw new \Exception("failed to refresh Dothan Config");
             }
             $this->_sayOK();
         } catch (\Exception $exception) {

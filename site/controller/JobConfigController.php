@@ -14,6 +14,7 @@ use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\entity\ExplodeLogJobEntity;
 use sinri\InfuraOffice\entity\RemoveAntiquityJobEntity;
 use sinri\InfuraOffice\entity\ShellCommandJobEntity;
+use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\JobLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
 
@@ -24,6 +25,7 @@ class JobConfigController extends BaseController
     public function __construct($initData = null)
     {
         parent::__construct($initData);
+        $this->isCurrentUserRole([UserEntity::ROLE_ADMIN], true);
         $this->jobLibrary = new JobLibrary();
     }
 
@@ -67,6 +69,7 @@ class JobConfigController extends BaseController
             $json['cron_time_month'] = LibRequest::getRequest("cron_time_month");
             $json['cron_time_day_of_week'] = LibRequest::getRequest("cron_time_day_of_week");
             $json['server_list'] = LibRequest::getRequest("server_list", []);
+            $json['server_group_list'] = LibRequest::getRequest("server_group_list", []);
             //$last_run_timestamp=LibRequest::getRequest("last_run_timestamp");
 
             CommonHelper::assertNotEmpty($json['job_name'], 'job name should not be empty');

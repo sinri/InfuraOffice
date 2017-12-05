@@ -63,7 +63,8 @@ class RemoveAntiquityJobEntity extends AbstractJobEntity
         $deadline = date($this->date_format, strtotime((-$this->keep_days) . ' day'));
 
         $report = [];
-        foreach ($this->server_list as $server_name) {
+        $affected_servers = $this->affectedServerList();
+        foreach ($affected_servers as $server_name) {
             // 2.0 ssh prepare
             $report[$server_name] = [
                 "output" => '',

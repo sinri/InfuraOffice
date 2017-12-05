@@ -11,6 +11,7 @@ namespace sinri\InfuraOffice\entity;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\daemon\SSHToolkit;
 use sinri\InfuraOffice\library\JobLibrary;
+use sinri\InfuraOffice\library\ServerGroupLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
 use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
 
@@ -27,6 +28,7 @@ use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
  * @property string cron_time_day_of_week
  * @property int last_run_timestamp
  * @property string[] server_list
+ * @property string[] server_group_list
  * @property bool stopped
  */
 abstract class AbstractJobEntity extends EntityInterface
@@ -34,6 +36,7 @@ abstract class AbstractJobEntity extends EntityInterface
     /**
      * @param $info
      * @return AbstractJobEntity
+     * @throws \sinri\enoch\mvc\BaseCodedException
      */
     public static function jobFactory($info)
     {
@@ -45,24 +48,12 @@ abstract class AbstractJobEntity extends EntityInterface
 
     public function propertiesAndDefaults($keyChain = null)
     {
-//        return [
-//            "job_name"=>null,
-//            "job_type"=>$this->jobType(),
-//            "server_list" => [],
-//            "cron_time_minute"=>null,
-//            "cron_time_hour"=>null,
-//            "cron_time_day_of_month"=>null,
-//            "cron_time_month"=>null,
-//            "cron_time_day_of_week"=>null,
-//            "last_run_timestamp"=>0,
-//            "stopped"=>false,
-//        ];
-
 
         $pDic = [
             "job_name" => null,
             "job_type" => $this->jobType(),
             "server_list" => [],
+            "server_group_list" => [],
             "cron_time_minute" => null,
             "cron_time_hour" => null,
             "cron_time_day_of_month" => null,
@@ -95,6 +86,22 @@ abstract class AbstractJobEntity extends EntityInterface
     abstract public function execute();
 
     /**
+     * @return string[]
+     */
+    public function affectedServerList()
+    {
+        $full_server_list = [];
+        $libSG = new ServerGroupLibrary();
+        foreach ($this->server_group_list as $server_group_name) {
+            $group = $libSG->readEntityByName($server_group_name);
+            $p = $group->server_name_list;
+            $full_server_list = array_merge($full_server_list, $p);
+        }
+        $full_server_list = array_merge($full_server_list, $this->server_list);
+        return $full_server_list;
+    }
+
+    /**
      * @param bool $shouldThrowException
      * @return bool
      * @throws \Exception
@@ -112,6 +119,7 @@ abstract class AbstractJobEntity extends EntityInterface
 
     /**
      *
+     * @throws \Exception
      */
     public function assertNotRunInLastMinute()
     {
@@ -146,6 +154,7 @@ abstract class AbstractJobEntity extends EntityInterface
      * Return a connected SSHToolkit Instance
      * @param string $serverName
      * @return SSHToolkit
+     * @throws \Exception
      */
     public static function createSSHForServer($serverName)
     {

@@ -29,6 +29,16 @@ class UserLibrary extends AbstractEntityLibrary
     }
 
     /**
+     * @return UserEntity[]
+     */
+    public function entityList()
+    {
+        $list = parent::entityList();
+        $list = array_merge([], $list);
+        return $list;
+    }
+
+    /**
      * @param $platform_name
      * @return bool|UserEntity
      */

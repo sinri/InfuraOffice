@@ -164,7 +164,7 @@ const handlerOfIndexComponentDatabaseWork = {
                 }).done((response) => {
                     if (response.code !== 'OK') {
                         this.has_error = true;
-                        this.error_message = response.data;
+                        this.error_message = "Database [" + db + "] " + response.data;
                         vueIndex.$Loading.error();
                         return;
                     }
@@ -186,6 +186,8 @@ const handlerOfIndexComponentDatabaseWork = {
                     this.process_list_result_database_name = db;
                     this.process_list_result_last_update = (new Date()).toLocaleString();
 
+                    this.has_error = false;
+                    this.error_message = '';
                     vueIndex.$Loading.finish();
                 }).fail(() => {
                     vueIndex.$Loading.error();

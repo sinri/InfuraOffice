@@ -1,9 +1,13 @@
 const handlerOfIndexComponentDatabaseManage = {
     componentDefinition: {
         template: '<div>' +
-        '<Row>' +
+        '<Row type="flex" justify="end" align="middle">' +
         '<i-col span="12"><h2>Database List</h2></i-col>' +
-        '<i-col span="12"><i-button icon="android-add" class="right" v-on:click="add_database">Add Database</i-button></i-col>' +
+        '<i-col span="12">' +
+        '<i-button icon="android-add" class="right" v-on:click="add_database">Add Database</i-button>' +
+        '<span style="display: inline-block" class="right">&nbsp;</span> ' +
+        '<i-button icon="android-sync" class="right" v-on:click="refresh_dothan_config_file">Refresh Dothan Config</i-button>' +
+        '</i-col>' +
         '</Row>' +
         '<Row>' +
         '<i-col span="24">' +
@@ -14,6 +18,15 @@ const handlerOfIndexComponentDatabaseManage = {
         '</i-col>' +
         '</Row>' +
         '<i-table :columns="database_fields" :data="databases"></i-table>' +
+        '<Row>' +
+        '<i-col span="24">&nbsp;</i-col>' +
+        '<i-col span="24">' +
+        '<p>' +
+        '<a href="https://github.com/sinri/Dothan" target="_blank">Dothan</a> ' +
+        'is supported as a service for database proxy.' +
+        '</p>' +
+        '</i-col>' +
+        '</Row>' +
         '<Modal v-model="show_edit_database" title="Update Database" @on-ok="modal_edit_database" @on-cancel="modal_close" :loading="modal_loading">' +
         '<i-input style="margin: 5px" v-model="edit_database_name"><span slot="prepend">Database Name</span></i-input>' +
         '<i-input style="margin: 5px" v-model="edit_server_type"><span slot="prepend">Type</span></i-input>' +
@@ -354,6 +367,32 @@ const handlerOfIndexComponentDatabaseManage = {
                     });
                 }).always(() => {
                     //console.log("guhehe");
+                });
+            },
+            refresh_dothan_config_file: function () {
+                $.ajax({
+                    url: '../api/DatabaseManageController/refreshDothanConfigFile',
+                    method: 'get',
+                    data: {},
+                    dataType: 'json'
+                }).done((response) => {
+                    //console.log(response);
+                    if (response.code === 'OK') {
+                        vueIndex.$Notice.success({
+                            title: "Dothan Config",
+                            desc: "Refreshed!"
+                        });
+                    } else {
+                        vueIndex.$Notice.error({
+                            title: "Dothan Config",
+                            desc: response.data
+                        });
+                    }
+                }).fail(() => {
+                    vueIndex.$Notice.error({
+                        title: "Dothan Config",
+                        desc: "Ajax Error"
+                    });
                 });
             }
         },

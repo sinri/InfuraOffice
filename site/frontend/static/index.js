@@ -1,6 +1,7 @@
 var vueIndex = null;
 
 Vue.component(GeneralComponentOfInfuraServerSelect.componentDefinition.name, GeneralComponentOfInfuraServerSelect.componentDefinition);
+Vue.component(GeneralComponentOfServerAndGroupSelect.componentDefinition.name, GeneralComponentOfServerAndGroupSelect.componentDefinition);
 
 $(document).ready(function () {
     if (!CookieHelper.isLogin()) {
@@ -29,6 +30,7 @@ $(document).ready(function () {
             }
         },
         components: {
+            dashboard: handlerOfIndexComponentDashboard.componentDefinition,
             user_manage: handlerOfIndexComponentUserManage.componentDefinition,
             platform_manage: handlerOfIndexComponentPlatformManage.componentDefinition,
             server_manage: handlerOfIndexComponentServerManage.componentDefinition,
@@ -49,23 +51,15 @@ $(document).ready(function () {
             },
             on_menu_item_selected: function (menu_item_name) {
                 console.log('menu item selected', menu_item_name);
+                if (!CookieHelper.isLogin()) {
+                    window.location.href = "login.html";
+                    return;
+                }
                 if (menu_item_name === 'menu_full_switch') {
                     this.menu_full = !this.menu_full;
                 } else {
                     let current_menu_item_selected = this.menu_item_selected;
                     this.menu_item_selected = menu_item_name;
-                    // switch (menu_item_name){
-                    //     case 'dashboard':
-                    //         handleIndexComponentDashboard();
-                    //         break;
-                    //     // case 'user_manage':
-                    //     //     handlerOfIndexComponentUserManage.handleIndexComponentUserManage();
-                    //     //     break;
-                    //     default:
-                    //         console.log('unsupported menu item name');
-                    //         this.menu_item_selected = current_menu_item_selected;
-                    //         break;
-                    // }
                 }
                 console.log('updated...', this.menu_item_selected);
             }
