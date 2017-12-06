@@ -294,7 +294,7 @@ const handlerOfIndexComponentServerManage = {
                         } else {
                             vueIndex.$Notice.warn({
                                 title: 'Server ' + server_name + " answered:",
-                                desc: response.data.result.data.result.data
+                                desc: response.data.result.data
                             });
                         }
                         vueIndex.$Loading.finish();
