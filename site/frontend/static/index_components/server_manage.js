@@ -293,7 +293,7 @@ const handlerOfIndexComponentServerManage = {
                                 desc: response.data.result.data.output
                             });
                         } else {
-                            vueIndex.$Notice.warn({
+                            vueIndex.$Notice.warning({
                                 title: 'Server ' + server_name + " answered:",
                                 desc: response.data.result.data
                             });
