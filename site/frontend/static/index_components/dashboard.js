@@ -3,7 +3,7 @@ const handlerOfIndexComponentDashboard = {
         template: '<div>\
             <h1>Welcome to Infura Office!</h1>\
             <div>\
-                <Carousel loop v-if="stat_loaded">\
+                <Carousel v-model="carousel_index" loop v-if="stat_loaded">\
                     <CarouselItem><div class="dashboard_carouse_item"><span class="dashboard_carouse_item_bigger">{{server_count}}</span> Servers</div></CarouselItem>\
                     <CarouselItem><div class="dashboard_carouse_item"><span class="dashboard_carouse_item_bigger">{{server_group_count}}</span> Server Groups</div></CarouselItem>\
                     <CarouselItem><div class="dashboard_carouse_item"><span class="dashboard_carouse_item_bigger">{{database_count}}</span> Databases</div></CarouselItem>\
@@ -18,6 +18,7 @@ const handlerOfIndexComponentDashboard = {
                 server_count: '?',
                 database_count: '?',
                 job_count: '?',
+                carousel_index: 0,
             }
         },
         methods: {
