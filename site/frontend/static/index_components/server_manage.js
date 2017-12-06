@@ -300,6 +300,7 @@ const handlerOfIndexComponentServerManage = {
                             title: 'Server ' + server_name + " died:",
                             desc: response.data
                         });
+                        vueIndex.$Loading.error();
                     }
                 }).fail(() => {
                     vueIndex.$Loading.error();
