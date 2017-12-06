@@ -282,7 +282,8 @@ const handlerOfIndexComponentServerManage = {
                     data: {
                         server_name: server_name
                     },
-                    dataType: 'json'
+                    dataType: 'json',
+                    timeout: 10000
                 }).done((response) => {
                     console.log(response);
                     if (response.code === 'OK') {
