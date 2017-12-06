@@ -78,6 +78,7 @@ class Daemon
                         DaemonHelper::log(LibLog::LOG_WARNING, "Reached MAX-WORKERS (limit is {$this->max_workers}), waiting...", count($this->workers));
                         $done_pid = pcntl_wait($status, $options);//(WNOHANG | WUNTRACED));
                         DaemonHelper::log(LibLog::LOG_INFO, "WAITED and saw pid " . $done_pid . " exited with status ", $status);
+                        DaemonHelper::log(LibLog::LOG_INFO, "STATUS DESCRIPTION: " . DaemonHelper::describePcntlWaitStatus($status));
                         if ($done_pid == 0) {
                             DaemonHelper::log(LibLog::LOG_INFO, "WNOHANG so zero returned... break");
                             break;

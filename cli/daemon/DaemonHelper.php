@@ -46,4 +46,25 @@ class DaemonHelper
             pcntl_signal($signal, $callback);
         }
     }
+
+    /**
+     * @param $status
+     * @return string
+     */
+    public static function describePcntlWaitStatus($status)
+    {
+        // pcntl_wifexited(), pcntl_wifstopped(), pcntl_wifsignaled(), pcntl_wexitstatus(), pcntl_wtermsig() and pcntl_wstopsig().
+        $str = "";
+        if (pcntl_wifexited($status)) {
+            $str .= "The child status code represents a normal exit.";
+        }
+        if (pcntl_wifstopped($status)) {
+            $str .= "The child process is currently stopped by signal " . pcntl_wstopsig($status) . ".";
+        }
+        if (pcntl_wifsignaled($status)) {
+            $str .= "The child process exited because of an uncaught signal " . pcntl_wtermsig($status) . ".";
+        }
+        $str .= "The return code of a terminated child is " . pcntl_wexitstatus($status);
+        return $str;
+    }
 }
