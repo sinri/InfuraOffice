@@ -30,6 +30,9 @@ const handlerOfIndexComponentServerManage = {
         '<Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">{{item.platform_type}} - {{item.platform_name}}</Option>' +
         '</Select>' +
         '<i-input style="margin: 5px" v-model="edit_platform_device_id"><span slot="prepend">Platform Device ID</span></i-input>' +
+        '<Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>' +
+        '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
+        '</Select>' +
         '</Modal>' +
         '</div>',
         data: function () {
@@ -40,6 +43,7 @@ const handlerOfIndexComponentServerManage = {
                     {key: 'ssh_user', title: 'SSH User'},
                     {key: 'platform_name', title: 'Platform Account'},
                     {key: 'platform_device_id', title: 'Device ID'},
+                    {key: 'platform_area', title: 'Area'},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
@@ -107,6 +111,8 @@ const handlerOfIndexComponentServerManage = {
                 edit_ssh_user: '',
                 edit_platform_name: '',
                 edit_platform_device_id: '',
+                edit_platform_area: '',
+                platform_area_list: AliyunRegionDictionary,
             }
         },
         methods: {
@@ -180,6 +186,7 @@ const handlerOfIndexComponentServerManage = {
                 this.edit_ssh_user = '';
                 this.edit_platform_name = '';
                 this.edit_platform_device_id = '';
+                this.edit_platform_area = '';
                 this.show_edit_server = true;
             },
             edit_server: function (row) {
@@ -188,6 +195,7 @@ const handlerOfIndexComponentServerManage = {
                 this.edit_ssh_user = row.ssh_user;
                 this.edit_platform_name = row.platform_name;
                 this.edit_platform_device_id = row.platform_device_id;
+                this.edit_platform_area = row.platform_area;
                 this.show_edit_server = true;
             },
             modal_edit_server: function () {
@@ -203,6 +211,7 @@ const handlerOfIndexComponentServerManage = {
                         "ssh_user": this.edit_ssh_user,
                         "platform_name": this.edit_platform_name,
                         "platform_device_id": this.edit_platform_device_id,
+                        "platform_area": this.edit_platform_area,
                     },
                     dataType: 'json'
                 }).done((response) => {

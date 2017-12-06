@@ -37,6 +37,9 @@ const handlerOfIndexComponentDatabaseManage = {
         '<Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">{{item.platform_type}} - {{item.platform_name}}</Option>' +
         '</Select>' +
         '<i-input style="margin: 5px" v-model="edit_platform_device_id"><span slot="prepend">Platform Device ID</span></i-input>' +
+        '<Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>' +
+        '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
+        '</Select>' +
         '<div>' +
         '<Button type="text">Accounts: </Button>' +
         '</div>' +
@@ -64,6 +67,7 @@ const handlerOfIndexComponentDatabaseManage = {
                     {key: 'dothan_port', title: 'Dothan'},
                     {key: 'platform_name', title: 'Platform Account'},
                     {key: 'platform_device_id', title: 'Device ID'},
+                    {key: 'platform_area', title: 'Area'},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
@@ -130,7 +134,10 @@ const handlerOfIndexComponentDatabaseManage = {
                 edit_accounts: [],
                 edit_platform_name: '',
                 edit_platform_device_id: '',
+                edit_platform_area: '',
                 edit_dothan_port: '',
+                //
+                platform_area_list: AliyunRegionDictionary,
             }
         },
         methods: {
@@ -207,6 +214,9 @@ const handlerOfIndexComponentDatabaseManage = {
                 this.edit_port = '';
                 this.edit_accounts = [];
                 this.edit_dothan_port = '';
+                this.edit_platform_name = '';
+                this.edit_platform_device_id = '';
+                this.edit_platform_area = '';
                 this.show_edit_database = true;
             },
             edit_database: function (database_name) {
@@ -224,6 +234,9 @@ const handlerOfIndexComponentDatabaseManage = {
                     this.edit_port = target_database.port;
                     this.edit_dothan_port = target_database.dothan_port;
                     this.edit_accounts = [];
+                    this.edit_platform_name = target_database.platform_name;
+                    this.edit_platform_device_id = target_database.platform_device_id;
+                    this.edit_platform_area = target_database.platform_area;
                     let item_id = 0;
                     for (let u in target_database.accounts) {
                         if (!target_database.accounts.hasOwnProperty(u)) continue;
@@ -285,6 +298,7 @@ const handlerOfIndexComponentDatabaseManage = {
                         accounts: edit_accounts,
                         platform_name: this.edit_platform_name,
                         platform_device_id: this.edit_platform_device_id,
+                        platform_area: this.edit_platform_area,
                         dothan_port: this.edit_dothan_port,
                     },
                     dataType: 'json'

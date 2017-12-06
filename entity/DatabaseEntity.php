@@ -21,12 +21,14 @@ use sinri\enoch\helper\CommonHelper;
  * @property array accounts
  * @property string platform_name
  * @property string platform_device_id
+ * @property string platform_area
  * @property int dothan_port
  */
 class DatabaseEntity extends EntityInterface
 {
 
     /**
+     * @param null $keyChain
      * @return array
      */
     public function propertiesAndDefaults($keyChain = null)
@@ -39,6 +41,7 @@ class DatabaseEntity extends EntityInterface
             "accounts" => [],
             "platform_name" => null,
             "platform_device_id" => null,
+            "platform_area" => null,
             "dothan_port" => -1,
         ];
         if ($keyChain === null) {

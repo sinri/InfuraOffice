@@ -38,6 +38,7 @@ class DatabaseManageController extends BaseController
 
             $platform_device_id = LibRequest::getRequest("platform_device_id");
             $platform_name = LibRequest::getRequest("platform_name");
+            $platform_area = LibRequest::getRequest("platform_area");
 
             $dothan_port = LibRequest::getRequest("dothan_port", -1);
             if ($dothan_port === '') {
@@ -54,6 +55,7 @@ class DatabaseManageController extends BaseController
                 "accounts" => $accounts,
                 "platform_name" => $platform_name,
                 "platform_device_id" => $platform_device_id,
+                "platform_area" => $platform_area,
                 "dothan_port" => $dothan_port,
             ]);
 

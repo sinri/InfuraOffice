@@ -20,6 +20,7 @@ use sinri\enoch\helper\CommonHelper;
  * @property string ssh_user
  * @property string platform_name
  * @property string platform_device_id
+ * @property string platform_area
  */
 class ServerEntity extends EntityInterface
 {
@@ -37,6 +38,7 @@ class ServerEntity extends EntityInterface
             "ssh_user" => null,
             "platform_name" => null,
             "platform_device_id" => null,
+            "platform_area" => null,
         ];
         if ($keyChain === null) {
             return $dic;

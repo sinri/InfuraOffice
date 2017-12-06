@@ -42,6 +42,7 @@ class ServerManageController extends BaseController
 
             $platform_device_id = LibRequest::getRequest("platform_device_id");
             $platform_name = LibRequest::getRequest("platform_name");
+            $platform_area = LibRequest::getRequest("platform_area");
 
             CommonHelper::assertNotEmpty($server_name, 'server name should not be empty');
 
@@ -51,6 +52,7 @@ class ServerManageController extends BaseController
                 "ssh_user" => $ssh_user,
                 "platform_name" => $platform_name,
                 "platform_device_id" => $platform_device_id,
+                "platform_area" => $platform_area,
             ]);
 
             $done = $this->serverLibrary->writeEntity($entity);
