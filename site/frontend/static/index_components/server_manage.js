@@ -7,7 +7,7 @@ const handlerOfIndexComponentServerManage = {
         '</Row>' +
         '<Row>' +
         '<i-col span="24">' +
-        '<Alert type="error" show-icon v-if="has_error">' +
+        '<Alert type="error" show-icon v-if="has_error" closable>' +
         'ERROR' +
         '<span slot="desc">{{ error_message }}</span>' +
         '</Alert>' +
@@ -18,7 +18,7 @@ const handlerOfIndexComponentServerManage = {
         '<h2>Server Connection Setting Instruction (Linux)</h2>' +
         '<p>First, you should confirm the existence of the id_rsa and id_rsa.pub files on the server this site deployed. If not there, create them.</p>' +
         '<p>Second, set the path of id_rsa to config file with keychain [daemon,ssh_key_file].</p>' +
-        '<p>Third, register id_rsa.pub content to target server. Use ssh and cat or ssh-copy-id can do this.</p>' +
+        '<p>Third, register id_rsa.pub content to target server. Use ssh and cat or ssh-copy-id can do this (ssh-copy-id -i ~/.ssh/id_rsa.pub admin@[HOST]).</p>' +
         '<p>For all the steps you can read this <a href="https://window.everstray.com/archives/88" target="_blank">blog</a>. </p>' +
         '<p>Generally you should make the ssh user of the remote server registered hold the sudo privilege.</p>' +
         '</div>' +
@@ -76,7 +76,7 @@ const handlerOfIndexComponentServerManage = {
                                         click: () => {
                                             //this.remove(params.index)
                                             console.log("click ping", params);
-                                            this.ping_server(params.row.server_name);
+                                            this.ping_server(params.row.server_name, params.row.connect_ip);
                                         }
                                     }
                                 }, 'Ping'),
@@ -273,7 +273,7 @@ const handlerOfIndexComponentServerManage = {
                     //console.log("guhehe");
                 });
             },
-            ping_server: function (server_name) {
+            ping_server: function (server_name, ip) {
                 console.log("remove server");
                 vueIndex.$Loading.start();
                 $.ajax({
@@ -300,8 +300,8 @@ const handlerOfIndexComponentServerManage = {
                         vueIndex.$Loading.finish();
                         //this.refreshServerList();
                     } else {
-                        //this.has_error = true;
-                        //this.error_message = response.data;
+                        this.has_error = true;
+                        this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
                         vueIndex.$Loading.error();
                         vueIndex.$Notice.error({
                             title: 'Server ' + server_name + " died:",
@@ -311,8 +311,8 @@ const handlerOfIndexComponentServerManage = {
 
                 }).fail(() => {
                     vueIndex.$Loading.error();
-                    //this.has_error=true;
-                    //this.error_message="Ajax Failed";
+                    this.has_error = true;
+                    this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
                     vueIndex.$Notice.error({
                         title: 'Ping Server ' + server_name,
                         desc: 'Ping Ajax Failed'
