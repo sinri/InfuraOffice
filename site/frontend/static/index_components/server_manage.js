@@ -286,20 +286,12 @@ const handlerOfIndexComponentServerManage = {
                     timeout: 10000
                 }).done((response) => {
                     console.log(response);
-                    if (response.code === 'OK') {
-                        if (response.data.result.code === "200") {
-                            vueIndex.$Notice.success({
-                                title: 'Server ' + server_name + " answered:",
-                                desc: response.data.result.data.output
-                            });
-                        } else {
-                            vueIndex.$Notice.warning({
-                                title: 'Server ' + server_name + " answered:",
-                                desc: response.data.result.data
-                            });
-                        }
+                    if (response.code === 'OK' && response.data.result.code === "200") {
+                        vueIndex.$Notice.success({
+                            title: 'Server ' + server_name + " answered:",
+                            desc: response.data.result.data.output
+                        });
                         vueIndex.$Loading.finish();
-                        //this.refreshServerList();
                     } else {
                         this.has_error = true;
                         this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
@@ -309,7 +301,6 @@ const handlerOfIndexComponentServerManage = {
                             desc: response.data
                         });
                     }
-
                 }).fail(() => {
                     vueIndex.$Loading.error();
                     this.has_error = true;
