@@ -74,7 +74,7 @@ const handlerOfIndexComponentServerWork = {
         '<div>' +
         '<Input type="text" v-model="ls_dir">' +
         '<span slot="prepend">Folder Path:</span>' +
-        '<Button slot="append" icon="ios-folder" v-on:click="click_ls_btn">du</Button>' +
+        '<Button slot="append" icon="ios-folder" v-on:click="click_ls_btn">ls</Button>' +
         '</Input>' +
         '</div>' +
         '<div class="shell_output_box" v-for="ls_of_server in ls_list">' +
