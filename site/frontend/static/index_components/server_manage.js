@@ -14,6 +14,9 @@ const handlerOfIndexComponentServerManage = {
         '</i-col>' +
         '</Row>' +
         '<i-table :columns="server_fields" :data="servers"></i-table>' +
+        '<Row>' +
+        '<i-col span="24"><div style="margin: 5px">Total: {{servers.length}}</div></i-col>' +
+        '</Row>' +
         '<div>' +
         '<h2>Server Connection Setting Instruction (Linux)</h2>' +
         '<p>First, you should confirm the existence of the id_rsa and id_rsa.pub files on the server this site deployed. If not there, create them.</p>' +
@@ -33,6 +36,9 @@ const handlerOfIndexComponentServerManage = {
         '<Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>' +
         '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
         '</Select>' +
+        '<div style="margin:5px">' +
+        'Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub {{edit_ssh_user}}@{{edit_connect_ip}};' +
+        '</div>' +
         '</Modal>' +
         '</div>',
         data: function () {
@@ -292,10 +298,10 @@ const handlerOfIndexComponentServerManage = {
                             desc: response.data.result.data.output
                         });
                         vueIndex.$Loading.finish();
-                        this.has_error = false;
+                        //this.has_error = false;
                     } else {
-                        this.has_error = true;
-                        this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
+                        //this.has_error = true;
+                        //this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
                         vueIndex.$Loading.error();
                         vueIndex.$Notice.error({
                             title: 'Server ' + server_name + " died:",
@@ -305,8 +311,8 @@ const handlerOfIndexComponentServerManage = {
                     }
                 }).fail(() => {
                     vueIndex.$Loading.error();
-                    this.has_error = true;
-                    this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
+                    //this.has_error = true;
+                    //this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
                     vueIndex.$Notice.error({
                         title: 'Ping Server ' + server_name,
                         desc: 'Ping Ajax Failed'

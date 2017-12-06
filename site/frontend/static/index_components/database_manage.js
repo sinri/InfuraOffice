@@ -19,6 +19,9 @@ const handlerOfIndexComponentDatabaseManage = {
         '</Row>' +
         '<i-table :columns="database_fields" :data="databases"></i-table>' +
         '<Row>' +
+        '<i-col span="24"><div style="margin: 5px">Total: {{databases.length}}</div></i-col>' +
+        '</Row>' +
+        '<Row>' +
         '<i-col span="24">&nbsp;</i-col>' +
         '<i-col span="24">' +
         '<p>' +

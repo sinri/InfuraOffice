@@ -125,7 +125,9 @@ class SSHToolkit
     public function disconnect()
     {
         DaemonHelper::log(LibLog::LOG_INFO, __METHOD__ . "@" . __LINE__);
-        $this->exec('echo "EXITING" && exit;');
+        if ($this->connection) {
+            $this->exec('echo "EXITING" && exit;');
+        }
         $this->connection = null;
     }
 
