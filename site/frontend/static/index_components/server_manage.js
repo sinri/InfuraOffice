@@ -13,9 +13,19 @@ const handlerOfIndexComponentServerManage = {
         '</Alert>' +
         '</i-col>' +
         '</Row>' +
-        '<i-table :columns="server_fields" :data="servers"></i-table>' +
         '<Row>' +
-        '<i-col span="24"><div style="margin: 5px">Total: {{servers.length}}</div></i-col>' +
+        '<i-col span="24">' +
+        '<i-input v-model="filter_key" style="margin: 5px 0;">' +
+        '<span slot="prepend">Search Name</span>' +
+        '<i-button slot="append" icon="ios-search" v-on:click="filter_table_items"></i-button>' +
+        '</i-input>' +
+        '</i-col>' +
+        '<i-col span="24">' +
+        '<i-table :columns="server_fields" :data="filtered_servers"></i-table>' +
+        '</i-col>' +
+        '</Row>' +
+        '<Row>' +
+        '<i-col span="24"><div style="margin: 5px;">Total: {{servers.length}} Filtered: {{filtered_servers.length}}</div></i-col>' +
         '</Row>' +
         '<div>' +
         '<h2>Server Connection Setting Instruction (Linux)</h2>' +
@@ -107,6 +117,7 @@ const handlerOfIndexComponentServerManage = {
                     }
                 ],
                 servers: [],
+                filtered_servers: [],
                 modal_loading: true,
                 has_error: false,
                 error_message: '',
@@ -119,6 +130,7 @@ const handlerOfIndexComponentServerManage = {
                 edit_platform_device_id: '',
                 edit_platform_area: '',
                 platform_area_list: AliyunRegionDictionary,
+                filter_key: '',
             }
         },
         methods: {
@@ -176,6 +188,7 @@ const handlerOfIndexComponentServerManage = {
                             // });
                         }
                         this.servers = servers;
+                        this.filter_table_items();
                     }
                     vueIndex.$Loading.finish();
                 }).fail(() => {
@@ -320,6 +333,15 @@ const handlerOfIndexComponentServerManage = {
                 }).always(() => {
                     //console.log("guhehe");
                 });
+            },
+            filter_table_items: function () {
+                let array = [];
+                for (let i = 0; i < this.servers.length; i++) {
+                    if (this.servers[i].server_name.toLowerCase().indexOf(this.filter_key.toLowerCase()) >= 0) {
+                        array.push(this.servers[i]);
+                    }
+                }
+                this.filtered_servers = array;
             }
         },
         mounted: function () {

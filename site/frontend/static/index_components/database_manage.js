@@ -17,9 +17,19 @@ const handlerOfIndexComponentDatabaseManage = {
         '</Alert>' +
         '</i-col>' +
         '</Row>' +
-        '<i-table :columns="database_fields" :data="databases"></i-table>' +
         '<Row>' +
-        '<i-col span="24"><div style="margin: 5px">Total: {{databases.length}}</div></i-col>' +
+        '<i-col span="24">' +
+        '<i-input v-model="filter_key" style="margin: 5px 0;">' +
+        '<span slot="prepend">Search Name</span>' +
+        '<i-button slot="append" icon="ios-search" v-on:click="filter_table_items"></i-button>' +
+        '</i-input>' +
+        '</i-col>' +
+        '<i-col span="24">' +
+        '<i-table :columns="database_fields" :data="filtered_databases"></i-table>' +
+        '</i-col>' +
+        '</Row>' +
+        '<Row>' +
+        '<i-col span="24"><div style="margin: 5px">Total: {{databases.length}} Filtered: {{filtered_databases.length}}</div></i-col>' +
         '</Row>' +
         '<Row>' +
         '<i-col span="24">&nbsp;</i-col>' +
@@ -128,6 +138,8 @@ const handlerOfIndexComponentDatabaseManage = {
                     }
                 ],
                 databases: [],
+                filtered_databases: [],
+                filter_key: '',
                 //
                 platform_list: [],
                 edit_database_name: '',
@@ -200,6 +212,7 @@ const handlerOfIndexComponentDatabaseManage = {
                             // });
                         }
                         this.databases = databases;
+                        this.filter_table_items();
                     }
                     vueIndex.$Loading.finish();
                 }).fail(() => {
@@ -411,6 +424,15 @@ const handlerOfIndexComponentDatabaseManage = {
                         desc: "Ajax Error"
                     });
                 });
+            },
+            filter_table_items: function () {
+                let array = [];
+                for (let i = 0; i < this.databases.length; i++) {
+                    if (this.databases[i].database_name.toLowerCase().indexOf(this.filter_key.toLowerCase()) >= 0) {
+                        array.push(this.databases[i]);
+                    }
+                }
+                this.filtered_databases = array;
             }
         },
         mounted: function () {
