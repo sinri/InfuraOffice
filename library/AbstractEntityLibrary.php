@@ -49,8 +49,12 @@ abstract class AbstractEntityLibrary
                 $entity_array[$key] = $entity->$key;
             }
 
-            $entities[] = $entity_array;
+            $entities[$entity->primaryKey()] = $entity_array;
         }
+
+        ksort($entities);
+        $entities = array_values($entities);
+
         return $entities;
     }
 
@@ -70,8 +74,10 @@ abstract class AbstractEntityLibrary
 
             if (!$entity) continue;
 
-            $entities[] = $entity;
+            $entities[$entity->primaryKey()] = $entity;
         }
+        ksort($entities);
+        $entities = array_values($entities);
         return $entities;
     }
 
