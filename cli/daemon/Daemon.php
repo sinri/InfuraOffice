@@ -81,6 +81,19 @@ class Daemon
                         if ($done_pid == 0) {
                             DaemonHelper::log(LibLog::LOG_INFO, "WNOHANG so zero returned... break");
                             break;
+                        } elseif ($done_pid < 0) {
+                            DaemonHelper::log(LibLog::LOG_ERROR, "pcntl error so -1 returned... break");
+                            $last_error_number = "?";
+                            $last_error_string = "?";
+                            if (function_exists("pcntl_get_last_error")) {
+                                $last_error_number = pcntl_get_last_error();
+                                if (function_exists("pcntl_strerror")) {
+                                    $last_error_string = pcntl_strerror($last_error_number);
+                                }
+                            }
+
+                            DaemonHelper::log(LibLog::LOG_ERROR, "LAST PCNTL ERROR: " . $last_error_string, $last_error_number);
+                            break;
                         }
                         if ($done_pid && isset($this->workers[$done_pid])) {
                             unset($this->workers[$done_pid]);
