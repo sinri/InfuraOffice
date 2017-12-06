@@ -292,6 +292,7 @@ const handlerOfIndexComponentServerManage = {
                             desc: response.data.result.data.output
                         });
                         vueIndex.$Loading.finish();
+                        this.has_error = false;
                     } else {
                         this.has_error = true;
                         this.error_message = "Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub admin@" + ip;
