@@ -286,10 +286,17 @@ const handlerOfIndexComponentServerManage = {
                 }).done((response) => {
                     console.log(response);
                     if (response.code === 'OK') {
-                        vueIndex.$Notice.success({
-                            title: 'Server ' + server_name + " answered:",
-                            desc: response.data.result.data.output
-                        });
+                        if (response.data.result.code === "200") {
+                            vueIndex.$Notice.success({
+                                title: 'Server ' + server_name + " answered:",
+                                desc: response.data.result.data.output
+                            });
+                        } else {
+                            vueIndex.$Notice.warn({
+                                title: 'Server ' + server_name + " answered:",
+                                desc: response.data.result.data.result.data
+                            });
+                        }
                         vueIndex.$Loading.finish();
                         //this.refreshServerList();
                     } else {

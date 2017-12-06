@@ -49,6 +49,9 @@ class SSHToolkit
         $this->ssh_auth_pass = $rsa_pass_phrase;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function connect()
     {
         DaemonHelper::log(LibLog::LOG_INFO, __METHOD__ . "@" . __LINE__);
@@ -87,6 +90,7 @@ class SSHToolkit
 
     /**
      * @return int
+     * @throws \Exception
      */
     public function getLastExecReturnVar()
     {
@@ -115,6 +119,9 @@ class SSHToolkit
         return ssh2_scp_recv($this->connection, $remoteFilePath, $localFilePath);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function disconnect()
     {
         DaemonHelper::log(LibLog::LOG_INFO, __METHOD__ . "@" . __LINE__);
@@ -122,6 +129,9 @@ class SSHToolkit
         $this->connection = null;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __destruct()
     {
         $this->disconnect();

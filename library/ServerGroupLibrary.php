@@ -40,7 +40,7 @@ class ServerGroupLibrary extends AbstractEntityLibrary
     }
 
     /**
-     * @param $platform_name
+     * @param $name
      * @return bool|ServerGroupEntity
      */
     public function readEntityByName($name)
@@ -49,7 +49,7 @@ class ServerGroupLibrary extends AbstractEntityLibrary
     }
 
     /**
-     * @param $platform_name_hash
+     * @param $name_hash
      * @return bool|ServerGroupEntity
      */
     public function readEntityByNameHashed($name_hash)
@@ -80,7 +80,7 @@ class ServerGroupLibrary extends AbstractEntityLibrary
      */
     public function whenOneServerRemoved($server_name)
     {
-        $groups = $this->entityArrayList();
+        $groups = $this->entityList();
         foreach ($groups as $group) {
             if (in_array($server_name, $group->server_name_list)) {
                 $group->server_name_list = array_diff($group->server_name_list, [$server_name]);

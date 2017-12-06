@@ -3,6 +3,10 @@ A Mix of Infura Management
 
 ## Third Party Library Declaration
 
+PECL
+
+* [SSH2](http://php.net/manual/en/ssh2.installation.php)
+
 Packagist
 
 * sinri/enoch 
