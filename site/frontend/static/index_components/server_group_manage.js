@@ -29,10 +29,10 @@ const handlerOfIndexComponentServerGroupManage = {
                 error_message: '',
                 group_fields: [
                     {
-                        key: 'group_name', title: 'Group Name'
+                        key: 'group_name', title: 'Group Name', sortable: true
                     },
                     {
-                        key: 'server_name_list_readable', title: 'Server List'
+                        key: 'server_name_list_readable', title: 'Server List', sortable: true
                     },
                     {
                         key: 'action', title: 'Action',

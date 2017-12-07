@@ -74,13 +74,13 @@ const handlerOfIndexComponentDatabaseManage = {
                 has_error: false,
                 error_message: '',
                 database_fields: [
-                    {key: 'database_name', title: 'Database Name'},
-                    {key: 'server_type', title: 'Server Type'},
-                    {key: 'connection', title: 'Connection'},
-                    {key: 'dothan_port', title: 'Dothan'},
-                    {key: 'platform_name', title: 'Platform Account'},
-                    {key: 'platform_device_id', title: 'Device ID'},
-                    {key: 'platform_area', title: 'Area'},
+                    {key: 'database_name', title: 'Database Name', sortable: true},
+                    {key: 'server_type', title: 'Server Type', sortable: true},
+                    {key: 'connection', title: 'Connection', sortable: true},
+                    {key: 'dothan_port', title: 'Dothan', sortable: true},
+                    {key: 'platform_name', title: 'Platform Account', sortable: true},
+                    {key: 'platform_device_id', title: 'Device ID', sortable: true},
+                    {key: 'platform_area', title: 'Area', sortable: true},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {

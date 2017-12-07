@@ -54,12 +54,12 @@ const handlerOfIndexComponentServerManage = {
         data: function () {
             return {
                 server_fields: [
-                    {key: 'server_name', title: 'Server Name'},
-                    {key: 'connect_ip', title: 'Connect IP'},
-                    {key: 'ssh_user', title: 'SSH User'},
-                    {key: 'platform_name', title: 'Platform Account'},
-                    {key: 'platform_device_id', title: 'Device ID'},
-                    {key: 'platform_area', title: 'Area'},
+                    {key: 'server_name', title: 'Server Name', sortable: true},
+                    {key: 'connect_ip', title: 'Connect IP', sortable: true},
+                    {key: 'ssh_user', title: 'SSH User', sortable: true},
+                    {key: 'platform_name', title: 'Platform Account', sortable: true},
+                    {key: 'platform_device_id', title: 'Device ID', sortable: true},
+                    {key: 'platform_area', title: 'Area', sortable: true},
                     {
                         key: 'action', title: 'Action',
                         render: (h, params) => {
