@@ -39,6 +39,7 @@ class DatabaseWorkController extends BaseController
 
     public function ping()
     {
+        $db = null;
         try {
             $database_name = LibRequest::getRequest("database_name", '');
             $username = LibRequest::getRequest("username", null);
@@ -46,12 +47,17 @@ class DatabaseWorkController extends BaseController
             $db = $this->databaseLibrary->getDatabaseClient($database_name, $username);
             $result = $db->getOne("select version()");
             if (!$result) {
-                $this->_sayFail("done");
+                $this->_sayFail("tried");
                 return;
             }
             $this->_sayOK(["result" => $result]);
         } catch (\Exception $exception) {
-            $this->_sayFail($exception->getMessage());
+            $this->_sayFail(
+                [
+                    $exception->getMessage(),
+                    (($db && $db->getPdo()) ? $db->errorInfo() : '')
+                ]
+            );
         }
     }
 

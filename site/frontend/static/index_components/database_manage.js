@@ -54,16 +54,16 @@ const handlerOfIndexComponentDatabaseManage = {
         '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
         '</Select>' +
         '<div>' +
-        '<Button type="text">Accounts: </Button>' +
+        '<i-button type="text">Accounts: </i-button>' +
         '</div>' +
         '<div v-for="account in edit_accounts">' +
         '<i-input style="margin: 5px" v-model="account.username"><span slot="prepend">Username</span></i-input>' +
         '<i-input style="margin: 5px" v-model="account.password"><span slot="prepend">Password</span></i-input>' +
-        '<Button type="dash" class="right" v-on:click="delete_one_account_item(account.item_id)">Delete</Button>' +
+        '<i-button type="dash" class="right" v-on:click="delete_one_account_item(account.item_id)">Delete</i-button>' +
         '<div class="clear"></div>' +
         '</div>' +
         '<div style="text-align: center">' +
-        '<Button shape="circle" icon="android-add" v-on:click="add_one_account_item"></Button>' +
+        '<i-button shape="circle" icon="android-add" v-on:click="add_one_account_item"></i-button>' +
         '</div>' +
         '</Modal>' +
         '</div>',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9a4f01f804c80c895bde7d78a457460",
+    "content-hash": "a6d4e8c51beb3f3cfc81ee6f66352725",
     "packages": [
         {
             "name": "ralouphie/getallheaders",
@@ -16,7 +16,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/ralouphie/getallheaders/5601c8a83fbba7ef674a7369456d12f1e0d0eafa.zip",
+                "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
                 "reference": "5601c8a83fbba7ef674a7369456d12f1e0d0eafa",
                 "shasum": ""
             },
@@ -48,16 +48,16 @@
         },
         {
             "name": "sinri/enoch",
-            "version": "2.1.18",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sinri/enoch.git",
-                "reference": "9b8176a2516d7b768e0128b7a5897b1374c814f0"
+                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/sinri/enoch/9b8176a2516d7b768e0128b7a5897b1374c814f0.zip",
-                "reference": "9b8176a2516d7b768e0128b7a5897b1374c814f0",
+                "url": "https://api.github.com/repos/sinri/enoch/zipball/f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
+                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
             "keywords": [
                 "php-framework"
             ],
-            "time": "2017-11-29T08:47:03+00:00"
+            "time": "2017-12-07T08:18:15+00:00"
         },
         {
             "name": "sinri/smallphpmailer",
@@ -104,7 +104,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/sinri/PHPMailer/028e146ab6b51bb121b3b6834ea002bd04bb38cb.zip",
+                "url": "https://api.github.com/repos/sinri/PHPMailer/zipball/028e146ab6b51bb121b3b6834ea002bd04bb38cb",
                 "reference": "028e146ab6b51bb121b3b6834ea002bd04bb38cb",
                 "shasum": ""
             },

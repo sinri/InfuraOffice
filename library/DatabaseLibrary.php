@@ -90,14 +90,19 @@ class DatabaseLibrary extends AbstractEntityLibrary
             throw new \Exception("no such user: " . $username);
         }
         $params = [];
+        $params['host'] = $databaseEntity->host;
+        $params['port'] = $databaseEntity->port;
+        $params['username'] = $username;
+        $params['password'] = $databaseEntity->accounts[$username];
         switch ($databaseEntity->server_type) {
-            case 'mysql':
-            default:
-                $params['host'] = $databaseEntity->host;
-                $params['port'] = $databaseEntity->port;
-                $params['username'] = $username;
-                $params['password'] = $databaseEntity->accounts[$username];
+            case 'mysql-drds':
                 $params['engine'] = 'mysql';
+                $params['options'] = [\PDO::ATTR_EMULATE_PREPARES => true];
+                break;
+            case 'mysql':
+                $params['engine'] = 'mysql';
+                break;
+            default:
                 break;
         }
         $db = new LibPDO($params);

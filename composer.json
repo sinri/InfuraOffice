@@ -3,10 +3,9 @@
   "description": "Infura Office Mix",
   "type": "project",
   "require": {
-    "sinri/enoch": "^2.1.18",
-    "php": "^5.6"
+    "sinri/enoch": "^2.2"
   },
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "Sinri Edogawa",
