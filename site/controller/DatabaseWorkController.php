@@ -44,7 +44,7 @@ class DatabaseWorkController extends BaseController
             $username = LibRequest::getRequest("username", null);
 
             $db = $this->databaseLibrary->getDatabaseClient($database_name, $username);
-            $result = $db->safeQueryOne("select version()");
+            $result = $db->getOne("select version()");
             if (!$result) {
                 $this->_sayFail("done");
                 return;
