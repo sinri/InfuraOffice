@@ -40,6 +40,7 @@ class DatabaseWorkController extends BaseController
     public function ping()
     {
         $db = null;
+        $username = '';
         try {
             $database_name = LibRequest::getRequest("database_name", '');
             $username = LibRequest::getRequest("username", null);
@@ -50,12 +51,13 @@ class DatabaseWorkController extends BaseController
                 $this->_sayFail("tried");
                 return;
             }
-            $this->_sayOK(["result" => $result]);
+            $this->_sayOK(["result" => $result, "username" => $username]);
         } catch (\Exception $exception) {
             $this->_sayFail(
                 [
-                    $exception->getMessage(),
-                    (($db && $db->getPdo()) ? $db->errorInfo() : '')
+                    "exception" => $exception->getMessage(),
+                    "pdo_error" => (($db && $db->getPdo()) ? $db->errorInfo() : ''),
+                    "username" => $username
                 ]
             );
         }

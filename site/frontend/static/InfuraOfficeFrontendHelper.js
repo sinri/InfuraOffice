@@ -72,3 +72,22 @@ const AliyunRegionDictionary = [
     {label: '法兰克福 / 欧洲中部1 / REGION_ID_EU_CENTRAL_1', key: "eu-central-1"},
     {label: '迪拜 / 中东东部1 / REGION_ID_ME_EAST_1', key: "me-east-1"},
 ];
+
+function jsReadableValue(anything) {
+    if (typeof anything === 'object') {
+        let str = '';
+        if (Array.isArray(anything)) {
+            for (let i = 0; i < anything.length; i++) {
+                str += jsReadableValue(anything[i]) + '\n';
+            }
+        } else {
+            for (let k in anything) {
+                if (!anything.hasOwnProperty(k)) continue;
+                str += k + ": " + jsReadableValue(anything[k]) + '\n';
+            }
+        }
+        return str;
+    } else {
+        return "" + anything;
+    }
+}

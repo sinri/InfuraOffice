@@ -383,7 +383,7 @@ const handlerOfIndexComponentDatabaseManage = {
                         //this.error_message = response.data;
                         vueIndex.$Notice.error({
                             title: 'Ping Database ' + database_name,
-                            desc: response.data
+                            desc: jsReadableValue(response.data)
                         });
                         vueIndex.$Loading.error();
                     }

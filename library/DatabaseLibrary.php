@@ -74,7 +74,7 @@ class DatabaseLibrary extends AbstractEntityLibrary
      * @return LibPDO
      * @throws \Exception
      */
-    public function getDatabaseClient($databaseName, $username = null)
+    public function getDatabaseClient($databaseName, &$username = null)
     {
         $databaseEntity = $this->readEntityByName($databaseName);
         if (!$databaseEntity) {
@@ -121,6 +121,7 @@ class DatabaseLibrary extends AbstractEntityLibrary
     {
         $entities = $this->entityList();
         $content = "# Dothan Config File updated on " . date('Y-m-d H:i:s') . PHP_EOL;
+        $content .= "# Dothan Config Version " . time() . PHP_EOL;
         foreach ($entities as $entity) {
             if (empty($entity->dothan_port) || $entity->dothan_port < 0) continue;
             $content .= "# " . $entity->database_name . " (" . $entity->platform_device_id . ") on " . $entity->platform_name . PHP_EOL;
