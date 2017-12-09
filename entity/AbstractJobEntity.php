@@ -182,7 +182,7 @@ abstract class AbstractJobEntity extends EntityInterface
     {
         $pid = getmypid();
         //echo "[" . date("Y-m-d H:i:s") . "|" . microtime(true) . "] <{$pid}:{$level}> " . $message . PHP_EOL;
-        InfuraOfficeToolkit::logger('cronjob_' . $this->job_name, false)
+        InfuraOfficeToolkit::logger('cronjob_' . $this->job_name . "_" . time(), false)
             ->log($level, "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message, $object);
     }
 

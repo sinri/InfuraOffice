@@ -12,6 +12,7 @@ namespace sinri\InfuraOffice\site\controller;
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\entity\ExplodeLogJobEntity;
+use sinri\InfuraOffice\entity\MixedJobEntity;
 use sinri\InfuraOffice\entity\RemoveAntiquityJobEntity;
 use sinri\InfuraOffice\entity\ShellCommandJobEntity;
 use sinri\InfuraOffice\entity\UserEntity;
@@ -101,6 +102,13 @@ class JobConfigController extends BaseController
                     $json['date_format'] = LibRequest::getRequest("date_format", 'Y-m-d');
 
                     $class_name = RemoveAntiquityJobEntity::class;
+                    break;
+                case "MixedJob":
+                    $json['explosion_list'] = LibRequest::getRequest("explosion_list", []);
+                    $json['antiquity_list'] = LibRequest::getRequest("antiquity_list", []);
+                    $json['zombie_list'] = LibRequest::getRequest("zombie_list", []);
+
+                    $class_name = MixedJobEntity::class;
                     break;
                 default:
                     throw new \Exception("unsupported job type");

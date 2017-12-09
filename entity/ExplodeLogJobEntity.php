@@ -37,6 +37,10 @@ class ExplodeLogJobEntity extends AbstractJobEntity
         ];
     }
 
+    /**
+     * @return mixed|void
+     * @throws \Exception
+     */
     public function execute()
     {
         $this->assertNotRunInLastMinute();

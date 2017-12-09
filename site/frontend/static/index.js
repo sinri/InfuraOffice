@@ -40,6 +40,7 @@ $(document).ready(function () {
             database_work: handlerOfIndexComponentDatabaseWork.componentDefinition,
             job_config: handlerOfIndexComponentJobConfig.componentDefinition,
             update_shell_command_job: handlerOfIndexComponentUpdateShellCommandJob.componentDefinition,
+            update_mixed_job: handlerOfIndexComponentUpdateMixedJob.componentDefinition,
             update_explode_log_job: handlerOfIndexComponentUpdateExplodeLogJob.componentDefinition,
             update_remove_antiquity_job: handlerOfIndexComponentUpdateRemoveAntiquityJob.componentDefinition,
         },
