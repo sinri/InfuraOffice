@@ -61,7 +61,7 @@ class MixedJobEntity extends AbstractJobEntity
         $temp_sh_dir_path = $this->ensureTempDir();
         $temp_sh_file_path = tempnam($temp_sh_dir_path, md5($this->primaryKey())) . ".py";
 
-        $command_content = file_get_contents(__DIR__ . '/../doc/shell_sample/base_job_func.py');
+        $command_content = file_get_contents(__DIR__ . '/../docs/shell_sample/base_job_func.py');
         $command_content .= PHP_EOL . PHP_EOL;
 
         if (!empty($this->explosion_list)) {
