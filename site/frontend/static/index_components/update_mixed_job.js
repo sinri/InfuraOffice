@@ -3,7 +3,9 @@ const handlerOfIndexComponentUpdateMixedJob = {
         template: '<div>\
             <Row>\
                 <i-col span="24"><h2>Mixed Job</h2></i-col>\
-                <i-col span="24"><p>Call preset shell functions to do mixed jobs.</p></i-col>\
+            </Row>\
+            <Row>\
+                <i-col span="24"><p>Call preset shell functions to do mixed jobs, including explosion, antiquity and zombie removal.</p></i-col>\
             </Row>\
             <Row>\
                 <i-col span="16">\
@@ -44,7 +46,7 @@ const handlerOfIndexComponentUpdateMixedJob = {
                 <i-col span="4"><i-input style="margin: 5px" v-model="draft.cron_time_day_of_week"><span slot="prepend">Weekday</span></i-input></i-col>\
             </Row>\
             <Row>\
-                <i-col span="24"><h3>Explosion</h3></i-col>\
+                <i-col span="24"><h3>Explosion: thin files in use</h3></i-col>\
             </Row>\
             <Row v-for="(item,key) in draft.explosion_list" class="explosion_list_config_div">\
                 <i-col span="10"><i-input v-model="item.keep_tail_lines"><span slot="prepend">Keep Tail Lines:</span></i-input></i-col>\
@@ -67,7 +69,7 @@ const handlerOfIndexComponentUpdateMixedJob = {
                 </i-col>\
             </Row>\
             <Row>\
-                <i-col span="24"><h3>Antiquity</h3></i-col>\
+                <i-col span="24"><h3>Antiquity: remove files with name containing date passed</h3></i-col>\
             </Row>\
             <Row v-for="(item,key) in draft.antiquity_list" class="antiquity_list_config_div">\
                 <i-col span="10"><i-input v-model="item.not_modified_days"><span slot="prepend">Not Modified Days:</span></i-input></i-col>\
@@ -85,7 +87,7 @@ const handlerOfIndexComponentUpdateMixedJob = {
                 </i-col>\
             </Row>\
             <Row>\
-                <i-col span="24"><h3>Zombie</h3></i-col>\
+                <i-col span="24"><h3>Zombie: remove files not accessed for a period</h3></i-col>\
             </Row>\
             <Row v-for="(item,key) in draft.zombie_list" class="zombie_list_config_div">\
                 <i-col span="10"><i-input v-model="item.not_accessed_days"><span slot="prepend">Not Accessed Days:</span></i-input></i-col>\

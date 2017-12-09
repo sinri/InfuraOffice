@@ -3,13 +3,13 @@ const GeneralComponentOfServerAndGroupSelect = {
         name: 'infura_server_and_group_select',
         template: '<div style="display: inline-block;width: 100%;margin:5px;">\
             <Row type="flex" justify="center" align="middle">\
-                <i-col span="2">Servers:</i-col>\
+                <i-col span="2" style="text-align: center">Servers:</i-col>\
                 <i-col span="10">\
                     <i-select v-model="target_servers" filterable multiple>\
                         <Option v-for="item in server_list" :value="item.key" :key="item.key">{{ item.label }}</Option>\
                     </i-select>\
                 </i-col>\
-                <i-col span="2">Groups</i-col>\
+                <i-col span="2" style="text-align: center">Groups:</i-col>\
                 <i-col span="10">\
                     <i-select v-model="target_server_groups" filterable multiple>\
                         <Option v-for="item in server_group_list" :value="item.key" :key="item.key">{{ item.label }}</Option>\
