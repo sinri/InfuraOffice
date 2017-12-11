@@ -9,6 +9,7 @@
 namespace sinri\InfuraOffice\entity;
 
 use sinri\enoch\core\LibLog;
+use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\daemon\SSHToolkit;
 use sinri\InfuraOffice\library\JobLibrary;
@@ -110,6 +111,11 @@ abstract class AbstractJobEntity extends EntityInterface
             return $left;
         });
 
+        if (LibRequest::isCLI()) {
+            echo "DEBUG: " . __METHOD__ . PHP_EOL;
+            var_dump($full_server_list);
+        }
+
         return $full_server_list;
     }
 
@@ -155,7 +161,7 @@ abstract class AbstractJobEntity extends EntityInterface
     {
         $temp_sh_dir_path = InfuraOfficeToolkit::tempPath($this->JobType());
         if (!file_exists($temp_sh_dir_path)) {
-            if (!@mkdir($temp_sh_dir_path, 0777, true)) {
+            if (!mkdir($temp_sh_dir_path, 0777, true)) {
                 throw new \Exception("Cannot MKDIR: " . $temp_sh_dir_path);
             }
         }
