@@ -10,6 +10,7 @@ namespace sinri\InfuraOffice\toolkit;
 
 
 use sinri\enoch\core\LibLog;
+use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 
 class InfuraOfficeToolkit
@@ -52,6 +53,9 @@ class InfuraOfficeToolkit
     {
         if (!isset(self::$loggers[$prefix])) {
             $dir = self::readConfig(['log', 'dir'], __DIR__ . '/../log');
+            if (LibRequest::isCLI()) {
+                echo __METHOD__ . '@' . __LINE__ . ' dir: ' . json_encode($dir) . PHP_EOL;
+            }
             self::$loggers[$prefix] = new LibLog($dir, $prefix, $cliUseStdOut);
         }
         return self::$loggers[$prefix];

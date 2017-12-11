@@ -192,7 +192,9 @@ abstract class AbstractJobEntity extends EntityInterface
 
     public function targetLogPrefix()
     {
-        return 'cronjob_' . $this->job_name . "_" . date('Y-m-d_H_i_s');
+        $prefix = 'cronjob_' . $this->job_name . "_" . date('Y-m-d_H_i_s');
+        if (LibRequest::isCLI()) echo __METHOD__ . '@' . __LINE__ . " " . json_encode($prefix) . PHP_EOL;
+        return $prefix;
     }
 
     /**
