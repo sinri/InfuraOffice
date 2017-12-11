@@ -79,9 +79,9 @@ while (true) {
                 //as child
                 $child_pid = getmypid();
                 try {
-                    echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
+                    echo __FILE__ . '@' . __LINE__ . ' Before Execute' . PHP_EOL;
                     $report = $job->execute();
-                    echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
+                    echo __FILE__ . '@' . __LINE__ . ' After Execute' . PHP_EOL;
                     CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] executed", $report);
                     $job->exportReportToLog($report);
                 } catch (Exception $exception) {

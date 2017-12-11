@@ -75,6 +75,7 @@ class ShellCommandJobEntity extends AbstractJobEntity
             if (LibRequest::isCLI()) {
                 echo __METHOD__ . '@' . __LINE__ . ' server name: ' . json_encode($server_name) . PHP_EOL;
             }
+            $this->executeLog(LibLog::LOG_INFO, "Begin to handle server", $server_name);
 
             // 2.0 ssh prepare
             $report[$server_name] = [
@@ -126,7 +127,7 @@ class ShellCommandJobEntity extends AbstractJobEntity
             $this->executeLog(LibLog::LOG_ERROR, '-', "Temp File Failed in Removing", $temp_sh_file_path);
         }
 
-        $this->executeLog(LibLog::LOG_DEBUG, '-', 'REPORT' . PHP_EOL . print_r($report, true) . PHP_EOL);
+        $this->executeLog(LibLog::LOG_INFO, '-', 'REPORT' . PHP_EOL . print_r($report, true) . PHP_EOL);
 
         echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
 
