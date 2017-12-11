@@ -84,7 +84,7 @@ class ShellCommandJobEntity extends AbstractJobEntity
             ];
             try {
                 $ssh = self::createSSHForServer($server_name);
-
+                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
                 $ssh->establishSFTP();
 
                 // 2.1 scp to remote
@@ -105,12 +105,17 @@ class ShellCommandJobEntity extends AbstractJobEntity
                     $report[$server_name]['done'] = true;
                 }
 
+                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
+
                 // 2.3 unlink remote file
                 $ssh->sftpUnlink($remote_sh_file_path);
             } catch (\Exception $exception) {
+                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
                 $report[$server_name]['error'] = "JOB[{$this->job_name}]-EXCEPTION! " . $exception->getMessage();
             }
         }
+
+        echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
 
         // 3. unlink
 
@@ -122,6 +127,8 @@ class ShellCommandJobEntity extends AbstractJobEntity
         }
 
         $this->executeLog(LibLog::LOG_DEBUG, '-', 'REPORT' . PHP_EOL . print_r($report, true) . PHP_EOL);
+
+        echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
 
         return $report;
     }
