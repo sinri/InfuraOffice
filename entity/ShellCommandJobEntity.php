@@ -9,7 +9,6 @@
 namespace sinri\InfuraOffice\entity;
 
 use sinri\enoch\core\LibLog;
-use sinri\enoch\core\LibRequest;
 
 /**
  * Class ShellCommandJobEntity
@@ -19,26 +18,6 @@ use sinri\enoch\core\LibRequest;
  */
 class ShellCommandJobEntity extends AbstractJobEntity
 {
-//    /**
-//     * @param null $keyChain
-//     * @return array
-//     */
-//    public function propertiesAndDefaults($keyChain = null)
-//    {
-//        static $dic =null;
-//
-//        if(!$dic) {
-//            $pDic=parent::propertiesAndDefaults();
-//            $dic=array_merge($pDic,[
-//                "command_content" => "",
-//            ]);
-//        }
-//
-//        if ($keyChain === null) {
-//            return $dic;
-//        }
-//        return CommonHelper::safeReadNDArray($dic, $keyChain);
-//    }
 
     public function jobType()
     {
@@ -72,9 +51,6 @@ class ShellCommandJobEntity extends AbstractJobEntity
         $report = [];
         $affected_servers = $this->affectedServerList();
         foreach ($affected_servers as $server_name) {
-            if (LibRequest::isCLI()) {
-                echo __METHOD__ . '@' . __LINE__ . ' server name: ' . json_encode($server_name) . PHP_EOL;
-            }
             $this->executeLog(LibLog::LOG_INFO, "Begin to handle server", $server_name);
 
             // 2.0 ssh prepare
@@ -85,7 +61,6 @@ class ShellCommandJobEntity extends AbstractJobEntity
             ];
             try {
                 $ssh = self::createSSHForServer($server_name);
-                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
                 $ssh->establishSFTP();
 
                 // 2.1 scp to remote
@@ -106,17 +81,12 @@ class ShellCommandJobEntity extends AbstractJobEntity
                     $report[$server_name]['done'] = true;
                 }
 
-                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
-
                 // 2.3 unlink remote file
                 $ssh->sftpUnlink($remote_sh_file_path);
             } catch (\Exception $exception) {
-                echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
                 $report[$server_name]['error'] = "JOB[{$this->job_name}]-EXCEPTION! " . $exception->getMessage();
             }
         }
-
-        echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
 
         // 3. unlink
 
@@ -128,8 +98,6 @@ class ShellCommandJobEntity extends AbstractJobEntity
         }
 
         $this->executeLog(LibLog::LOG_INFO, '-', 'REPORT' . PHP_EOL . print_r($report, true) . PHP_EOL);
-
-        echo __METHOD__ . '@' . __LINE__ . PHP_EOL;
 
         return $report;
     }

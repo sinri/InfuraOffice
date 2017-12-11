@@ -192,8 +192,8 @@ abstract class AbstractJobEntity extends EntityInterface
 
     public function targetLogPrefix()
     {
-        $prefix = 'cronjob_' . $this->job_name . "_" . date('Y-m-d_H_i_s');
-        if (LibRequest::isCLI()) echo __METHOD__ . '@' . __LINE__ . " " . json_encode($prefix) . PHP_EOL;
+        $jn = preg_replace('/[\s\\\/]/', '_', $this->job_name);
+        $prefix = 'cronjob_' . $jn . "_" . date('Y-m-d_H_i_s');
         return $prefix;
     }
 
@@ -206,10 +206,6 @@ abstract class AbstractJobEntity extends EntityInterface
     public function executeLog($level, $serverName, $message, $object = '')
     {
         $pid = getmypid();
-        //echo "[" . date("Y-m-d H:i:s") . "|" . microtime(true) . "] <{$pid}:{$level}> " . $message . PHP_EOL;
-        if (LibRequest::isCLI()) {
-            echo __METHOD__ . '@' . __LINE__ . " [{$level}] " . "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message . ' | ' . json_encode($object) . PHP_EOL;
-        }
         InfuraOfficeToolkit::logger($this->targetLogPrefix(), false)
             ->log($level, "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message, $object);
     }
