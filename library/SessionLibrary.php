@@ -71,21 +71,21 @@ class SessionLibrary extends AbstractEntityLibrary
     }
 
     /**
-     * @param $platform_name
+     * @param $name
      * @return bool|SessionEntity
      */
-    public function readEntityByName($platform_name)
+    public function readEntityByName($name)
     {
-        return parent::readEntityByName($platform_name);
+        return parent::readEntityByName($name);
     }
 
     /**
-     * @param $platform_name_hash
+     * @param $name_hash
      * @return bool|SessionEntity
      */
-    public function readEntityByNameHashed($platform_name_hash)
+    public function readEntityByNameHashed($name_hash)
     {
-        return parent::readEntityByNameHashed($platform_name_hash);
+        return parent::readEntityByNameHashed($name_hash);
     }
 
     /**

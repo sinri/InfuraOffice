@@ -18,6 +18,7 @@ use sinri\InfuraOffice\entity\ShellCommandJobEntity;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\JobLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
+use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
 
 class JobConfigController extends BaseController
 {
@@ -149,6 +150,45 @@ class JobConfigController extends BaseController
                 throw new \Exception("update job failed");
             }
             $this->_sayOK();
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function listJobLog()
+    {
+        try {
+            $job_name = LibRequest::getRequest("job_name", '');
+            $list = InfuraOfficeToolkit::getLogList($job_name);
+
+            foreach ($list as $key => $value) {
+                $list[$key] = [
+                    "log_name" => $value,
+                    "title" => basename($value),
+                ];
+            }
+
+            $this->_sayOK(['list' => $list]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function readJobLog()
+    {
+        try {
+            $log_name = LibRequest::getRequest("log_name");
+            CommonHelper::assertNotEmpty($log_name, 'incorrect log name');
+            if (!file_exists($log_name) || !is_file($log_name)) {
+                throw new \Exception("this log name is not a file");
+            }
+            $list = InfuraOfficeToolkit::getLogList();
+            if (!in_array($log_name, $list)) {
+                throw new \Exception("not in log list");
+            }
+
+            $text = file_get_contents($log_name);
+            $this->_sayOK(['content' => $text]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }

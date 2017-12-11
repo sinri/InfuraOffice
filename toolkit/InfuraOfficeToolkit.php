@@ -58,12 +58,13 @@ class InfuraOfficeToolkit
     }
 
     /**
+     * @param string $job_name
      * @return string[]
      */
-    public static function getLogList()
+    public static function getLogList($job_name = '')
     {
         $dir = self::readConfig(['log', 'dir'], __DIR__ . '/../log');
-        $list = glob($dir . '/log-cronjob_*.log');
+        $list = glob($dir . '/log-cronjob_' . $job_name . '*.log');
         return $list;
     }
 }

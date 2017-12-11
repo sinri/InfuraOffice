@@ -8,6 +8,7 @@
 
 namespace sinri\InfuraOffice\entity;
 
+use sinri\enoch\core\LibLog;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\daemon\SSHToolkit;
 use sinri\InfuraOffice\library\JobLibrary;
@@ -91,6 +92,7 @@ abstract class AbstractJobEntity extends EntityInterface
     public function affectedServerList()
     {
         $full_server_list = [];
+        $libS = new ServerLibrary();
         $libSG = new ServerGroupLibrary();
         foreach ($this->server_group_list as $server_group_name) {
             $group = $libSG->readEntityByName($server_group_name);
@@ -98,6 +100,16 @@ abstract class AbstractJobEntity extends EntityInterface
             $full_server_list = array_merge($full_server_list, $p);
         }
         $full_server_list = array_merge($full_server_list, $this->server_list);
+
+        //filter not existed
+        $full_server_list = array_filter($full_server_list, function ($item) use ($libS) {
+            $left = (false !== $libS->readEntityByName($item));
+            if (!$left) {
+                $this->executeLog(LibLog::LOG_WARNING, "SERVER DOES NOT EXIST NOW", $item);
+            }
+            return $left;
+        });
+
         return $full_server_list;
     }
 
@@ -172,6 +184,11 @@ abstract class AbstractJobEntity extends EntityInterface
         return $ssh_toolkit;
     }
 
+    public function targetLogPrefix()
+    {
+        return 'cronjob_' . $this->job_name . "_" . date('Y-m-d_H_i_s');
+    }
+
     /**
      * @param string $level DEBUG INFO WARNING ERROR
      * @param string $serverName
@@ -182,7 +199,7 @@ abstract class AbstractJobEntity extends EntityInterface
     {
         $pid = getmypid();
         //echo "[" . date("Y-m-d H:i:s") . "|" . microtime(true) . "] <{$pid}:{$level}> " . $message . PHP_EOL;
-        InfuraOfficeToolkit::logger('cronjob_' . $this->job_name . "_" . time(), false)
+        InfuraOfficeToolkit::logger($this->targetLogPrefix(), false)
             ->log($level, "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message, $object);
     }
 
@@ -191,7 +208,7 @@ abstract class AbstractJobEntity extends EntityInterface
      */
     public function exportReportToLog($report)
     {
-        $outputFile = InfuraOfficeToolkit::logger('cronjob_' . $this->job_name, false)->decideTargetFile();
+        $outputFile = InfuraOfficeToolkit::logger($this->targetLogPrefix(), false)->decideTargetFile();
         $output = '';
         $output .= "====== FINAL REPORT ======" . PHP_EOL;
         foreach ($report as $serverName => $serverReport) {

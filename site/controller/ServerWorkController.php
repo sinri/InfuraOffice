@@ -173,4 +173,38 @@ class ServerWorkController extends BaseController
             $this->_sayFail($exception->getMessage());
         }
     }
+
+    public function runShellCommand()
+    {
+        try {
+            $server_name_list = LibRequest::getRequest("server_name_list", []);
+            $command = LibRequest::getRequest("command", "echo 'no command given';");
+            $server_command_results = [];
+            foreach ($server_name_list as $server_name) {
+                $entity = $this->serverLibrary->readEntityByName($server_name);
+                if (!$entity) {
+                    throw new \Exception('No such server');
+                }
+
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command);
+
+                $daemonQueryLibrary = new DaemonQueryLibrary();
+                $result = @$daemonQueryLibrary->query($query);
+
+                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+                //$output = implode(PHP_EOL, $output);
+
+                $server_command_results[] = [
+                    'server_name' => $server_name,
+                    'shell_command' => $command,
+                    'output' => $output,
+                    'error' => $parse_error,
+                ];
+            }
+
+            $this->_sayOK(['result_list' => $server_command_results]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
 }

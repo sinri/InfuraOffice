@@ -21,6 +21,17 @@ const handlerOfIndexComponentJobConfig = {
                     <i-table :columns="job_fields" :data="job_list" stripe></i-table>\
                 </i-col>\
             </Row>\
+            <Modal v-model="display_history" width="90%">\
+                <div slot="header">\
+                    <h2>History of {{display_history_job_name}}</h2>\
+                    <i-select v-model="history_log_name" @on-change="on_history_log_changed" style="margin: 5px 0;">\
+                        <i-option v-for="item in history_log_list" :value="item.log_name" :key="item.log_name">{{item.title}}</i-option>\
+                    </i-select>\
+                </div>\
+                <div style="overflow: auto;width: 100%;height: 400px;background: #def3e3;">\
+                    <pre>{{history_log_content}}</pre>\
+                </div>\
+            </Modal>\
         </div>',
         data: function () {
             return {
@@ -52,6 +63,27 @@ const handlerOfIndexComponentJobConfig = {
                                         })
                                     ]
                                 )
+                            ]);
+                        }
+                    },
+                    {
+                        key: 'history', title: 'History',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('i-button', {
+                                    props: {
+                                        type: "ghost",
+                                        shape: "circle",
+                                        icon: "ios-recording-outline",
+                                    },
+                                    on: {
+                                        click: () => {
+                                            console.log('lalala');
+                                            console.log(params.row.job_name);
+                                            this.load_history_list(params.row.job_name);
+                                        }
+                                    }
+                                })
                             ]);
                         }
                     },
@@ -99,6 +131,11 @@ const handlerOfIndexComponentJobConfig = {
                     }
                 ],
                 job_list: [],
+                display_history: false,
+                display_history_job_name: '',
+                history_log_name: '',
+                history_log_list: [],
+                history_log_content: '',
             }
         },
         methods: {
@@ -198,6 +235,59 @@ const handlerOfIndexComponentJobConfig = {
                     }
                 }).fail(() => {
                     this.$Message.error(action_text + " job: " + 'ajax failed');
+                });
+            },
+            load_history_list: function (job_name) {
+                this.display_history_job_name = job_name;
+                this.display_history = true;
+
+                $.ajax({
+                    url: '../api/JobConfigController/listJobLog',
+                    method: 'post',
+                    data: {
+                        job_name: job_name
+                    },
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code === 'OK') {
+                        //this.$Message.success(action_text + " job: Done");
+                        this.history_log_name = '';
+
+                        // let list=[];
+                        // for(let i=0;i<response.data.list.length;i++){
+                        //     list.push({
+                        //         log_name:response.data.list[i]
+                        //     });
+                        // }
+                        // this.history_log_list=list;
+
+                        this.history_log_list = response.data.list;
+                    } else {
+                        this.$Message.error("Failed to load history of job: " + response.data);
+                    }
+                }).fail(() => {
+                    this.$Message.error("Failed to load history of job: " + 'ajax failed');
+                });
+            },
+            on_history_log_changed: function () {
+                this.history_log_content = '';
+                console.log('history_log_name changed to ' + this.history_log_name);
+                $.ajax({
+                    url: '../api/JobConfigController/readJobLog',
+                    method: 'post',
+                    data: {
+                        log_name: this.history_log_name
+                    },
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code === 'OK') {
+                        //this.$Message.success(action_text + " job: Done");
+                        this.history_log_content = response.data.content;
+                    } else {
+                        this.$Message.error("Failed to load log of job: " + response.data);
+                    }
+                }).fail(() => {
+                    this.$Message.error("Failed to load log of job: " + 'ajax failed');
                 });
             }
         },

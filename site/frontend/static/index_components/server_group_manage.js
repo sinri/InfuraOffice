@@ -166,6 +166,19 @@ const handlerOfIndexComponentServerGroupManage = {
             },
             on_edit_btn: function (group) {
                 this.show_edit_group = true;
+
+                let set2 = new Set();
+                for (let key in this.all_servers) {
+                    if (!this.all_servers.hasOwnProperty(key)) continue;
+                    set2.add(this.all_servers[key].key);
+                }
+                let intersection = new Set(group.server_name_list.filter(x => set2.has(x)));
+                console.log("intersection", intersection);
+                this.modal_data = {
+                    group_name: group.group_name,
+                    server_name_list: [...intersection],
+                };
+                console.log("on_edit_btn", group, this.modal_data);
             },
             on_remove_btn: function (group_name) {
                 // API

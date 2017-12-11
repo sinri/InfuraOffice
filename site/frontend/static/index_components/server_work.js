@@ -83,6 +83,19 @@ const handlerOfIndexComponentServerWork = {
         '<Alert type="error" v-if="ls_of_server.error">{{ls_of_server.error}}</Alert>' +
         '</div>' +
         '</TabPane>' +
+        '<TabPane label="Shell Command">' +
+        '<div>' +
+        '<i-input type="text" v-model="shell_command">' +
+        '<span slot="prepend">shell $</span>' +
+        '<i-button slot="append" icon="nuclear" v-on:click="click_shell_command_btn"></i-button>' +
+        '</i-input>' +
+        '<div class="shell_output_box" v-for="command_of_server in shell_command_list">' +
+        '<h4>{{command_of_server.server_name}}:{{command_of_server.shell_command}}</h4>' +
+        '<pre>{{command_of_server.output}}</pre>' +
+        '<Alert type="error" v-if="command_of_server.error">{{command_of_server.error}}</Alert>' +
+        '</div>' +
+        '</div>' +
+        '</TabPane>' +
         '</Tabs>' +
         '</div>' +
         '</div>',
@@ -99,6 +112,8 @@ const handlerOfIndexComponentServerWork = {
                 du_list: [],
                 ls_dir: '/',
                 ls_list: [],
+                shell_command: '',
+                shell_command_list: [],
             }
         },
         methods: {
@@ -242,7 +257,7 @@ const handlerOfIndexComponentServerWork = {
                     console.log(response);
                     if (response.code !== 'OK') {
                         vueIndex.$Notice.error({
-                            title: 'Load df Failed',
+                            title: 'Load du Failed',
                             desc: response.data
                         });
                         this.du_list = [];
@@ -255,7 +270,7 @@ const handlerOfIndexComponentServerWork = {
                     vueIndex.$Loading.error();
                     vueIndex.$Notice.error({
                         title: 'Ajax Failed',
-                        desc: 'when calling df'
+                        desc: 'when calling du'
                     });
                 });
             },
@@ -282,7 +297,7 @@ const handlerOfIndexComponentServerWork = {
                     console.log(response);
                     if (response.code !== 'OK') {
                         vueIndex.$Notice.error({
-                            title: 'Load df Failed',
+                            title: 'Load ls Failed',
                             desc: response.data
                         });
                         this.ls_list = [];
@@ -295,7 +310,47 @@ const handlerOfIndexComponentServerWork = {
                     vueIndex.$Loading.error();
                     vueIndex.$Notice.error({
                         title: 'Ajax Failed',
-                        desc: 'when calling df'
+                        desc: 'when calling ls'
+                    });
+                });
+            },
+            click_shell_command_btn: function () {
+                if (this.target_server_list.length <= 0) {
+                    this.$Message.warning({
+                        content: "Select one or more servers first!",
+                        duration: 2,
+                    });
+                    return;
+                }
+
+                vueIndex.$Loading.start();
+
+                $.ajax({
+                    url: '../api/ServerWorkController/runShellCommand',
+                    method: 'post',
+                    data: {
+                        server_name_list: this.target_server_list,
+                        command: this.shell_command
+                    },
+                    dataType: 'json'
+                }).done((response) => {
+                    console.log(response);
+                    if (response.code !== 'OK') {
+                        vueIndex.$Notice.error({
+                            title: 'Load shell Failed',
+                            desc: response.data
+                        });
+                        this.ls_list = [];
+                        vueIndex.$Loading.error();
+                    } else {
+                        this.shell_command_list = response.data.result_list;
+                        vueIndex.$Loading.finish();
+                    }
+                }).fail(() => {
+                    vueIndex.$Loading.error();
+                    vueIndex.$Notice.error({
+                        title: 'Ajax Failed',
+                        desc: 'when calling shell'
                     });
                 });
             },
@@ -333,7 +388,7 @@ const handlerOfIndexComponentServerWork = {
                 } else {
                     //do nothing
                 }
-            }
+            },
         },
         mounted: function () {
             //console.log(handlerOfIndexComponentServerWork.componentDefinition.template);
