@@ -194,7 +194,7 @@ abstract class AbstractJobEntity extends EntityInterface
     {
         static $start_time = null;
         if (!$start_time) $start_time = date('H_i_s');
-        $jn = preg_replace('/[\s\\\/]/', '_', $this->job_name);
+        $jn = preg_replace('/[\s\/\\\\]/', '_', $this->job_name);
         $prefix = 'cronjob_' . $jn . "_" . $start_time;
         return $prefix;
     }
