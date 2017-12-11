@@ -192,8 +192,10 @@ abstract class AbstractJobEntity extends EntityInterface
 
     public function targetLogPrefix()
     {
+        static $start_time = null;
+        if (!$start_time) $start_time = date('H_i_s');
         $jn = preg_replace('/[\s\\\/]/', '_', $this->job_name);
-        $prefix = 'cronjob_' . $jn . "_" . date('Y-m-d_H_i_s');
+        $prefix = 'cronjob_' . $jn . "_" . $start_time;
         return $prefix;
     }
 
