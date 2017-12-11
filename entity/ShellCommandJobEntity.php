@@ -56,7 +56,7 @@ class ShellCommandJobEntity extends AbstractJobEntity
         // 1. prepare tmp file
         $temp_sh_dir_path = $this->ensureTempDir();
         //$temp_sh_file_path=$temp_sh_dir_path.DIRECTORY_SEPARATOR.md5($this->primaryKey()).".sh";
-        $temp_sh_file_path = tempnam($temp_sh_dir_path, md5($this->primaryKey())) . ".sh";
+        $temp_sh_file_path = tempnam($temp_sh_dir_path, md5($this->primaryKey()));
 
         $written_to_local_temp = @file_put_contents($temp_sh_file_path, $this->command_content);
         if (!$written_to_local_temp) {
