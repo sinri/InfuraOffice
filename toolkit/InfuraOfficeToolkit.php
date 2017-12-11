@@ -42,6 +42,9 @@ class InfuraOfficeToolkit
         return __DIR__ . '/../data/tmp' . ($subPath === null ? '' : DIRECTORY_SEPARATOR . $subPath);
     }
 
+    /**
+     * @var LibLog[]
+     */
     private static $loggers = [];
 
     /**
@@ -58,7 +61,9 @@ class InfuraOfficeToolkit
             }
             self::$loggers[$prefix] = new LibLog($dir, $prefix, $cliUseStdOut);
         }
-        return self::$loggers[$prefix];
+        $logger = self::$loggers[$prefix];
+        $logger->setForceUseStandardOutputInCLI($cliUseStdOut);
+        return $logger;
     }
 
     /**
