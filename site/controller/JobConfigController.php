@@ -9,6 +9,7 @@
 namespace sinri\InfuraOffice\site\controller;
 
 
+use sinri\enoch\core\LibLog;
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\entity\ExplodeLogJobEntity;
@@ -40,6 +41,9 @@ class JobConfigController extends BaseController
             });
         }
         $jobs = array_values($jobs);
+
+        InfuraOfficeToolkit::logger('debug')->log(LibLog::LOG_INFO, __METHOD__, $jobs);
+
         $this->_sayOK(['list' => $jobs]);
     }
 

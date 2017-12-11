@@ -207,6 +207,9 @@ abstract class AbstractJobEntity extends EntityInterface
     {
         $pid = getmypid();
         //echo "[" . date("Y-m-d H:i:s") . "|" . microtime(true) . "] <{$pid}:{$level}> " . $message . PHP_EOL;
+        if (LibRequest::isCLI()) {
+            echo __METHOD__ . '@' . __LINE__ . " [{$level}] " . "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message . ' | ' . json_encode($object) . PHP_EOL;
+        }
         InfuraOfficeToolkit::logger($this->targetLogPrefix(), false)
             ->log($level, "[" . microtime(true) . "] <{$pid}> ({$serverName})" . $message, $object);
     }
