@@ -9,6 +9,7 @@
 namespace sinri\InfuraOffice\entity;
 
 use sinri\enoch\core\LibLog;
+use sinri\enoch\core\LibRequest;
 
 /**
  * Class ShellCommandJobEntity
@@ -71,6 +72,10 @@ class ShellCommandJobEntity extends AbstractJobEntity
         $report = [];
         $affected_servers = $this->affectedServerList();
         foreach ($affected_servers as $server_name) {
+            if (LibRequest::isCLI()) {
+                echo __METHOD__ . '@' . __LINE__ . ' server name: ' . json_encode($server_name) . PHP_EOL;
+            }
+
             // 2.0 ssh prepare
             $report[$server_name] = [
                 "output" => '',
