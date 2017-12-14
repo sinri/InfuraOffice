@@ -190,6 +190,7 @@ const handlerOfIndexComponentUpdateMixedJob = {
                     server_group_list: [],
                     explosion_list: [],
                     antiquity_list: [],
+                    zombie_list: [],
                 };
             },
             add_explosion_list_item: function () {

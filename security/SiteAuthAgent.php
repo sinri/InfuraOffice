@@ -21,7 +21,16 @@ class SiteAuthAgent extends MiddlewareInterface
         return false;
     }
 
-    public function shouldAcceptRequest($path, $method, $params, &$preparedData = null)
+    /**
+     * @param $path
+     * @param $method
+     * @param $params
+     * @param null $preparedData
+     * @param int $responseCode
+     * @param null $error
+     * @return bool
+     */
+    public function shouldAcceptRequest($path, $method, $params, &$preparedData = null, &$responseCode = 200, &$error = null)
     {
         //echo $path.PHP_EOL;//die();
 

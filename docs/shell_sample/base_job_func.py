@@ -65,12 +65,12 @@ def antiquity_func(file_patterns, keep_days):
 
             found = re.search('(\d{4})-?(\d{2})-?(\d{2})', target_file)
             if found:
-                print "found-4: ", found.group()
+                #print "found-4: ", found.group()
                 year = found.group(1)
             else:
                 found = re.search('(\d{2})-?(\d{2})-?(\d{2})', target_file)
                 if found:
-                    print "found-2: ", found.group()
+                    #print "found-2: ", found.group()
                     year = "20" + found.group(1)
                 else:
                     print "No date pattern matched, passover"
