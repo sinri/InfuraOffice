@@ -73,15 +73,14 @@ while (true) {
                 break;
             } elseif ($pid) {
                 //as parent
-                CronJobWorker::log("INFO", "CronJobWorker Created child process [{$pid}]!");
+                CronJobWorker::log("INFO", "CronJobWorker Created child process [{$pid}]!", $job_name);
                 $alive_children[$pid] = $pid;
             } else {
                 //as child
-                $child_pid = getmypid();
+                //$child_pid = getmypid();
                 try {
-                    echo __FILE__ . '@' . __LINE__ . ' Before Execute' . PHP_EOL;
+                    CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] begins");
                     $report = $job->execute();
-                    echo __FILE__ . '@' . __LINE__ . ' After Execute' . PHP_EOL;
                     CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] executed", $report);
                     $job->exportReportToLog($report);
                 } catch (Exception $exception) {
@@ -93,9 +92,11 @@ while (true) {
     }
 
     for ($i = 0; $i < count($alive_children); $i++) {
+        $wait_start_time = microtime(true);
         $done_pid = pcntl_wait($status, (WNOHANG | WUNTRACED));
+        $wait_end_time = microtime(true);
         if ($done_pid) {
-            CronJobWorker::log(LibLog::LOG_INFO, "Child Process [{$done_pid}] confirmed death");
+            CronJobWorker::log(LibLog::LOG_INFO, "Child Process [{$done_pid}] confirmed death, cost seconds: " . ($wait_end_time - $wait_start_time));
             unset($alive_children[$done_pid]);
         }
     }

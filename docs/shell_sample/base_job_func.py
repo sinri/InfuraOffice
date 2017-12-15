@@ -28,6 +28,15 @@ def explosion_func(file_patterns, left_tail_lines, keep_backup):
         print "Found Files:", files
 
         for target_file in files:
+
+            if not os.path.isfile(target_file):
+                print "this is a directory, passover: ", target_file
+                continue
+
+            # (base_path, tail_of_path) = os.path.split(target_file)
+            # print "base path: ", base_path
+            # print "tail of path: ", tail_of_path
+
             print "Ready to explode file: ", target_file
             if keep_backup == 1:
                 backup_file = target_file + "." + time.strftime("%Y%m%d-%H:%M", time.localtime()) + ".bak"
@@ -48,6 +57,10 @@ def explosion_func(file_patterns, left_tail_lines, keep_backup):
     return
 
 
+# run as
+# explosion_func(["/Users/Sinri/Codes/PycharmProjects/fstest/test/*.out"], 10, 1)
+
+
 def antiquity_func(file_patterns, keep_days):
     print file_patterns, keep_days
 
@@ -61,16 +74,24 @@ def antiquity_func(file_patterns, keep_days):
         print "Found Files:", files
 
         for target_file in files:
-            print "Ready to check antiquity file: ", target_file
+            if not os.path.isfile(target_file):
+                print "this is a directory, passover: ", target_file
+                continue
 
-            found = re.search('(\d{4})-?(\d{2})-?(\d{2})', target_file)
+            (base_path, tail_of_path) = os.path.split(target_file)
+            # print "base path: ", base_path
+            # print "tail of path: ", tail_of_path
+
+            print "Ready to check antiquity file: ", tail_of_path, " in ", base_path
+
+            found = re.search('(\d{4})-?(\d{2})-?(\d{2})', tail_of_path)
             if found:
-                #print "found-4: ", found.group()
+                print "found-4: ", found.group()
                 year = found.group(1)
             else:
-                found = re.search('(\d{2})-?(\d{2})-?(\d{2})', target_file)
+                found = re.search('(\d{2})-?(\d{2})-?(\d{2})', tail_of_path)
                 if found:
-                    #print "found-2: ", found.group()
+                    print "found-2: ", found.group()
                     year = "20" + found.group(1)
                 else:
                     print "No date pattern matched, passover"
@@ -88,6 +109,9 @@ def antiquity_func(file_patterns, keep_days):
     return
 
 
+# run as
+# antiquity_func(["/Users/Sinri/Codes/PycharmProjects/fstest/test/*.bak"], 3)
+
 def zombie_func(file_patterns, keep_days):
     print file_patterns, keep_days
 
@@ -102,6 +126,10 @@ def zombie_func(file_patterns, keep_days):
         print "Found Files:", files
 
         for target_file in files:
+            if not os.path.isfile(target_file):
+                print "this is a directory, passover: ", target_file
+                continue
+
             print "Ready to check zombie file: ", target_file
             fd = os.open(target_file, os.O_RDONLY)
             info = os.fstat(fd)
@@ -116,3 +144,5 @@ def zombie_func(file_patterns, keep_days):
 
     return
 
+# run as
+# zombie_func(["/Users/Sinri/Codes/PycharmProjects/fstest/test/*.bak",], 1)
