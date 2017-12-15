@@ -84,21 +84,49 @@ def antiquity_func(file_patterns, keep_days):
 
             print "Ready to check antiquity file: ", tail_of_path, " in ", base_path
 
-            found = re.search('(\d{4})-?(\d{2})-?(\d{2})', tail_of_path)
-            if found:
-                print "found-4: ", found.group()
-                year = found.group(1)
-            else:
-                found = re.search('(\d{2})-?(\d{2})-?(\d{2})', tail_of_path)
-                if found:
-                    print "found-2: ", found.group()
-                    year = "20" + found.group(1)
-                else:
-                    print "No date pattern matched, passover"
-                    continue
+            regex_tuple = (
+                '(?!-)(20\d{2})-([01]\d)-([0-3]\d)',
+                '(20\d{2})([01]\d)([0-3]\d)',
+                '(?!-)(\d{2})-([01]\d)-([0-3]\d)',
+                '(\d{2})([01]\d)([0-3]\d)',
+            )
 
+            found = None
+            for regex_item in regex_tuple:
+                # print "regex item: ", regex_item
+                found = re.search(regex_item, tail_of_path)
+                if not found:
+                    # print "NOT FOUND"
+                    continue
+                else:
+                    # print "GOT: ", found.group()
+                    break
+
+            if not found:
+                print "No date pattern matched, passover"
+                continue
+
+            year = found.group(1)
+            if year.__len__() == 2:
+                year = "20" + year
             month = found.group(2)
             day = found.group(3)
+
+            # found = re.search('(\d{4})-?(\d{2})-?(\d{2})', tail_of_path)
+            # if found:
+            #     print "found-4: ", found.group()
+            #     year = found.group(1)
+            # else:
+            #     found = re.search('(\d{2})-?(\d{2})-?(\d{2})', tail_of_path)
+            #     if found:
+            #         print "found-2: ", found.group()
+            #         year = "20" + found.group(1)
+            #     else:
+            #         print "No date pattern matched, passover"
+            #         continue
+            #
+            # month = found.group(2)
+            # day = found.group(3)
 
             found_date = year + "-" + month + "-" + day
             print "Found date: ", found_date
@@ -110,7 +138,12 @@ def antiquity_func(file_patterns, keep_days):
 
 
 # run as
-# antiquity_func(["/Users/Sinri/Codes/PycharmProjects/fstest/test/*.bak"], 3)
+# antiquity_func([
+#     "/Users/Sinri/Codes/PycharmProjects/fstest/test/*.bak",
+#     "/Users/Sinri/Codes/PycharmProjects/fstest/test/*/*.bak"
+# ],
+#     3)
+
 
 def zombie_func(file_patterns, keep_days):
     print file_patterns, keep_days
