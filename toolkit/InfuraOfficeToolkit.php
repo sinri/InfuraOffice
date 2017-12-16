@@ -76,4 +76,17 @@ class InfuraOfficeToolkit
         $list = glob($dir . '/log-cronjob_' . $job_name . '*.log');
         return $list;
     }
+
+    public static function convertBytesToReadable($size)
+    {
+        $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
+        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[intval($i)];
+    }
+
+    public static function cliMemoryDebug($placeNote = '')
+    {
+        if (LibRequest::isCLI()) {
+            echo "cliMemoryDebug.RealUsage=" . self::convertBytesToReadable(memory_get_usage(true)) . "; " . $placeNote . PHP_EOL; // 123 kb
+        }
+    }
 }

@@ -21,6 +21,7 @@ use sinri\enoch\helper\CommonHelper;
  * @property string platform_name
  * @property string platform_device_id
  * @property string platform_area
+ * @property string slk_paths
  */
 class ServerEntity extends EntityInterface
 {
@@ -39,6 +40,7 @@ class ServerEntity extends EntityInterface
             "platform_name" => null,
             "platform_device_id" => null,
             "platform_area" => null,
+            "slk_paths" => '',
         ];
         if ($keyChain === null) {
             return $dic;

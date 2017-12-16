@@ -44,6 +44,8 @@ class ServerManageController extends BaseController
             $platform_name = LibRequest::getRequest("platform_name");
             $platform_area = LibRequest::getRequest("platform_area");
 
+            $slk_paths = LibRequest::getRequest("slk_paths", []);
+
             CommonHelper::assertNotEmpty($server_name, 'server name should not be empty');
 
             $entity = new ServerEntity([
@@ -53,6 +55,7 @@ class ServerManageController extends BaseController
                 "platform_name" => $platform_name,
                 "platform_device_id" => $platform_device_id,
                 "platform_area" => $platform_area,
+                "slk_paths" => $slk_paths,
             ]);
 
             $done = $this->serverLibrary->writeEntity($entity);

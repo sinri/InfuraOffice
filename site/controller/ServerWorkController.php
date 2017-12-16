@@ -10,6 +10,7 @@ namespace sinri\InfuraOffice\site\controller;
 
 
 use sinri\enoch\core\LibRequest;
+use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\handler\ShellCommandHandler;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DaemonQueryLibrary;
@@ -203,6 +204,42 @@ class ServerWorkController extends BaseController
             }
 
             $this->_sayOK(['result_list' => $server_command_results]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function listSLKFiles()
+    {
+        try {
+            $server_name = LibRequest::getRequest("server_name");
+
+            $serverEntity = (new ServerLibrary())->readEntityByName($server_name);
+            CommonHelper::assertNotEmpty($serverEntity, 'no such server');
+
+            $patterns = [];
+            if (is_string($serverEntity->slk_paths)) {
+                $patterns = preg_split('/\s*[\r\n]\s*/', $serverEntity->slk_paths);
+            }
+
+            $files = [];
+            foreach ($patterns as $pattern) {
+                $pattern = trim($pattern);
+                if (strlen($pattern) <= 0) continue;
+
+                $command = "sudo find / -path " . escapeshellarg($pattern);
+                $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
+
+                $daemonQueryLibrary = new DaemonQueryLibrary();
+                $result = @$daemonQueryLibrary->query($query);
+
+                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+                $list = explode("\n", $output);
+                $list = array_filter($list);
+                $files = array_merge($files, $list);
+            }
+
+            $this->_sayOK(['files' => $files]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }

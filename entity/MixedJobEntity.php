@@ -11,6 +11,7 @@ namespace sinri\InfuraOffice\entity;
 
 use sinri\enoch\core\LibLog;
 use sinri\enoch\helper\CommonHelper;
+use sinri\InfuraOffice\toolkit\InfuraOfficeToolkit;
 
 /**
  * Class TrashJobEntity
@@ -64,6 +65,8 @@ class MixedJobEntity extends AbstractJobEntity
         $command_content = file_get_contents(__DIR__ . '/../docs/shell_sample/base_job_func.py');
         $command_content .= PHP_EOL . PHP_EOL;
 
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
+
         if (!empty($this->explosion_list)) {
             foreach ($this->explosion_list as $explosion_config) {
                 $files = CommonHelper::safeReadArray($explosion_config, self::JobConfigKeyOfFiles, []);
@@ -78,6 +81,7 @@ class MixedJobEntity extends AbstractJobEntity
                 $command_content .= intval($keep_tail_lines, 10) . "," . intval($keep_backup, 10) . ")" . PHP_EOL;
             }
         }
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         if (!empty($this->antiquity_list)) {
             foreach ($this->antiquity_list as $antiquity_config) {
                 $files = CommonHelper::safeReadArray($antiquity_config, self::JobConfigKeyOfFiles, []);
@@ -91,6 +95,7 @@ class MixedJobEntity extends AbstractJobEntity
                 $command_content .= intval($not_modified_days, 10) . ")" . PHP_EOL;
             }
         }
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         if (!empty($this->zombie_list)) {
             foreach ($this->zombie_list as $zombie_config) {
                 $files = CommonHelper::safeReadArray($zombie_config, self::JobConfigKeyOfFiles, []);
@@ -104,20 +109,25 @@ class MixedJobEntity extends AbstractJobEntity
                 $command_content .= intval($not_accessed_days, 10) . ")" . PHP_EOL;
             }
         }
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         //$this->executeLog(LibLog::LOG_DEBUG, '-', $command_content);
         $written_to_local_temp = @file_put_contents($temp_sh_file_path, $command_content);
         if (!$written_to_local_temp) {
             $error = "Cannot write local temp file: " . $temp_sh_file_path;
             $this->executeLog(LibLog::LOG_ERROR, '-', $error);
             throw new \Exception($error);
+        } else {
+            $this->executeLog(LibLog::LOG_INFO, '-', 'Local temp file: ', $temp_sh_file_path);
         }
 
         $remote_sh_file_path = '/tmp/' . md5($this->JobType() . '-' . $this->primaryKey()) . '.' . time() . '.py';
 
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         // 2. remote each
         $report = [];
         $affected_servers = $this->affectedServerList();
         foreach ($affected_servers as $server_name) {
+            InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
             // 2.0 ssh prepare
             $report[$server_name] = [
                 "output" => '',
@@ -154,6 +164,7 @@ class MixedJobEntity extends AbstractJobEntity
             } catch (\Exception $exception) {
                 $report[$server_name]['error'] = "JOB[{$this->job_name}]-EXCEPTION! " . $exception->getMessage();
             }
+            InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         }
 
         // 3. unlink
@@ -166,6 +177,8 @@ class MixedJobEntity extends AbstractJobEntity
         }
 
         $this->executeLog(LibLog::LOG_DEBUG, '-', 'REPORT' . PHP_EOL . print_r($report, true) . PHP_EOL);
+
+        InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
 
         return $report;
     }

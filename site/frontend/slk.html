@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SLK@IO</title>
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/vue/dist/vue.js"></script>
+    <script src="node_modules/js-cookie/src/js.cookie.js"></script>
+
+    <script src="static/InfuraOfficeFrontendHelper.js"></script>
+
+    <script src="node_modules/iview/dist/iview.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="node_modules/iview/dist/styles/iview.css"/>
+
+    <script src="static/slk.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/slk.css"/>
+
+</head>
+<body>
+<div id="app_slk">
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24"><h1>SinriLogKeeper in InfuraOffice</h1></i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="4">
+            <i-select v-model="target_server" @on-change="on_server_changed" transfer filterable>
+                <i-option v-for="item in server_list" :value="item.key">{{item.label}}</i-option>
+            </i-select>
+        </i-col>
+        <i-col span="20">
+            <i-select v-model="target_file" :loading="file_select_loading" transfer filterable>
+                <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
+            </i-select>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        {{target_server}} {{target_file}}
+    </Row>
+</div>
+</body>
+</html>

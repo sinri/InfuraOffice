@@ -46,6 +46,8 @@ const handlerOfIndexComponentServerManage = {
         '<Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>' +
         '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
         '</Select>' +
+        '<div style="margin: 5px">SinriLogKeeper Paths:</div>' +
+        '<i-input style="margin: 5px" v-model="edit_slk_paths" type="textarea"></i-input>' +
         '<div style="margin:5px">' +
         'Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub {{edit_ssh_user}}@{{edit_connect_ip}};' +
         '</div>' +
@@ -129,6 +131,7 @@ const handlerOfIndexComponentServerManage = {
                 edit_platform_name: '',
                 edit_platform_device_id: '',
                 edit_platform_area: '',
+                edit_slk_paths: '',
                 platform_area_list: AliyunRegionDictionary,
                 filter_key: '',
             }
@@ -206,6 +209,7 @@ const handlerOfIndexComponentServerManage = {
                 this.edit_platform_name = '';
                 this.edit_platform_device_id = '';
                 this.edit_platform_area = '';
+                this.edit_slk_paths = '';
                 this.show_edit_server = true;
             },
             edit_server: function (row) {
@@ -215,6 +219,7 @@ const handlerOfIndexComponentServerManage = {
                 this.edit_platform_name = row.platform_name;
                 this.edit_platform_device_id = row.platform_device_id;
                 this.edit_platform_area = row.platform_area;
+                this.edit_slk_paths = row.slk_paths;
                 this.show_edit_server = true;
             },
             modal_edit_server: function () {
@@ -231,6 +236,7 @@ const handlerOfIndexComponentServerManage = {
                         "platform_name": this.edit_platform_name,
                         "platform_device_id": this.edit_platform_device_id,
                         "platform_area": this.edit_platform_area,
+                        "slk_paths": this.edit_slk_paths,
                     },
                     dataType: 'json'
                 }).done((response) => {
