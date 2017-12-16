@@ -127,6 +127,7 @@ class MixedJobEntity extends AbstractJobEntity
         $report = [];
         $affected_servers = $this->affectedServerList();
         foreach ($affected_servers as $server_name) {
+            $this->executeLog(LibLog::LOG_INFO, $server_name, "work start");
             InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
             // 2.0 ssh prepare
             $report[$server_name] = [
@@ -136,21 +137,25 @@ class MixedJobEntity extends AbstractJobEntity
 //                "remote_file"=>'',
             ];
             try {
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "work prepare ssh2");
                 $ssh = self::createSSHForServer($server_name);
-
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "work prepare sftp");
                 $ssh->establishSFTP();
 
                 // 2.1 scp to remote
                 //$scp_done = $ssh->scpSend($temp_sh_file_path, $remote_sh_file_path);
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "to send script through sftp");
                 $scp_done = $ssh->sftpSend($temp_sh_file_path, $remote_sh_file_path, 0777);
                 if (!$scp_done) {
+                    $this->executeLog(LibLog::LOG_ERROR, $server_name, "SCP FAILED");
                     $report[$server_name]['error'] = "SCP FAILED when writing into remote file path " . $remote_sh_file_path;
                     continue;
                 }
 
                 // 2.2 run shell
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "to run script through ssh2 exec");
                 $report[$server_name]['output'] = $ssh->exec("sudo python " . escapeshellarg($remote_sh_file_path) . " 2>&1");
-
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "script executed and organizing output");
                 $shell_return_var = $ssh->getLastExecReturnVar();// exec("echo $?");
                 if ($shell_return_var != 0) {
                     $report[$server_name]['error'] = 'Shell Return Value is ' . $shell_return_var;
@@ -161,6 +166,7 @@ class MixedJobEntity extends AbstractJobEntity
                 // 2.3 unlink remote file
 //                $report[$server_name]['remote_file']=$remote_sh_file_path;
                 $ssh->sftpUnlink($remote_sh_file_path);
+                $this->executeLog(LibLog::LOG_INFO, $server_name, "work over");
             } catch (\Exception $exception) {
                 $this->executeLog(LibLog::LOG_ERROR, $server_name, "JOB[{$this->job_name}]-EXCEPTION! ", $exception->getMessage());
                 $report[$server_name]['error'] = "JOB[{$this->job_name}]-EXCEPTION! " . $exception->getMessage();

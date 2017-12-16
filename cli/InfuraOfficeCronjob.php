@@ -93,7 +93,7 @@ while (true) {
 
     for ($i = 0; $i < count($alive_children); $i++) {
         $wait_start_time = microtime(true);
-        $done_pid = pcntl_wait($status, (WNOHANG | WUNTRACED));
+        $done_pid = pcntl_wait($status, WNOHANG);//(WNOHANG | WUNTRACED)
         $wait_end_time = microtime(true);
         if ($done_pid) {
             CronJobWorker::log(LibLog::LOG_INFO, "Child Process [{$done_pid}] confirmed death, cost seconds: " . ($wait_end_time - $wait_start_time));
