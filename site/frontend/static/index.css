@@ -49,3 +49,7 @@ body {
 .highlighted_box {
 
 }
+
+#menu_pane i.ivu-icon {
+    width: 14px;
+}
