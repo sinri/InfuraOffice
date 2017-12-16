@@ -162,6 +162,7 @@ class MixedJobEntity extends AbstractJobEntity
 //                $report[$server_name]['remote_file']=$remote_sh_file_path;
                 $ssh->sftpUnlink($remote_sh_file_path);
             } catch (\Exception $exception) {
+                $this->executeLog(LibLog::LOG_ERROR, $server_name, "JOB[{$this->job_name}]-EXCEPTION! ", $exception->getMessage());
                 $report[$server_name]['error'] = "JOB[{$this->job_name}]-EXCEPTION! " . $exception->getMessage();
             }
             InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
