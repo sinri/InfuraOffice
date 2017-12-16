@@ -28,7 +28,7 @@ class ServerGroupLibrary extends AbstractEntityLibrary
     public function entityList()
     {
         $list = parent::entityList();
-        $list = array_merge([], $list);
+        $list = array_merge([$this->theServerGroupEntityOfAll()], $list);
         return $list;
     }
     /**
@@ -36,7 +36,14 @@ class ServerGroupLibrary extends AbstractEntityLibrary
      */
     public function entityArrayList()
     {
-        return parent::entityArrayList();
+        $list = parent::entityArrayList();
+        $entity_of_all = $this->theServerGroupEntityOfAll();
+        $entity_array = [];
+        foreach ($entity_of_all->propertiesAndDefaults() as $key => $default_value) {
+            $entity_array[$key] = $entity_of_all->$key;
+        }
+        $list[] = $entity_array;
+        return $list;
     }
 
     /**
@@ -87,5 +94,14 @@ class ServerGroupLibrary extends AbstractEntityLibrary
                 $done = $this->writeEntity($group);
             }
         }
+    }
+
+    public function theServerGroupEntityOfAll()
+    {
+        $entity = new ServerGroupEntity([
+            'group_name' => 'all',
+            'server_name_list' => (new ServerLibrary())->entityPKList(),
+        ]);
+        return $entity;
     }
 }

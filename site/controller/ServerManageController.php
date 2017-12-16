@@ -92,6 +92,7 @@ class ServerManageController extends BaseController
             $server_name_list = LibRequest::getRequest("server_name_list", []);
 
             CommonHelper::assertNotEmpty($group_name, 'server group name should not be empty');
+            if ($group_name === 'all') throw new \Exception("You cannot use a reserved server group name!");
 
             $entity = new ServerGroupEntity(['group_name' => $group_name, 'server_name_list' => $server_name_list]);
             $done = $this->serverGroupLibrary->writeEntity($entity);
@@ -109,6 +110,7 @@ class ServerManageController extends BaseController
         try {
             $group_name = LibRequest::getRequest("group_name");
             CommonHelper::assertNotEmpty($group_name, 'server group name should not be empty');
+            if ($group_name === 'all') throw new \Exception("You cannot use a reserved server group name!");
             $done = $this->serverGroupLibrary->removeEntity($group_name);
             if (!$done) {
                 throw new \Exception("cannot remove server group");

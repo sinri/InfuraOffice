@@ -29,6 +29,20 @@ abstract class AbstractEntityLibrary
     }
 
     /**
+     * @return string[]
+     */
+    public function entityPKList()
+    {
+        $entity_names = SecurityDataAgent::getObjectList($this->getAspectName(), false);
+        $list = [];
+        foreach ($entity_names as $entity_name_hashed) {
+            $entity = $this->readEntityByNameHashed($entity_name_hashed);
+            $list[] = $entity->primaryKey();
+        }
+        return $list;
+    }
+
+    /**
      * @return array
      */
     public function entityArrayList()
