@@ -50,10 +50,11 @@ class MixedJobEntity extends AbstractJobEntity
     }
 
     /**
+     * @param null $targetServerName
      * @return mixed
      * @throws \Exception
      */
-    public function execute()
+    public function execute($targetServerName = null)
     {
         $this->assertNotRunInLastMinute();
         $this->recordExecution();
@@ -125,7 +126,11 @@ class MixedJobEntity extends AbstractJobEntity
         InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);
         // 2. remote each
         $report = [];
-        $affected_servers = $this->affectedServerList();
+        if ($targetServerName === null) {
+            $affected_servers = $this->affectedServerList();
+        } else {
+            $affected_servers = [$targetServerName];
+        }
         foreach ($affected_servers as $server_name) {
             $this->executeLog(LibLog::LOG_INFO, $server_name, "work start");
             InfuraOfficeToolkit::cliMemoryDebug(__METHOD__ . '@' . __LINE__);

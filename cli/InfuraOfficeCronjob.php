@@ -66,27 +66,30 @@ while (true) {
         CronJobWorker::log(LibLog::LOG_INFO, "It is time to work now", array_keys($jobs));
         CronJobWorker::log(LibLog::LOG_DEBUG, "Current worker process count", count($alive_children));
         foreach ($jobs as $job_name => $job) {
-            $pid = pcntl_fork();
-            if ($pid == -1) {
-                //failed
-                CronJobWorker::log(LibLog::LOG_ERROR, "Cannot create child process to handle job, stop trying.", $job_name);
-                break;
-            } elseif ($pid) {
-                //as parent
-                CronJobWorker::log("INFO", "CronJobWorker Created child process [{$pid}]!", $job_name);
-                $alive_children[$pid] = $pid;
-            } else {
-                //as child
-                //$child_pid = getmypid();
-                try {
-                    CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] begins");
-                    $report = $job->execute();
-                    CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] executed", $report);
-                    $job->exportReportToLog($report);
-                } catch (Exception $exception) {
-                    CronJobWorker::log(LibLog::LOG_ERROR, "Job [{$job_name}] failed", $exception->getMessage());
+            $servers = $job->affectedServerList();
+            foreach ($servers as $server_name) {
+                $pid = pcntl_fork();
+                if ($pid == -1) {
+                    //failed
+                    CronJobWorker::log(LibLog::LOG_ERROR, "Cannot create child process to handle job, stop trying.", $job_name);
+                    break;
+                } elseif ($pid) {
+                    //as parent
+                    CronJobWorker::log("INFO", "CronJobWorker Created child process [{$pid}]!", $job_name);
+                    $alive_children[$pid] = $pid;
+                } else {
+                    //as child
+                    //$child_pid = getmypid();
+                    try {
+                        CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] begins");
+                        $report = $job->execute($server_name);
+                        CronJobWorker::log(LibLog::LOG_INFO, "Job [{$job_name}] executed", $report);
+                        $job->exportReportToLog($report);
+                    } catch (Exception $exception) {
+                        CronJobWorker::log(LibLog::LOG_ERROR, "Job [{$job_name}] failed", $exception->getMessage());
+                    }
+                    exit();
                 }
-                exit();
             }
         }
     }

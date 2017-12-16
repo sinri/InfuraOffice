@@ -36,10 +36,11 @@ class RemoveAntiquityJobEntity extends AbstractJobEntity
     }
 
     /**
+     * @param null $targetServerName
      * @return array
      * @throws \Exception
      */
-    public function execute()
+    public function execute($targetServerName = null)
     {
         $this->assertNotRunInLastMinute();
         $this->recordExecution();
@@ -63,7 +64,11 @@ class RemoveAntiquityJobEntity extends AbstractJobEntity
         $deadline = date($this->date_format, strtotime((-$this->keep_days) . ' day'));
 
         $report = [];
-        $affected_servers = $this->affectedServerList();
+        if ($targetServerName === null) {
+            $affected_servers = $this->affectedServerList();
+        } else {
+            $affected_servers = [$targetServerName];
+        }
         foreach ($affected_servers as $server_name) {
             // 2.0 ssh prepare
             $report[$server_name] = [

@@ -25,10 +25,11 @@ class ShellCommandJobEntity extends AbstractJobEntity
     }
 
     /**
+     * @param null $targetServerName
      * @return array
      * @throws \Exception
      */
-    public function execute()
+    public function execute($targetServerName = null)
     {
         $this->assertNotRunInLastMinute();
         $this->recordExecution();
@@ -49,7 +50,11 @@ class ShellCommandJobEntity extends AbstractJobEntity
 
         // 2. remote each
         $report = [];
-        $affected_servers = $this->affectedServerList();
+        if ($targetServerName === null) {
+            $affected_servers = $this->affectedServerList();
+        } else {
+            $affected_servers = [$targetServerName];
+        }
         foreach ($affected_servers as $server_name) {
             $this->executeLog(LibLog::LOG_INFO, "Begin to handle server", $server_name);
 

@@ -83,9 +83,10 @@ abstract class AbstractJobEntity extends EntityInterface
     }
 
     /**
+     * @param null $targetServerName
      * @return mixed
      */
-    abstract public function execute();
+    abstract public function execute($targetServerName = null);
 
     /**
      * @return string[]
