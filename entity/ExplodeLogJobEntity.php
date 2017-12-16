@@ -38,10 +38,11 @@ class ExplodeLogJobEntity extends AbstractJobEntity
     }
 
     /**
+     * @param null $targetServerName
      * @return mixed|void
      * @throws \Exception
      */
-    public function execute()
+    public function execute($targetServerName = null)
     {
         $this->assertNotRunInLastMinute();
         $this->recordExecution();

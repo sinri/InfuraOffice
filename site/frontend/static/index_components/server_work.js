@@ -16,7 +16,7 @@ const handlerOfIndexComponentServerWork = {
         '</div>' +
         '<h3>Select Servers ...</h3>' +
         '<div>' +
-        '<Select v-model="target_server_list" multiple style="width:260px">' +
+        '<Select v-model="target_server_list" multiple filterable>' +
         '<Option v-for="item in full_server_list" :value="item.key" :key="item.key">{{ item.label }}</Option>' +
         '</Select>' +
         '</div>' +
