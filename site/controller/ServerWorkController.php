@@ -244,4 +244,61 @@ class ServerWorkController extends BaseController
             $this->_sayFail($exception->getMessage());
         }
     }
+
+    public function readSLKLogs()
+    {
+        try {
+            $server_name = LibRequest::getRequest("target_server", '');
+            $target_file = LibRequest::getRequest("target_file", '');
+            $range_start = LibRequest::getRequest("range_start", '');
+            $range_end = LibRequest::getRequest("range_end", '');
+            $around_lines = LibRequest::getRequest("around_lines", '0');
+            $is_case_sensitive = LibRequest::getRequest("is_case_sensitive", 'NO');
+            $keyword = LibRequest::getRequest("keyword", '');
+
+            // cat -n '/var/log/tomcat7/catalina.out'|awk '{if($1>=26726 && $1<=27726) print $0}'|grep -C 10 -m 2000 ''
+            // cat -n '/var/log/tomcat7/catalina.out'|awk '{if($1>=28773 && $1<=29773) print $0}'|grep -C 10 -m 2000 'xx'
+
+            // get total lines
+            $command = 'wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
+            $daemonQueryLibrary = new DaemonQueryLibrary();
+            $result = @$daemonQueryLibrary->query($query);
+            $total_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
+            $total_lines = intval($total_lines, 10);
+
+            if (empty($range_start)) $range_start = 0;
+            else {
+                $range_start = intval($range_start, 10);
+                if ($range_start < 0) {
+                    $range_start = $total_lines - $range_start;
+                }
+            }
+
+            if (empty($range_end)) $range_end = $total_lines;
+            else {
+                $range_end = intval($range_end, 10);
+                if ($range_end < 0) {
+                    $range_end = $total_lines - $range_end;
+                }
+            }
+
+            $around_lines = intval($around_lines, 10);
+
+            $command = 'cat -n ' . escapeshellarg($target_file)
+                . '|awk \'{if($1>=' . $range_start . ' && $1<=' . $range_end . ') print $0}\''
+                . '|grep -C ' . intval($around_lines) . ' -m 2000 ' . escapeshellarg($keyword);
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
+
+            $daemonQueryLibrary = new DaemonQueryLibrary();
+            $result = @$daemonQueryLibrary->query($query);
+
+            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+            $list = explode("\n", $output);
+
+            $this->_sayOK(['output' => $output, 'lines' => $list, 'total_lines' => $total_lines, 'command' => $command]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
 }

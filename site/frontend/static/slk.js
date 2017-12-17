@@ -17,6 +17,13 @@ $(document).ready(function () {
             target_file: '',
             file_list: [],
             file_select_loading: false,
+            range_start: '',
+            range_end: '',
+            around_lines: 10,
+            keyword: '',
+            is_case_sensitive: false,
+            log_output: '',
+            query_info: 'Not Searched Yet',
         },
         methods: {
             load_server_list: function () {
@@ -81,6 +88,35 @@ $(document).ready(function () {
             on_server_changed: function (server_name) {
                 console.log(server_name);
                 this.load_server_slk_files(server_name);
+            },
+            on_slk_search: function () {
+                $.ajax({
+                    url: '../api/ServerWorkController/readSLKLogs',
+                    method: 'post',
+                    data: {
+                        target_server: this.target_server,
+                        target_file: this.target_file,
+                        range_start: this.range_start,
+                        range_end: this.range_end,
+                        around_lines: this.around_lines,
+                        is_case_sensitive: this.is_case_sensitive,
+                        keyword: this.keyword,
+                    },
+                    dataType: 'json'
+                }).done((response) => {
+                    if (response.code !== 'OK') {
+                        this.$Message.error(response.data);
+                    } else {
+                        console.log(response.data);
+                        this.log_output = response.data.output;
+                        this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
+                            'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
+                            "\n" +
+                            "Command: " + response.data.command;
+                    }
+                }).fail(() => {
+                    this.$Message.error("ajax failed");
+                })
             }
         },
         mounted: function () {
