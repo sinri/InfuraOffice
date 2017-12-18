@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SLK@IO</title>
+    <title>Embedded SinriLogKeeper in InfuraOffice</title>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/vue/dist/vue.js"></script>
@@ -21,8 +21,17 @@
 <div id="app_slk">
     <Row type="flex" justify="center" align="middle">
         <i-col span="20">
-            <Row type="flex" justify="center" align="middle">
-                <i-col span="24"><h1>SinriLogKeeper in InfuraOffice</h1></i-col>
+            <Row type="flex" justify="center" align="middle" style="border-bottom: 1px solid lightgrey">
+                <i-col span="20">
+                    <h1>SinriLogKeeper
+                        <small>Embedded Version in InfuraOffice</small>
+                    </h1>
+                </i-col>
+                <i-col span="4">
+                    <i-button style="display: inline-block;float: right" icon="log-out" shape="circle" size="small"
+                              v-on:click="logout">Logout
+                    </i-button>
+                </i-col>
             </Row>
             <Row type="flex" justify="space-between" align="middle">
                 <i-col span="1"><span>Server:</span></i-col>

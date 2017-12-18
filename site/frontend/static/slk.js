@@ -26,6 +26,11 @@ $(document).ready(function () {
             query_info: 'Not Searched Yet',
         },
         methods: {
+            logout: function () {
+                console.log("logout");
+                CookieHelper.setToken(null);
+                window.location.href = "login.html";
+            },
             load_server_list: function () {
                 $.ajax({
                     url: '../api/ServerWorkController/servers',

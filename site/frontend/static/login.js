@@ -53,7 +53,11 @@ $(document).ready(function () {
                         content: 'User validated. ' + last_login_text + " Soon open main page.",
                         duration: 1,
                         onClose: () => {
-                            window.location.href = "index.html";
+                            if (response.data.role === 'SLK_READER') {
+                                window.location.href = "slk.html"
+                            } else {
+                                window.location.href = "index.html";
+                            }
                         }
                     });
                 }).fail((err) => {

@@ -92,6 +92,7 @@ class LoginController extends BaseController
             $this->_sayOK([
                 "token" => $token,
                 "username" => $user_entity->username,
+                'role' => $user_entity->role,
                 "life" => $life,
                 "last_login_time" => date('Y-m-d H:i:s', $last_login_time),
                 "last_login_ip" => $last_login_ip,
