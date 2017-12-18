@@ -69,6 +69,7 @@ $(document).ready(function () {
                     console.log(response);
                     if (response.code !== 'OK') {
                         this.$Message.error(response.data);
+                        this.file_list = [];
                     } else {
                         let l = [];
                         for (let i = 0; i < response.data.files.length; i++) {
@@ -81,6 +82,7 @@ $(document).ready(function () {
                     }
                 }).fail(() => {
                     this.$Message.error("infura_server_select ajax failed");
+                    this.file_list = [];
                 }).always(() => {
                     this.file_select_loading = false;
                 })
@@ -106,6 +108,8 @@ $(document).ready(function () {
                 }).done((response) => {
                     if (response.code !== 'OK') {
                         this.$Message.error(response.data);
+                        this.query_info = response.data;
+                        this.log_output = '';
                     } else {
                         console.log(response.data);
                         this.log_output = response.data.output;
@@ -116,6 +120,8 @@ $(document).ready(function () {
                     }
                 }).fail(() => {
                     this.$Message.error("ajax failed");
+                    this.query_info = "ajax failed";
+                    this.log_output = '';
                 })
             }
         },

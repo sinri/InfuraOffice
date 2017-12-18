@@ -10,7 +10,7 @@ const handlerOfIndexComponentUpdateMixedJob = {
             <Row>\
                 <i-col span="16">\
                     <span>Select to update: </span> \
-                    <Select style="width: 200px" v-model="edit_job_name">\
+                    <Select style="width: 200px" v-model="edit_job_name" filterable>\
                         <Option v-for="item in job_list" :value="item.job_name" :key="item.job_name">{{ item.job_name }}</Option>\
                     </Select> \
                     <Button v-on:click="on_load_btn">Load</Button>\

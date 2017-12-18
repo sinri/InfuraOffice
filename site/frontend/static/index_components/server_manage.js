@@ -46,7 +46,7 @@ const handlerOfIndexComponentServerManage = {
         '<Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>' +
         '<Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>' +
         '</Select>' +
-        '<div style="margin: 5px">SinriLogKeeper Paths:</div>' +
+        '<div style="margin: 5px">SinriLogKeeper Paths (Note: Never mix symbolic links in path!):</div>' +
         '<i-input style="margin: 5px" v-model="edit_slk_paths" type="textarea"></i-input>' +
         '<div style="margin:5px">' +
         'Guess you need this: ssh-copy-id -i ~/.ssh/id_rsa.pub {{edit_ssh_user}}@{{edit_connect_ip}};' +
