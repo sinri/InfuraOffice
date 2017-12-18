@@ -27,6 +27,7 @@ class UserEntity extends EntityInterface
     const ROLE_ADMIN = "ADMIN";
     const ROLE_WORKER = "WORKER";
     const ROLE_WATCHER = "WATCHER";
+    const ROLE_SLK_READER = "SLK_READER";
 
     public function __construct($json)
     {

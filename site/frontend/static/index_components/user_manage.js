@@ -42,6 +42,7 @@ const handlerOfIndexComponentUserManage = {
                     {value: 'WATCHER', label: 'ROLE: WATCHER'},
                     {value: 'WORKER', label: 'ROLE: WORKER'},
                     {value: 'ADMIN', label: 'ROLE: ADMIN'},
+                    {value: 'SLK_READER', label: 'ROLE: SinriLogKeeper READER'},
                 ],
                 has_error: false,
                 error_message: ""
