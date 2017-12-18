@@ -12,6 +12,7 @@ namespace sinri\InfuraOffice\site\controller;
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
 use sinri\InfuraOffice\cli\handler\ShellCommandHandler;
+use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\DaemonQueryLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
 use sinri\InfuraOffice\toolkit\BaseController;
@@ -21,7 +22,19 @@ class SLKController extends BaseController
     public function __construct($initData = null)
     {
         parent::__construct($initData);
-        //$this->isCurrentUserRole([UserEntity::ROLE_ADMIN, UserEntity::ROLE_WORKER], true);
+        $this->isCurrentUserRole([
+            UserEntity::ROLE_ADMIN, UserEntity::ROLE_WORKER, UserEntity::ROLE_WATCHER, UserEntity::ROLE_SLK_READER
+        ], true);
+    }
+
+    public function servers()
+    {
+        try {
+            $servers = (new ServerLibrary())->entityArrayList();
+            $this->_sayOK(['list' => $servers]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
     }
 
     public function listSLKFiles()

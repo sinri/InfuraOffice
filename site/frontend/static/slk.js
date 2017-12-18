@@ -33,7 +33,7 @@ $(document).ready(function () {
             },
             load_server_list: function () {
                 $.ajax({
-                    url: '../api/ServerWorkController/servers',
+                    url: '../api/SLKController/servers',
                     method: 'get',
                     dataType: 'json'
                 }).done((response) => {
