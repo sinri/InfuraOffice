@@ -44,7 +44,7 @@ class DaemonQueryLibrary
             fwrite($client, $content);
             fflush($client);
             $response = '';
-            DaemonHelper::clientLog("INFO", "Request Sent");
+            DaemonHelper::clientLog("INFO", "Request Sent", $content);
             $one_month_size = 1024;
             while (!feof($client)) {
                 DaemonHelper::clientLog("DEBUG", "Waiting for response... one month size = {$one_month_size}");

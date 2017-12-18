@@ -59,7 +59,7 @@ $(document).ready(function () {
             load_server_slk_files: function (server_name) {
                 this.file_select_loading = true;
                 $.ajax({
-                    url: '../api/ServerWorkController/listSLKFiles',
+                    url: '../api/SLKController/listSLKFiles',
                     method: 'post',
                     data: {
                         server_name: server_name,
@@ -91,7 +91,7 @@ $(document).ready(function () {
             },
             on_slk_search: function () {
                 $.ajax({
-                    url: '../api/ServerWorkController/readSLKLogs',
+                    url: '../api/SLKController/readSLKLogs',
                     method: 'post',
                     data: {
                         target_server: this.target_server,
