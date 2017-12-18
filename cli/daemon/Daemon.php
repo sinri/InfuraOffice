@@ -29,6 +29,9 @@ class Daemon
         $this->max_workers = InfuraOfficeToolkit::readConfig(['daemon', 'max_workers'], 0);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function listen()
     {
         $this->socketAgent->runServer(function ($client) {
@@ -105,9 +108,17 @@ class Daemon
                 }
                 return SocketAgent::SERVER_CALLBACK_COMMAND_NONE;
             } elseif ($code == '200') {
-                fwrite($client, json_encode(['code' => $code, 'data' => $responseBody]));
-                fflush($client);
+                $send_content = json_encode(['code' => $code, 'data' => $responseBody]);
+                for ($written = 0; $written < strlen($send_content); $written += $partWrittenBytes) {
+                    $partWrittenBytes = fwrite($client, substr($send_content, $written));
+                    if ($partWrittenBytes === false) {
+                        DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed");
+                        break;
+                    }
+                }
+                //fflush($client);
                 $closed = fclose($client);
+                DaemonHelper::log("DEBUG", "Writing Over. Total " . strlen($send_content) . " bytes while " . $written . " bytes written!");
                 DaemonHelper::log("DEBUG", "Try to close client [{$pairName}] and die... closed? " . json_encode($closed));
                 exit(0);
             } else {

@@ -31,6 +31,7 @@ class DaemonQueryLibrary
      * @param $content
      * @param int $timeoutInSeconds
      * @return array|string
+     * @throws \Exception
      */
     public function query($content, $timeoutInSeconds = 1)
     {

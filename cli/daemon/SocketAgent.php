@@ -94,6 +94,7 @@ class SocketAgent
      * @param callable|null $requestHandler (resource $client)
      * @param callable|null $bindStatusHandler (bool $bind_ok)
      * @param callable|null $specialHandler (resource $serverSocket, int $signal)
+     * @throws \Exception
      */
     public function runServer($requestHandler = null, $bindStatusHandler = null, $specialHandler = null)
     {
@@ -158,6 +159,7 @@ class SocketAgent
     /**
      * @param callable|null $callback
      * @return mixed|string
+     * @throws \Exception
      */
     public function runClient($callback = null)
     {
