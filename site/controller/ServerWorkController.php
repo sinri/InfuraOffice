@@ -227,7 +227,7 @@ class ServerWorkController extends BaseController
                 $pattern = trim($pattern);
                 if (strlen($pattern) <= 0) continue;
 
-                $command = "sudo find / -path " . escapeshellarg($pattern);
+                $command = "sudo locate " . escapeshellarg($pattern);
                 $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
                 $daemonQueryLibrary = new DaemonQueryLibrary();

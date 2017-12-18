@@ -64,7 +64,7 @@ const handlerOfIndexComponentServerWork = {
         '</div>' +
         '<div>' +
         '<div class="shell_output_box" v-for="du_of_server in du_list">' +
-        '<h4>{{du_of_server.server_name}}:{{du_of_server.dir}}</h4>' +
+        '<h4>{{du_of_server.server_name}} : {{du_of_server.dir}}</h4>' +
         '<pre>{{du_of_server.output}}</pre>' +
         '<Alert type="error" v-if="du_of_server.error">{{du_of_server.error}}</Alert>' +
         '</div>' +
@@ -78,7 +78,7 @@ const handlerOfIndexComponentServerWork = {
         '</Input>' +
         '</div>' +
         '<div class="shell_output_box" v-for="ls_of_server in ls_list">' +
-        '<h4>{{ls_of_server.server_name}}:{{ls_of_server.dir}}</h4>' +
+        '<h4>{{ls_of_server.server_name}} : {{ls_of_server.dir}}</h4>' +
         '<pre>{{ls_of_server.output}}</pre>' +
         '<Alert type="error" v-if="ls_of_server.error">{{ls_of_server.error}}</Alert>' +
         '</div>' +
@@ -90,7 +90,7 @@ const handlerOfIndexComponentServerWork = {
         '<i-button slot="append" icon="nuclear" v-on:click="click_shell_command_btn"></i-button>' +
         '</i-input>' +
         '<div class="shell_output_box" v-for="command_of_server in shell_command_list">' +
-        '<h4>{{command_of_server.server_name}}:{{command_of_server.shell_command}}</h4>' +
+        '<h4>{{command_of_server.server_name}} : {{command_of_server.shell_command}}</h4>' +
         '<pre>{{command_of_server.output}}</pre>' +
         '<Alert type="error" v-if="command_of_server.error">{{command_of_server.error}}</Alert>' +
         '</div>' +
