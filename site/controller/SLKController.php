@@ -37,7 +37,7 @@ class SLKController extends BaseController
                 $pattern = trim($pattern);
                 if (strlen($pattern) <= 0) continue;
 
-                $command = "sudo locate " . escapeshellarg($pattern);
+                $command = "sudo find / -path " . escapeshellarg($pattern);
                 $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
                 $daemonQueryLibrary = new DaemonQueryLibrary();
