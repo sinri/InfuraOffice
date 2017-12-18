@@ -1,3 +1,7 @@
 div.ivu-row-flex {
     padding: 5px;
 }
+
+pre {
+    overflow: auto;
+}
