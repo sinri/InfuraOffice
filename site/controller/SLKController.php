@@ -18,6 +18,11 @@ use sinri\InfuraOffice\toolkit\BaseController;
 
 class SLKController extends BaseController
 {
+    public function __construct($initData = null)
+    {
+        parent::__construct($initData);
+        //$this->isCurrentUserRole([UserEntity::ROLE_ADMIN, UserEntity::ROLE_WORKER], true);
+    }
 
     public function listSLKFiles()
     {
@@ -97,7 +102,7 @@ class SLKController extends BaseController
 
             $command = 'cat -n ' . escapeshellarg($target_file)
                 . '|awk \'{if($1>=' . $range_start . ' && $1<=' . $range_end . ') print $0}\''
-                . '|grep -C ' . intval($around_lines) . (!$is_case_sensitive ? ' -i ' : '') . ' -m 2000 ' . escapeshellarg($keyword);
+                . '|grep -C ' . intval($around_lines) . ($is_case_sensitive ? ' -i ' : '') . ' -m 2000 ' . escapeshellarg($keyword);
             $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
             $daemonQueryLibrary = new DaemonQueryLibrary();
