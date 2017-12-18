@@ -81,7 +81,7 @@ class SLKController extends BaseController
             else {
                 $range_start = intval($range_start, 10);
                 if ($range_start < 0) {
-                    $range_start = $total_lines - $range_start;
+                    $range_start = $total_lines + $range_start;
                 }
             }
 
@@ -89,7 +89,7 @@ class SLKController extends BaseController
             else {
                 $range_end = intval($range_end, 10);
                 if ($range_end < 0) {
-                    $range_end = $total_lines - $range_end;
+                    $range_end = $total_lines + $range_end;
                 }
             }
 
