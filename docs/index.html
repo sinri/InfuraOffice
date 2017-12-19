@@ -3,11 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <title>Document of Infura Office</title>
+    <!-- import Vue.js -->
+    <script src="//vuejs.org/js/vue.min.js"></script>
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+    <!-- import iView -->
+    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
+    <style>
+        #app {
+            margin: 10px auto;
+            width: 80%;
+            font-size: 14px;
+        }
+
+        #app > div {
+            margin: 5px;
+        }
+
+        h1 {
+            margin: 10px auto;
+        }
+
+        h2 {
+            margin: 5px auto;
+        }
+
+        code {
+            background-color: #b2eeb9;
+        }
+
+        dl {
+            margin: 5px;
+        }
+
+        dt {
+            font-weight: bold;
+        }
+
+        dd {
+            margin: 5px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-<h1>Document of Infura Office</h1>
-<p>
-    Infura Office is an open-source infrastructure management system, designed for Manually Infrastructure Maintainers.
-</p>
+<div id="app">
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h1>Document of Infura Office</h1>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <p style="font-size: 15px">
+                Infura Office is an open-source infrastructure management system, designed for Manually Infrastructure
+                Maintainers.
+            </p>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h2>Evolution</h2>
+        </i-col>
+        <i-col span="24">
+            <Timeline>
+                <timeline-item color="green">Server and Database Information Integration Framework</timeline-item>
+                <timeline-item color="green">Socket Daemon based on Shell for Servers</timeline-item>
+                <timeline-item color="green">Database SQL Killer</timeline-item>
+                <timeline-item color="green">Regular Job Framework</timeline-item>
+                <timeline-item color="green">SinriLogKeeper Embedding Version</timeline-item>
+            </Timeline>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h2>Install</h2>
+        </i-col>
+        <i-col span="24">
+            <ol>
+                <li>InfuraOffice is designed to run in Linux.</li>
+                <li>Get the source code from GitHub; you can use git clone command or download zip directly.</li>
+                <li>Run <code>php composer.phar install</code> in the project root directory;</li>
+                <li>Run <code>npm install</code> in the <code>site/frontend</code> directory.</li>
+            </ol>
+        </i-col>
+        <i-col span="24">
+            <h2>Configuration</h2>
+        </i-col>
+        <i-col span="24">
+            <ol>
+                <li>Ensure directory <code>data</code> under the root directory and make it writable.</li>
+                <li>Ensure a directory writable for recording logs.</li>
+                <li>Ensure config file <code>config/config.php</code>, a sample given as
+                    <code>config/config.sample.php</code>. Details might be found below.
+                </li>
+            </ol>
+        </i-col>
+        <i-col span="24">
+            <h2>Daemon Settings</h2>
+        </i-col>
+        <i-col span="24">
+            <p>
+                Daemon should run with root account, and listen to a local port to serve remote communication tasks.
+                InfuraOffice use SSH RSA to access remote Linux Servers (i.e. servers with other OSs are not supported),
+                and daemon should be able to access to the identity RSA private and public key,
+                while the remote server should hold the public key.
+                You would be noticed again about this when you manage the servers.
+            </p>
+        </i-col>
+        <i-col span="24">
+            <dl>
+                <dt>address</dt>
+                <dd>It usually should be 127.0.0.1 for IPv4.</dd>
+                <dt>port</dt>
+                <dd>The default port is 12345. You can change it to other unused port.</dd>
+                <dt>ssh_key_file</dt>
+                <dd>For almost environment, the private key file is of root, the place is /root/.ssh/id_rsa</dd>
+                <dt>ssh_public_file</dt>
+                <dd>For almost environment, the public key file is of root, the place is /root/.ssh/id_rsa.pub</dd>
+                <dt>ssh_pass_phrase</dt>
+                <dd>The pass phrase of the SSH RSA, set to <code>null</code> if empty.</dd>
+                <dt>max_workers</dt>
+                <dd>You can decide the maximum number of sub-processes runnable at the same time with an integer greater
+                    than zero, otherwise unlimited.
+                </dd>
+            </dl>
+        </i-col>
+        <i-col span="24">
+            <h2>Web Server Settings</h2>
+        </i-col>
+        <i-col span="24">
+            <p>
+                The web site root directory is <code>site</code>.
+            </p>
+            <p>
+                For Nginx, you need to add the following to make the router work.
+            </p>
+            <pre>
+                location / {
+                    try_files $uri $uri/ /index.php?$args;
+                }
+            </pre>
+            <p>
+                For Apache, you might need put <code>.htaccess</code> in directory <code>site</code> and allow override.
+                The content of <code>.htaccess</code> is here.
+            </p>
+            <pre>
+                RewriteEngine On
+                RewriteCond %{REQUEST_FILENAME} !-f
+                RewriteCond %{REQUEST_FILENAME} !-d
+                RewriteRule ^(.*)$ index.php [QSA,L]
+            </pre>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h2>Server Side Services</h2>
+        </i-col>
+        <i-col span="24">
+            <p>
+                There is three sample script to handle the server side services, a.k.a. Daemon, Cronjob and Dothan if
+                needed.
+                Refer to <code>docs/shell_sample</code>.
+            </p>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h2>Usage</h2>
+        </i-col>
+        <i-col span="24">
+            <p>Ping a server, and do DF, DU, LS and run any simple command on it.</p>
+            <p>Help doing automatically hot updating for Dothan.</p>
+            <p>Show processes of a database as list, and execute kill.</p>
+            <p>Schedule the jobs for servers to do regular maintain tasks.</p>
+            <p>Open logs to read for certain users.</p>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle">
+        <i-col span="24">
+            <h2>About</h2>
+        </i-col>
+        <i-col span="24">
+            <p>
+                Copyright 2017 <a href="mailto:sinri@everstray.com">Sinri Edogawa</a>.
+            </p>
+            <p>
+                InfuraOffice is open-source project under GPL-3.0 license.
+            </p>
+            <p>
+                InfuraOffice uses third party packages, including
+            </p>
+            <ul style="margin-left: 10px">
+                <li>[PECL] <a href="http://php.net/manual/en/ssh2.installation.php">SSH2</a></li>
+                <li>[Packagist] <a href="https://packagist.org/packages/sinri/enoch">sinri/enoch</a></li>
+                <li>[NPM] iview</li>
+                <li>[NPM] jquery</li>
+                <li>[NPM] js-cookie</li>
+                <li>[NPM] vue</li>
+                <li>[NPM] highlight.js</li>
+            </ul>
+            <p>
+                This project is used by the Infrastructure Group of <a hre="https://leqee.com">LEQEE Group EC Branch</a>.
+            </p>
+        </i-col>
+    </Row>
+</div>
+<script>
+    let theVue = new Vue({
+        el: '#app',
+        data: {
+            visible: false
+        },
+        methods: {
+            show: function () {
+                this.visible = true;
+            }
+        }
+    })
+</script>
 </body>
 </html>
