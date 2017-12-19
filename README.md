@@ -1,6 +1,8 @@
 # InfuraOffice
 A Mix of Infura Management
 
+https://sinri.github.io/InfuraOffice/
+
 ## Third Party Library Declaration
 
 PECL
@@ -44,6 +46,8 @@ You should set the daemon address and port, and the path of SSH key file (common
 * port: 12345
 * ssh_key_file: ~/.ssh/id_rsa
 
+Run `php cli/InfuraOfficeDaemon.php` to start the daemon, run with `nohup` is recommended.
+
 ### Log
 
 You should determine a directory to store logs.
@@ -59,38 +63,3 @@ You should determine a directory to store logs.
 ## CLI
 
 Run `php cli/InfuraOfficeDaemon.php` . You might use `nohup` in product environment.
-
-## Job Config
-
-
- * @property string job_name
- * @property string job_type
- * @property string cron_time_minute
- * @property string cron_time_hour
- * @property string cron_time_day_of_month
- * @property string cron_time_month
- * @property string cron_time_day_of_week
- * @property int last_run_timestamp
- * @property string[] server_list
- * @property bool stopped
-
-### ShellCommand
-
- * @property string command_content
-
-### ExplodeLog
-
- * @property string file
- * @property int left_tail_lines
- * @property bool keep_backup
-
-### RemoveAntiquity
-
-* file
-* keep_days
-* date_format : Y(2017) y(17) m(12) d(31)
-
-### RemoveZombie
-
-* file
-* keep_days 
