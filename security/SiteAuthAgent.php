@@ -42,6 +42,9 @@ class SiteAuthAgent extends MiddlewareInterface
         }
 
         $token = LibRequest::getCookie("infura-office-token", null);
+        if ($token === null) {
+            $token = LibRequest::getRequest("InfuraOfficeToken", null);
+        }
 
         // check token
         $session_library = new SessionLibrary();

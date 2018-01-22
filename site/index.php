@@ -10,6 +10,23 @@ require_once __DIR__ . '/../autoload.php';
 
 date_default_timezone_set("Asia/Shanghai");
 
+if ($_SERVER['SERVER_NAME'] === 'localhost') {
+//    print_r($_SERVER);
+
+    header("Access-Control-Allow-Origin: *");
+//header("Access-Control-Allow-Credentials: true");
+//header("Access-Control-Expose-Headers: Foobar");
+
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: X-PINGOTHER, Content-Type");
+    header("Access-Control-Max-Age: 86400");
+
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        echo "";
+        exit();
+    }
+}
+
 $lamech = new \sinri\enoch\mvc\Lamech();
 
 $lamech->getRouter()->setErrorHandler(function ($errorData) {

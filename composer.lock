@@ -48,16 +48,16 @@
         },
         {
             "name": "sinri/enoch",
-            "version": "2.2.0",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sinri/enoch.git",
-                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614"
+                "reference": "57c030ead16c81c544c4f4af558469e487b07dde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sinri/enoch/zipball/f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
-                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
+                "url": "https://files.phpcomposer.com/files/sinri/enoch/57c030ead16c81c544c4f4af558469e487b07dde.zip",
+                "reference": "57c030ead16c81c544c4f4af558469e487b07dde",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
             "keywords": [
                 "php-framework"
             ],
-            "time": "2017-12-07T08:18:15+00:00"
+            "time": "2018-01-20T16:38:33+00:00"
         },
         {
             "name": "sinri/smallphpmailer",
