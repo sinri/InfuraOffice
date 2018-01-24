@@ -50,11 +50,16 @@ class SiteAuthAgent extends MiddlewareInterface
         $session_library = new SessionLibrary();
 
         $sessionEntity = $session_library->readEntityByName($token);
-        if (!$sessionEntity) return false;
+        if (!$sessionEntity) {
+            $responseCode = 403;
+            return false;
+        }
         if ($sessionEntity->expiration <= time()) {
+            $responseCode = 403;
             return false;
         }
         if ($this->shouldKeepSameIpInOneSession() && $sessionEntity->ip != LibRequest::ip_address()) {
+            $responseCode = 403;
             return false;
         }
 

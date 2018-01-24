@@ -6,9 +6,8 @@
                 <Header>
                     <Menu mode="horizontal" theme="dark" active-name="1" @on-select="onTopBarMenuSelect">
                         <div class="layout-logo">
-                            InfuraOffice
-                        </div>
-                        <div>
+                            <!--InfuraOffice-->
+
                             <Breadcrumb class="layout-breadcrumb">
                                 <!--<BreadcrumbItem v-for="item in Breadcrumb">{{item}}</BreadcrumbItem>-->
                                 <BreadcrumbItem v-for="(item,index) in $route.matched" style="color:white">
@@ -40,18 +39,18 @@
                             <template v-for="item_0 in $router.options.routes" v-if="item_0.path==='/'">
                                 <template v-for="item_a in item_0.children" v-if="!item_a.hidden">
                                     <template v-if="item_a.is_group">
-                                        <menu-group :title="item_a.title">
+                                        <menu-group :title="item_a.name">
                                             <menu-item v-for="item_b in item_a.children" v-if="!item_b.hidden"
                                                        :name="item_b.name">
-                                                <Icon :type="item_b.icon"></Icon>
-                                                <span>{{item_b.title}}</span>
+                                                <Icon :type="item_b.icon" style="width: 14px"></Icon>
+                                                <span>{{item_b.name}}</span>
                                             </menu-item>
                                         </menu-group>
                                     </template>
                                     <template v-else>
                                         <menu-item :name="item_a.name">
-                                            <Icon :type="item_a.icon"></Icon>
-                                            <span>{{item_a.title}}</span>
+                                            <Icon :type="item_a.icon" style="width: 14px"></Icon>
+                                            <span>{{item_a.name}}</span>
                                         </menu-item>
                                     </template>
                                 </template>
@@ -67,7 +66,7 @@
                         </BreadcrumbItem>
                         </Breadcrumb>
                         -->
-                        <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
+                        <Content :style="{margin: '24px 0',padding: '24px', minHeight: '280px', background: '#fff'}">
                             <router-view/>
                         </Content>
                     </Layout>
@@ -177,9 +176,6 @@
                         ]
                     }
                 ],
-                Breadcrumb: [
-                    'Home', 'Dashboard'
-                ]
             };
         },
         methods: {
@@ -243,7 +239,7 @@
     }
 
     .layout-logo {
-        width: 100px;
+        width: 300px;
         height: 30px;
         background: #5b6270;
         border-radius: 3px;
@@ -267,7 +263,23 @@
 
     .layout-breadcrumb {
         /*width: 225px;*/
-        margin: 0 10px 0 auto;
+        margin: 0 10px;
         float: left;
+    }
+
+    .ivu-breadcrumb a {
+        color: white;
+    }
+
+    .left {
+        float: left;
+    }
+
+    .right {
+        float: right;
+    }
+
+    .clear {
+        clear: both;
     }
 </style>

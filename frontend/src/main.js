@@ -7,9 +7,13 @@ import 'iview/dist/styles/iview.css';
 
 import {Tools} from './assets/js/common'
 
+import ServerAndGroupSelect from './components/shared/ServerAndGroupSelect'
+
 Vue.config.productionTip = false;
 
 Vue.use(iView);
+
+Vue.component('infura-server-and-group-select', ServerAndGroupSelect);
 
 router.beforeEach((to, from, next) => {
     document.documentElement.scrollTop = document.body.scrollTop = 0;
@@ -31,6 +35,9 @@ new Vue({
     // components: {App},
     // template: '<App/>',
 
+    components: {
+        //'infura-server-and-group-select':ServerAndGroupSelect,
+    },
     template: '<router-view></router-view>',
 
     methods: {},

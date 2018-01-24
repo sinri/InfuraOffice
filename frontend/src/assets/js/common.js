@@ -14,7 +14,7 @@ export const Tools = {
                 let a1 = [];
                 for (let field in data) {
                     if (!data.hasOwnProperty(field)) continue;
-                    a1.push("field=" + encodeURIComponent(data[field]))
+                    a1.push(field + "=" + encodeURIComponent(data[field]))
                 }
                 url = url + "?" + a1.join("&");
             }
@@ -50,7 +50,7 @@ export const Tools = {
                     if (error.response.status === 403) {
                         //goto login
                         console.log("token invalidated -> logout");
-                        CookieHelper.setToken(null);
+                        Tools.CookieHelper.setToken(null);
                         window.location.href = "/login";
                         return;
                     }

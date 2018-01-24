@@ -1,11 +1,22 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import HelloWorld from '@/components/HelloWorld'
 import SinriLogKeeper from '../SinriLogKeeper.vue'
 
 import App from '../App'
 import componentOfLogin from '../login.vue'
 import componentOfDashboard from '@/components/Dashboard'
+import componentOfServerInWork from '@/components/work/ServerWork'
+import componentOfDatabaseInWork from '@/components/work/DatabaseWork'
+import componentOfOverviewInSchedule from '@/components/schedule/Overview'
+import componentOfShellJobInSchedule from '@/components/schedule/ShellJob'
+import componentOfMixedJobInSchedule from '@/components/schedule/MixedJob'
+import componentOfUsersInSettings from '@/components/settings/Users'
+import componentOfPlatformsInSettings from '@/components/settings/Platforms'
+import componentOfServersInSettings from '@/components/settings/Servers'
+import componentOfServerGroupsInSettings from '@/components/settings/ServerGroups'
+import componentOfDatabasesInSettings from '@/components/settings/Databases'
 
 Vue.use(Router);
 
@@ -21,14 +32,14 @@ export default new Router({
             children: [
                 {
                     path: '/',
-                    name: 'root_page',
+                    name: 'Root',
                     title: 'InfuraOffice',
                     redirect: '/dashboard',
                     hidden: true,
                 },
                 {
                     path: '/hello-world',
-                    name: 'hello-world',
+                    name: 'HelloWorld',
                     title: 'Hello World',
                     component: HelloWorld,
                     is_group: false,
@@ -45,24 +56,27 @@ export default new Router({
                 },
                 {
                     path: '/work-group',
-                    name: 'work-group',
+                    name: 'Work',
                     is_group: true,
                     title: 'Work',
+                    component: {template: '<router-view></router-view>'},
                     hidden: false,
                     children: [
                         {
                             path: '/work-group/server',
-                            name: 'server_work',
+                            name: 'Server Work',
                             icon: 'ios-medical-outline',
                             title: 'Server',
+                            component: componentOfServerInWork,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/work-group/database',
-                            name: 'database_work',
+                            name: 'Database Work',
                             icon: 'social-buffer-outline',
                             title: 'Database',
+                            component: componentOfDatabaseInWork,
                             is_group: false,
                             hidden: false,
                         },
@@ -70,32 +84,36 @@ export default new Router({
                 },
                 {
                     path: '/schedule-group',
-                    name: 'schedule-group',
+                    name: 'Schedule',
                     title: 'Schedule',
+                    component: {template: '<router-view></router-view>'},
                     is_group: true,
                     hidden: false,
                     children: [
                         {
                             path: '/schedule-group/overview',
-                            name: 'job_config',
+                            name: 'Schedule List',
                             icon: 'ios-alarm-outline',
                             title: 'Overview',
+                            component: componentOfOverviewInSchedule,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/schedule-group/shell',
-                            name: 'update_shell_command_job',
+                            name: 'Shell Job',
                             icon: 'android-list',
                             title: 'Shell Job',
+                            component: componentOfShellJobInSchedule,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/schedule-group/mixed',
-                            name: 'update_mixed_job',
+                            name: 'Mixed Job',
                             icon: 'ios-color-filter-outline',
                             title: 'Mixed Job',
+                            component: componentOfMixedJobInSchedule,
                             is_group: false,
                             hidden: false,
                         }
@@ -103,48 +121,54 @@ export default new Router({
                 },
                 {
                     path: '/settings-group',
-                    name: 'settings-group',
+                    name: 'Settings',
                     title: 'Settings',
+                    component: {template: '<router-view></router-view>'},
                     is_group: true,
                     hidden: false,
                     children: [
                         {
                             path: '/settings-group/user',
-                            name: 'user_manage',
+                            name: 'Users',
                             icon: 'person-stalker',
-                            title: 'User',
+                            title: 'Users',
+                            component: componentOfUsersInSettings,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/settings-group/platform',
-                            name: 'platform_manage',
+                            name: 'Platforms',
                             icon: 'android-cloud-outline',
-                            title: 'Platform',
+                            title: 'Platforms',
+                            component: componentOfPlatformsInSettings,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/settings-group/server',
-                            name: 'server_manage',
+                            name: 'Servers',
                             icon: 'android-desktop',
-                            title: 'Server',
+                            title: 'Servers',
+                            component: componentOfServersInSettings,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/settings-group/server-group',
-                            name: 'server_group_manage',
+                            name: 'Server Groups',
                             icon: 'ios-pricetags-outline',
-                            title: 'Server Group',
+                            title: 'Server Groups',
+                            component: componentOfServerGroupsInSettings,
                             is_group: false,
                             hidden: false,
                         },
                         {
                             path: '/settings-group/database',
-                            name: 'database_manage',
+                            name: 'Databases',
                             icon: 'soup-can-outline',
-                            title: 'Database',
+                            title: 'Databases',
+                            component: componentOfDatabasesInSettings,
                             is_group: false,
                             hidden: false,
                         },

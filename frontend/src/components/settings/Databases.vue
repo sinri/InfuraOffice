@@ -1,0 +1,395 @@
+<template>
+    <div>
+        <Row type="flex" justify="end" align="middle">
+            <i-col span="12"><h2>Database List</h2></i-col>
+            <i-col span="12">
+                <i-button icon="android-add" class="right" v-on:click="add_database">Add Database</i-button>
+                <span style="display: inline-block" class="right">&nbsp;</span>
+                <i-button icon="android-sync" class="right" v-on:click="refresh_dothan_config_file">Refresh Dothan
+                    Config
+                </i-button>
+            </i-col>
+        </Row>
+        <Row>
+            <i-col span="24">
+                <Alert type="error" show-icon v-if="has_error">
+                    ERROR
+                    <span slot="desc">{{ error_message }}</span>
+                </Alert>
+            </i-col>
+        </Row>
+        <Row>
+            <i-col span="24">
+                <i-input v-model="filter_key" style="margin: 5px 0;">
+                    <span slot="prepend">Search Name</span>
+                    <i-button slot="append" icon="ios-search" v-on:click="filter_table_items"></i-button>
+                </i-input>
+            </i-col>
+            <i-col span="24">
+                <i-table :columns="database_fields" :data="filtered_databases"></i-table>
+            </i-col>
+        </Row>
+        <Row>
+            <i-col span="24">
+                <div style="margin: 5px">Total: {{databases.length}} Filtered: {{filtered_databases.length}}</div>
+            </i-col>
+        </Row>
+        <Row>
+            <i-col span="24">&nbsp;</i-col>
+            <i-col span="24">
+                <p>
+                    <a href="https://github.com/sinri/Dothan" target="_blank">Dothan</a>
+                    is supported as a service for database proxy.
+                </p>
+            </i-col>
+        </Row>
+        <Modal v-model="show_edit_database" title="Update Database" @on-ok="modal_edit_database"
+               @on-cancel="modal_close" :loading="modal_loading">
+            <i-input style="margin: 5px" v-model="edit_database_name"><span slot="prepend">Database Name</span>
+            </i-input>
+            <i-input style="margin: 5px" v-model="edit_server_type"><span slot="prepend">Type</span></i-input>
+            <i-input style="margin: 5px" v-model="edit_host"><span slot="prepend">Host</span></i-input>
+            <i-input style="margin: 5px" v-model="edit_port"><span slot="prepend">Port</span></i-input>
+            <i-input style="margin: 5px" v-model="edit_dothan_port" placeholder="Keep it empty or -1 if not use Dothan">
+                <span slot="prepend">Dothan Port</span></i-input>
+            <Select v-model="edit_platform_name" placeholder="Select Platform Account..." transfer>
+                <Option v-for="item in platform_list" :value="item.platform_name" :key="item.platform_name">
+                    {{item.platform_type}} - {{item.platform_name}}
+                </Option>
+            </Select>
+            <i-input style="margin: 5px" v-model="edit_platform_device_id"><span
+                    slot="prepend">Platform Device ID</span></i-input>
+            <Select v-model="edit_platform_area" placeholder="Select Device Location Area..." transfer>
+                <Option v-for="item in platform_area_list" :value="item.key" :key="item.key">{{item.label}}</Option>
+            </Select>
+            <div>
+                <i-button type="text">Accounts:</i-button>
+            </div>
+            <div v-for="account in edit_accounts">
+                <i-input style="margin: 5px" v-model="account.username"><span slot="prepend">Username</span></i-input>
+                <i-input style="margin: 5px" v-model="account.password"><span slot="prepend">Password</span></i-input>
+                <i-button type="dash" class="right" v-on:click="delete_one_account_item(account.item_id)">Delete
+                </i-button>
+                <div class="clear"></div>
+            </div>
+            <div style="text-align: center">
+                <i-button shape="circle" icon="android-add" v-on:click="add_one_account_item"></i-button>
+            </div>
+        </Modal>
+    </div>
+</template>
+
+<script>
+    import {Tools} from '../../assets/js/common';
+
+    export default {
+        name: "databases",
+        data: function () {
+            return {
+                modal_loading: true,
+                show_edit_database: false,
+                has_error: false,
+                error_message: '',
+                database_fields: [
+                    {key: 'database_name', title: 'Database Name', sortable: true},
+                    {key: 'server_type', title: 'Server Type', sortable: true},
+                    {key: 'connection', title: 'Connection', sortable: true},
+                    {key: 'dothan_port', title: 'Dothan', sortable: true},
+                    {key: 'platform_name', title: 'Platform Account', sortable: true},
+                    {key: 'platform_device_id', title: 'Device ID', sortable: true},
+                    {key: 'platform_area', title: 'Area', sortable: true},
+                    {
+                        key: 'action', title: 'Action',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        margin: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            //this.show(params.index)
+                                            console.log("click edit", params);
+                                            this.edit_database(params.row.database_name);
+                                        }
+                                    }
+                                }, 'Edit'),
+                                h('Button', {
+                                    props: {
+                                        type: 'info',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        margin: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            //this.remove(params.index)
+                                            console.log("click ping", params);
+                                            this.ping_database(params.row.database_name);
+                                        }
+                                    }
+                                }, 'Ping'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        margin: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            //this.remove(params.index)
+                                            console.log("click remove", params);
+                                            this.remove_database(params.row.database_name);
+                                        }
+                                    }
+                                }, 'Delete')
+                            ]);
+                        }
+                    }
+                ],
+                databases: [],
+                filtered_databases: [],
+                filter_key: '',
+                //
+                platform_list: [],
+                edit_database_name: '',
+                edit_server_type: 'mysql',
+                edit_host: '',
+                edit_port: 3306,
+                edit_accounts: [],
+                edit_platform_name: '',
+                edit_platform_device_id: '',
+                edit_platform_area: '',
+                edit_dothan_port: '',
+                //
+                platform_area_list: Tools.AliyunRegionDictionary,
+            }
+        },
+        methods: {
+            refresh_platform_accounts: function () {
+                Tools.callInfuraOfficeJsonAPI(
+                    "post",
+                    "/api/PlatformWorkController/platforms",
+                    {},
+                    (data) => {
+                        this.platform_list = data.list;
+                    },
+                    (error) => {
+                        this.$Message.error("Loading platforms: " + 'ajax failed');
+                    }
+                );
+            },
+            refresh_database_list: function () {
+                this.$Loading.start();
+                Tools.callInfuraOfficeJsonAPI(
+                    "get",
+                    "/api/DatabaseWorkController/databases",
+                    {},
+                    (data) => {
+                        let databases = [];
+                        for (let i = 0; i < data.list.length; i++) {
+                            let database_item = data.list[i];
+                            database_item.connection = database_item.host + ":" + database_item.port;
+                            databases.push(database_item);
+                        }
+                        this.databases = databases;
+                        this.filter_table_items();
+                        this.$Loading.finish();
+                    },
+                    (error) => {
+                        this.$Loading.error();
+                        this.has_error = true;
+                        this.error_message = error;
+                    }
+                )
+            },
+            add_database: function () {
+                this.edit_database_name = '';
+                this.edit_server_type = '';
+                this.edit_host = '';
+                this.edit_port = '';
+                this.edit_accounts = [];
+                this.edit_dothan_port = '';
+                this.edit_platform_name = '';
+                this.edit_platform_device_id = '';
+                this.edit_platform_area = '';
+                this.show_edit_database = true;
+            },
+            edit_database: function (database_name) {
+                let target_database = null;
+                for (let i = 0; i < this.databases.length; i++) {
+                    if (this.databases[i].database_name === database_name) {
+                        target_database = this.databases[i];
+                        break;
+                    }
+                }
+                if (target_database) {
+                    this.edit_database_name = target_database.database_name;
+                    this.edit_server_type = target_database.server_type;
+                    this.edit_host = target_database.host;
+                    this.edit_port = target_database.port;
+                    this.edit_dothan_port = target_database.dothan_port;
+                    this.edit_accounts = [];
+                    this.edit_platform_name = target_database.platform_name;
+                    this.edit_platform_device_id = target_database.platform_device_id;
+                    this.edit_platform_area = target_database.platform_area;
+                    let item_id = 0;
+                    for (let u in target_database.accounts) {
+                        if (!target_database.accounts.hasOwnProperty(u)) continue;
+                        let p = target_database.accounts[u];
+                        this.edit_accounts.push({
+                            username: u,
+                            password: p,
+                            item_id: item_id++
+                        });
+                    }
+                }
+                this.show_edit_database = true;
+            },
+            remove_database: function (database_name) {
+                this.$Loading.start();
+                Tools.callInfuraOfficeJsonAPI(
+                    "post",
+                    "/api/DatabaseManageController/removeDatabase",
+                    {
+                        database_name: database_name
+                    },
+                    (data) => {
+                        this.refresh_database_list();
+                        this.$Loading.finish();
+                    },
+                    (error) => {
+                        this.$Message.error(error);
+                        this.$Loading.error();
+                    }
+                )
+            },
+            modal_edit_database: function () {
+
+                let edit_accounts = {};
+                for (let i = 0; i < this.edit_accounts.length; i++) {
+                    edit_accounts[this.edit_accounts[i].username] = this.edit_accounts[i].password;
+                }
+
+                this.$Loading.start();
+                this.modal_loading = true;
+                Tools.callInfuraOfficeJsonAPI(
+                    "post",
+                    "/api/DatabaseManageController/updateDatabase",
+                    {
+                        database_name: this.edit_database_name,
+                        server_type: this.edit_server_type,
+                        host: this.edit_host,
+                        port: this.edit_port,
+                        accounts: edit_accounts,
+                        platform_name: this.edit_platform_name,
+                        platform_device_id: this.edit_platform_device_id,
+                        platform_area: this.edit_platform_area,
+                        dothan_port: this.edit_dothan_port,
+                    },
+                    (data) => {
+                        this.refresh_database_list();
+                        this.show_edit_database = false;
+                        this.$Loading.finish();
+                    },
+                    (error) => {
+                        this.$Loading.error();
+                        this.has_error = true;
+                        this.error_message = error;
+                        this.modal_loading = false;
+                    }
+                );
+            },
+            modal_close: function () {
+                this.show_edit_database = false;
+            },
+            add_one_account_item: function () {
+                this.edit_accounts.push({
+                    username: '', password: '', item_id: this.edit_accounts.length
+                })
+            },
+            delete_one_account_item: function (item_id) {
+                console.log('delete_one_account_item', item_id);
+                for (let k = 0; k < this.edit_accounts.length; k++) {
+                    //if(!this.edit_accounts.hasOwnProperty(k))continue;
+                    if (this.edit_accounts[k].item_id === item_id) {
+                        this.edit_accounts.splice(k, 1);
+                    }
+                }
+                for (let k = 0; k < this.edit_accounts.length; k++) {
+                    this.edit_accounts[k].item_id = k;
+                }
+
+            },
+            ping_database: function (database_name) {
+                this.$Loading.start();
+                Tools.callInfuraOfficeJsonAPI(
+                    "get",
+                    "/api/DatabaseWorkController/ping",
+                    {
+                        database_name: database_name
+                    },
+                    (data) => {
+                        this.$Notice.success({
+                            title: 'Database ' + database_name + " answered:",
+                            desc: response.data.result
+                        });
+                        this.$Loading.finish();
+                    },
+                    (error) => {
+                        this.$Notice.error({
+                            title: 'Ping Database ' + database_name,
+                            desc: jsReadableValue(error)
+                        });
+                        this.$Loading.error();
+                    }
+                );
+            },
+            refresh_dothan_config_file: function () {
+                Tools.callInfuraOfficeJsonAPI(
+                    "get",
+                    "/api/DatabaseManageController/refreshDothanConfigFile",
+                    {},
+                    (data) => {
+                        this.$Notice.success({
+                            title: "Dothan Config",
+                            desc: "Refreshed!"
+                        });
+                    },
+                    (error) => {
+                        this.$Notice.error({
+                            title: "Dothan Config",
+                            desc: error
+                        });
+                    }
+                );
+            },
+            filter_table_items: function () {
+                let array = [];
+                for (let i = 0; i < this.databases.length; i++) {
+                    if (this.databases[i].database_name.toLowerCase().indexOf(this.filter_key.toLowerCase()) >= 0) {
+                        array.push(this.databases[i]);
+                    }
+                }
+                this.filtered_databases = array;
+            }
+        },
+        mounted: function () {
+            this.refresh_platform_accounts();
+            this.refresh_database_list();
+        }
+    }
+</script>
+
+<style scoped>
+    h2 {
+        margin: 10px 0;
+    }
+</style>
