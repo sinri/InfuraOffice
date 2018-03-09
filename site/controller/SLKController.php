@@ -88,7 +88,7 @@ class SLKController extends BaseController
             // cat -n '/var/log/tomcat7/catalina.out'|awk '{if($1>=28773 && $1<=29773) print $0}'|grep -C 10 -m 2000 'xx'
 
             // get total lines
-            $command = 'wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+            $command = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
             $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
             $daemonQueryLibrary = new DaemonQueryLibrary();
             $result = @$daemonQueryLibrary->query($query);
@@ -113,7 +113,7 @@ class SLKController extends BaseController
 
             $around_lines = intval($around_lines, 10);
 
-            $command = 'cat -n ' . escapeshellarg($target_file)
+            $command = 'sudo cat -n ' . escapeshellarg($target_file)
                 . '|awk \'{if($1>=' . $range_start . ' && $1<=' . $range_end . ') print $0}\''
                 . '|grep -C ' . intval($around_lines) . ($is_case_sensitive ? ' -i ' : '') . ' -m 2000 ' . escapeshellarg($keyword);
             $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
