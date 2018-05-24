@@ -22,7 +22,7 @@ $lamech->getRouter()->setErrorHandler(function ($errorData) {
 // for root, to frontend
 $lamech->getRouter()->get("", function () {
     // it should be used to redirect to FRONTEND
-    header("Location: frontend");
+    header("Location: frontend/index.html");
 });
 
 $lamech->getRouter()->loadAllControllersInDirectoryAsCI(
