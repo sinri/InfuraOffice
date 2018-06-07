@@ -8,6 +8,7 @@ composer.phar
 /data/
 /site/.htaccess
 /site/frontend/node_modules/
+/site/frontend/package-lock.json
 /log/
 /config/config.php
 /cli/daemon/daemon_test.php
