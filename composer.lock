@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+      "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "a6d4e8c51beb3f3cfc81ee6f66352725",
@@ -48,16 +48,16 @@
         },
         {
             "name": "sinri/enoch",
-            "version": "2.2.0",
+          "version": "2.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sinri/enoch.git",
-                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614"
+              "reference": "6a1159c698d65f8bd6474d8abecc08b981648dd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sinri/enoch/zipball/f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
-                "reference": "f7ce8ec4822c48e01ff68bb28c5747b236e6c614",
+              "url": "https://api.github.com/repos/sinri/enoch/zipball/6a1159c698d65f8bd6474d8abecc08b981648dd5",
+              "reference": "6a1159c698d65f8bd6474d8abecc08b981648dd5",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
             "keywords": [
                 "php-framework"
             ],
-            "time": "2017-12-07T08:18:15+00:00"
+          "time": "2018-03-21T10:02:11+00:00"
         },
         {
             "name": "sinri/smallphpmailer",

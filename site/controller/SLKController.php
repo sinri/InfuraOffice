@@ -51,6 +51,8 @@ class SLKController extends BaseController
             }
 
             $files = [];
+            /*
+            // this is the old method
             foreach ($patterns as $pattern) {
                 $pattern = trim($pattern);
                 if (strlen($pattern) <= 0) continue;
@@ -66,6 +68,19 @@ class SLKController extends BaseController
                 $list = array_filter($list);
                 $files = array_merge($files, $list);
             }
+            */
+            // try to fix Issue #1
+            $command = '';
+            foreach ($patterns as $pattern) {
+                if (strlen($pattern) <= 0) continue;
+                $command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
+            }
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, false);
+            $daemonQueryLibrary = new DaemonQueryLibrary();
+            $result = @$daemonQueryLibrary->query($query);
+            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+            $list = explode("\n", $output);
+            $files = array_filter($list);
 
             $this->_sayOK(['files' => $files]);
         } catch (\Exception $exception) {
