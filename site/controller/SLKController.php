@@ -73,7 +73,10 @@ class SLKController extends BaseController
             $command = '';
             foreach ($patterns as $pattern) {
                 if (strlen($pattern) <= 0) continue;
-                $command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
+                //$command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
+                $command .= <<<PYTHON_COMMAND
+echo -e 'import glob\nlist=glob.glob("{$pattern}")\nfor item in list:\n\tprint(item)'|python -;
+PYTHON_COMMAND;
             }
             $query = ShellCommandHandler::buildQueryForSync($server_name, $command, false);
             $daemonQueryLibrary = new DaemonQueryLibrary();
