@@ -147,4 +147,67 @@ PYTHON_COMMAND;
             $this->_sayFail($exception->getMessage());
         }
     }
+
+    public function getFileInfo()
+    {
+        try {
+            $server_name = LibRequest::getRequest("target_server", '');
+            $target_file = LibRequest::getRequest("target_file", '');
+
+            $daemonQueryLibrary = new DaemonQueryLibrary();
+
+            $command1 = 'sudo ls -al ' . escapeshellarg($target_file) . '|awk \'{print $5}\'';
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command1, true);
+            $result = @$daemonQueryLibrary->query($query);
+            $file_size = $daemonQueryLibrary->parseResponse($result, $parse_error);
+
+            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command2, true);
+            $result = @$daemonQueryLibrary->query($query);
+            $file_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
+
+            $this->_sayOK(['file_size' => $file_size, 'total_lines' => $file_lines, 'command' => $command1 . ';' . $command2]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function readSLKLogsForLargeFile()
+    {
+        /**
+         * grep -n [-i] -m 2000 -C [around] [search] [file]
+         * tail -n [lines] | grep -n [-i] -m 2000 -C [around] [search] [file]
+         */
+
+        try {
+            $server_name = LibRequest::getRequest("target_server", '');
+            $target_file = LibRequest::getRequest("target_file", '');
+            $last_lines = LibRequest::getRequest("last_lines", '0');
+            $around_lines = LibRequest::getRequest("around_lines", '0');
+            $is_case_sensitive = LibRequest::getRequest("is_case_sensitive", 'NO');
+            $keyword = LibRequest::getRequest("keyword", '');
+
+            $last_lines = intval($last_lines, 10);
+            $around_lines = intval($around_lines, 10);
+
+            $daemonQueryLibrary = new DaemonQueryLibrary();
+
+            $command = "sudo ";
+            if ($last_lines > 0) {
+                $command .= "tail -n " . $last_lines . ' ' . escapeshellarg($target_file) . " | ";
+                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword);
+            } else {
+                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword) . ' ' . escapeshellarg($target_file);
+            }
+
+            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
+            $result = @$daemonQueryLibrary->query($query);
+            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+            $list = explode("\n", $output);
+
+            $this->_sayOK(['output' => $output, 'lines' => $list, 'total_lines' => count($list), 'command' => $command]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
 }
