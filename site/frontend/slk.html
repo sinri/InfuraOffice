@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <meta name='viewport' content='width=device-width, initial-scale=1'/>
     <title>Embedded SinriLogKeeper in InfuraOffice</title>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -20,20 +20,22 @@
 </head>
 <body>
 <div id="app_slk">
+    <Row type="flex" justify="center" align="middle"
+         style="border-bottom: 1px solid lightgrey;margin-bottom: 12px">
+        <i-col span="20">
+            <h1>SinriLogKeeper
+                <small>Embedded Version in InfuraOffice</small>
+            </h1>
+        </i-col>
+        <i-col span="4">
+            <i-button style="display: inline-block;float: right" icon="log-out" shape="circle" size="small"
+                      @click="logout">Logout
+            </i-button>
+        </i-col>
+    </Row>
     <Row type="flex" justify="center" align="middle">
         <i-col :lg="12" :md="16" :sm="20" :xs="24" style="margin: 5px 0;">
-            <Row type="flex" justify="center" align="middle" style="border-bottom: 1px solid lightgrey;margin-bottom: 12px">
-                <i-col span="20">
-                    <h1>SinriLogKeeper
-                        <small>Embedded Version in InfuraOffice</small>
-                    </h1>
-                </i-col>
-                <i-col span="4">
-                    <i-button style="display: inline-block;float: right" icon="log-out" shape="circle" size="small"
-                        @click="logout">Logout
-                    </i-button>
-                </i-col>
-            </Row>
+
             <i-form :label-width="120">
                 <form-item label="Server:">
                     <i-select v-model="target_server" @on-change="on_server_changed" filterable clearable>
@@ -41,7 +43,8 @@
                     </i-select>
                 </form-item>
                 <form-item label="File:">
-                    <i-select v-model="target_file" :loading="file_select_loading" filterable clearable @on-change="get_file_info">
+                    <i-select v-model="target_file" :loading="file_select_loading" filterable clearable
+                              @on-change="get_file_info">
                         <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
                     </i-select>
                 </form-item>
@@ -76,14 +79,14 @@
                     </i-button>
                 </form-item>
             </i-form>
-            <Row type="flex" justify="center" align="middle" style="border: 1px solid lightgrey;">
-                <i-col span="24">
-                    <pre style="background-color: lavender">{{query_info}}</pre>
-                </i-col>
-                <i-col span="24">
-                    <pre style="background-color: rgba(168, 230, 138, 0.38);">{{log_output}}</pre>
-                </i-col>
-            </Row>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;">
+        <i-col span="22" offset="1">
+            <pre style="background-color: lavender">{{query_info}}</pre>
+        </i-col>
+        <i-col span="22" offset="1">
+            <pre style="background-color: rgba(168, 230, 138, 0.38);">{{log_output}}</pre>
         </i-col>
     </Row>
 </div>
