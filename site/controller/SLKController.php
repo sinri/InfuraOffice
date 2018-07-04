@@ -161,10 +161,11 @@ PYTHON_COMMAND;
             $result = @$daemonQueryLibrary->query($query);
             $file_size = $daemonQueryLibrary->parseResponse($result, $parse_error);
 
-            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command2, true);
-            $result = @$daemonQueryLibrary->query($query);
-            $file_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
+            $file_lines = -1;// wc would be slow for big file
+//            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+//            $query = ShellCommandHandler::buildQueryForSync($server_name, $command2, true);
+//            $result = @$daemonQueryLibrary->query($query);
+//            $file_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
 
             $this->_sayOK(['file_size' => $file_size, 'total_lines' => $file_lines, 'command' => $command1 . ';' . $command2]);
         } catch (\Exception $exception) {
