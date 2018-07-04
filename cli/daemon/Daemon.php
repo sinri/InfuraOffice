@@ -113,7 +113,7 @@ class Daemon
                     $partWrittenBytes = fwrite($client, substr($send_content, $written));
                     if ($partWrittenBytes === false || $partWrittenBytes === 0) {
                         // only check false would lead to infinite loop so I add zero check to break
-                        DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed");
+                        DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed", [$partWrittenBytes]);
                         break;
                     }
                 }
