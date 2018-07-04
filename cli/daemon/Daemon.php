@@ -118,6 +118,8 @@ class Daemon
                         break;
                     }
                 }
+                $finClientMetaData = stream_get_meta_data($client);
+                DaemonHelper::log(LibLog::LOG_DEBUG, 'finClientMetaData', [$finClientMetaData]);
                 //fflush($client);
                 $closed = fclose($client);
                 DaemonHelper::log("DEBUG", "Writing Over. Total " . strlen($send_content) . " bytes while " . $written . " bytes written!");
