@@ -38,7 +38,8 @@ class Daemon
             $pairName = stream_socket_get_name($client, true);
             DaemonHelper::log("INFO", 'Accepted from ' . $pairName);
 
-            stream_set_timeout($client, 0, 100000);
+            //stream_set_timeout($client, 0, 100000);
+            stream_set_timeout($client, 60);
 
             $content = '';
             while (!feof($client)) {
