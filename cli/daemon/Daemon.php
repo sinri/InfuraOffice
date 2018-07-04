@@ -111,7 +111,8 @@ class Daemon
                 $send_content = json_encode(['code' => $code, 'data' => $responseBody]);
                 for ($written = 0; $written < strlen($send_content); $written += $partWrittenBytes) {
                     $partWrittenBytes = fwrite($client, substr($send_content, $written));
-                    if ($partWrittenBytes === false) {
+                    if ($partWrittenBytes === false || $partWrittenBytes === 0) {
+                        // only check false would lead to infinite loop so I add zero check to break
                         DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed");
                         break;
                     }
