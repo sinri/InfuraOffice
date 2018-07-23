@@ -119,6 +119,8 @@ class ShellCommandHandler implements RequestHandlerInterface
                     'output' => $output,
                 ];
                 break;
+            case 'async':
+
             default:
                 throw new \Exception("No such method defined");
                 break;

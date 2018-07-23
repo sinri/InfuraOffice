@@ -63,3 +63,22 @@ You should determine a directory to store logs.
 ## CLI
 
 Run `php cli/InfuraOfficeDaemon.php` . You might use `nohup` in product environment.
+
+# About new daemon written in Java `JSSHAgent`
+
+InfuraOfficeJavaDaemon.jar is provided in `cli/JSSHAgent`.
+
+Run as 
+
+```bash
+java -jar InfuraOfficeJavaDaemon.jar [[(*|ip):]port] [key_path] [thread_limit] [DEBUG|INFO|WARN|ERROR]
+```
+
+Arguments:
+
+* Listen address and port. Address is optional for localhost. A star(`*`) means listen to the whole web. Note, a warning would be shown when listen to non-local address.
+* RSA Private Key Path. By default use the Linux Default path for current user.
+* Thread Limit. How many workers to work.
+* Minimal Log Level.   
+
+> Its source code is not completely done, so only jar file provided along with release.
