@@ -38,7 +38,8 @@ class Daemon
             $pairName = stream_socket_get_name($client, true);
             DaemonHelper::log("INFO", 'Accepted from ' . $pairName);
 
-            stream_set_timeout($client, 0, 100000);
+            //stream_set_timeout($client, 0, 100000);
+            stream_set_timeout($client, 60);
 
             $content = '';
             while (!feof($client)) {
@@ -111,11 +112,14 @@ class Daemon
                 $send_content = json_encode(['code' => $code, 'data' => $responseBody]);
                 for ($written = 0; $written < strlen($send_content); $written += $partWrittenBytes) {
                     $partWrittenBytes = fwrite($client, substr($send_content, $written));
-                    if ($partWrittenBytes === false) {
-                        DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed");
+                    if ($partWrittenBytes === false || $partWrittenBytes === 0) {
+                        // only check false would lead to infinite loop so I add zero check to break
+                        DaemonHelper::log(LibLog::LOG_ERROR, "write to client failed", [$partWrittenBytes]);
                         break;
                     }
                 }
+                $finClientMetaData = stream_get_meta_data($client);
+                DaemonHelper::log(LibLog::LOG_DEBUG, 'finClientMetaData', [$finClientMetaData]);
                 //fflush($client);
                 $closed = fclose($client);
                 DaemonHelper::log("DEBUG", "Writing Over. Total " . strlen($send_content) . " bytes while " . $written . " bytes written!");

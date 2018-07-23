@@ -13,3 +13,4 @@ composer.phar
 /config/config.php
 /cli/daemon/daemon_test.php
 /debug/
+/site-v1/

@@ -1,5 +1,6 @@
 let vueSLK = null;
 
+
 $(document).ready(function () {
     if (!CookieHelper.isLogin()) {
         window.location.href = "login.html";
@@ -15,10 +16,16 @@ $(document).ready(function () {
             target_server: '',
             server_list: [],
             target_file: '',
+            file_info: {
+                file_size: 0,
+                total_lines: '',
+            },
+            is_over_1GB: false,
             file_list: [],
             file_select_loading: false,
             range_start: '',
             range_end: '',
+            last_lines: '',
             around_lines: 10,
             keyword: '',
             is_case_sensitive: false,
@@ -92,41 +99,84 @@ $(document).ready(function () {
                     this.file_select_loading = false;
                 })
             },
+            get_file_info: function (value) {
+                if (!value) return;
+                const data = {
+                    target_server: this.target_server,
+                    target_file: value
+                }
+                this.axios({
+                    url: '../api/SLKController/getFileInfo',
+                    method: 'post',
+                    data
+                }).then(res => {
+                    if (res.code === 'OK') {
+                        const file_size = (res.data.file_size / (1024*1024*1024)).toFixed(2);
+                        this.file_info = {
+                            file_size,
+                            total_lines: res.data.total_lines
+                        }
+                        const int = Number.parseInt(file_size, 10);
+                        this.is_over_1GB = !!int;
+                    }
+                })
+            },
             on_server_changed: function (server_name) {
                 console.log(server_name);
                 this.load_server_slk_files(server_name);
             },
             on_slk_search: function () {
-                $.ajax({
-                    url: '../api/SLKController/readSLKLogs',
-                    method: 'post',
-                    data: {
-                        target_server: this.target_server,
-                        target_file: this.target_file,
-                        range_start: this.range_start,
-                        range_end: this.range_end,
-                        around_lines: this.around_lines,
-                        is_case_sensitive: this.is_case_sensitive,
-                        keyword: this.keyword,
-                    },
-                    dataType: 'json'
-                }).done((response) => {
-                    if (response.code !== 'OK') {
-                        this.$Message.error(response.data);
-                        this.query_info = response.data;
+                if (!this.target_server) {
+                    this.$Message.warning("please select Server");
+                    return;
+                }
+                if (!this.target_file) {
+                    this.$Message.warning("please select File");
+                    return;
+                }
+                let url = this.is_over_1GB ? 'readSLKLogsForLargeFile' : 'readSLKLogs';
+                url = `../api/SLKController/${url}`;
+                const formdata = Object.assign({
+                    target_server: this.target_server,
+                    target_file: this.target_file,
+                    around_lines: this.around_lines,
+                    is_case_sensitive: this.is_case_sensitive,
+                    keyword: this.keyword,
+                }, this.is_over_1GB ? {
+                    last_lines: this.last_lines
+                } : {
+                    range_start: this.range_start,
+                    range_end: this.range_end
+                });
+                this.axios({ url: url, method: 'post', data: formdata})
+                    .then(response => {
+                        if (response.code !== 'OK') {
+                            this.$Message.error(response.data);
+                            this.query_info = response.data;
+                            this.log_output = '';
+                        } else {
+                            console.log(response.data);
+                            this.log_output = response.data.output;
+                            this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
+                                'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
+                                "\n" +
+                                "Command: " + response.data.command;
+                        }
+                    }).catch(err => {
+                        this.query_info = "ajax failed";
                         this.log_output = '';
-                    } else {
-                        console.log(response.data);
-                        this.log_output = response.data.output;
-                        this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
-                            'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
-                            "\n" +
-                            "Command: " + response.data.command;
-                    }
-                }).fail(() => {
-                    this.$Message.error("ajax failed");
-                    this.query_info = "ajax failed";
-                    this.log_output = '';
+                    })
+            },
+            axios: function (option) {
+                const options = Object.assign({method: 'get', dataType: 'json'}, option);
+                return new Promise((resolve, reject) => {
+                    $.ajax(options).then(res => {
+                        resolve(res);
+                    }).catch(err => {
+                        this.$Message.error("ajax failed");
+                        console.error(err);
+                        reject(err);
+                    })
                 })
             }
         },

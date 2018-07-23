@@ -4,4 +4,15 @@ div.ivu-row-flex {
 
 pre {
     overflow: auto;
+    padding: 5px 10px;
+}
+
+@media screen and (max-width: 768px) {
+    h1 small {
+        display: none;
+    }
+}
+
+#app_slk .ivu-form-item {
+    margin-bottom: 12px;
 }

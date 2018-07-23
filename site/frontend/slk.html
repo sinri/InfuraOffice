@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1'/>
     <title>Embedded SinriLogKeeper in InfuraOffice</title>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -19,78 +20,73 @@
 </head>
 <body>
 <div id="app_slk">
-    <Row type="flex" justify="center" align="middle">
+    <Row type="flex" justify="center" align="middle"
+         style="border-bottom: 1px solid lightgrey;margin-bottom: 12px">
         <i-col span="20">
-            <Row type="flex" justify="center" align="middle" style="border-bottom: 1px solid lightgrey">
-                <i-col span="20">
-                    <h1>SinriLogKeeper
-                        <small>Embedded Version in InfuraOffice</small>
-                    </h1>
-                </i-col>
-                <i-col span="4">
-                    <i-button style="display: inline-block;float: right" icon="log-out" shape="circle" size="small"
-                              v-on:click="logout">Logout
-                    </i-button>
-                </i-col>
-            </Row>
-            <Row type="flex" justify="space-between" align="middle">
-                <i-col span="1"><span>Server:</span></i-col>
-                <i-col span="4">
-                    <i-select v-model="target_server" @on-change="on_server_changed" transfer filterable>
-                        <i-option v-for="item in server_list" :value="item.key">{{item.label}}</i-option>
-                    </i-select>
-                </i-col>
-                <i-col span="1"><span>File:</span></i-col>
-                <i-col span="16">
-                    <i-select v-model="target_file" :loading="file_select_loading" transfer filterable>
-                        <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
-                    </i-select>
-                </i-col>
-            </Row>
-            <Row type="flex" justify="space-between" align="middle">
-                <i-col span="5">
-                    <i-input v-model="range_start">
-                        <span slot="prepend">From</span>
-                    </i-input>
-                </i-col>
-                <i-col span="5">
-                    <i-input v-model="range_end">
-                        <span slot="prepend">To</span>
-                    </i-input>
-                </i-col>
-                <i-col span="5">
-                    <i-input v-model="around_lines">
-                        <span slot="prepend">Around Lines</span>
-                    </i-input>
-                </i-col>
-                <i-col span="5">
-                    <Checkbox v-model="is_case_sensitive">Case Sensitive</Checkbox>
-                </i-col>
-            </Row>
-            <Row type="flex" justify="space-between" align="middle">
-                <i-col span="16">
-                    <i-input type="text" v-model="keyword">
-                        <span slot="prepend">Keyword</span>
-                    </i-input>
-                </i-col>
-                <i-col span="4">
-                    <i-button v-on:click="on_slk_search" type="primary" long>Search</i-button>
-                </i-col>
-            </Row>
+            <h1>SinriLogKeeper
+                <small>Embedded Version in InfuraOffice</small>
+            </h1>
+        </i-col>
+        <i-col span="4">
+            <i-button style="display: inline-block;float: right" icon="log-out" shape="circle" size="small"
+                      @click="logout">Logout
+            </i-button>
         </i-col>
     </Row>
     <Row type="flex" justify="center" align="middle">
-        <i-col span="20" style="border: 1px solid lightgrey;">
-            <Row type="flex" justify="center" align="middle">
-                <i-col span="24">
-                    <pre style="background-color: lavender">{{query_info}}</pre>
-                </i-col>
-            </Row>
-            <Row type="flex" justify="center" align="middle">
-                <i-col span="24">
-                    <pre style="background-color: rgba(168, 230, 138, 0.38);">{{log_output}}</pre>
-                </i-col>
-            </Row>
+        <i-col :lg="12" :md="16" :sm="20" :xs="24" style="margin: 5px 0;">
+
+            <i-form :label-width="120">
+                <form-item label="Server:">
+                    <i-select v-model="target_server" @on-change="on_server_changed" filterable clearable>
+                        <i-option v-for="item in server_list" :value="item.key">{{item.label}}</i-option>
+                    </i-select>
+                </form-item>
+                <form-item label="File:">
+                    <i-select v-model="target_file" :loading="file_select_loading" filterable clearable
+                              @on-change="get_file_info">
+                        <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
+                    </i-select>
+                </form-item>
+                <template v-if="!is_over_1GB">
+                    <form-item label="From:">
+                        <i-input v-model="range_start"></i-input>
+                    </form-item>
+                    <form-item label="To:">
+                        <i-input v-model="range_end"></i-input>
+                    </form-item>
+                </template>
+                <template v-else>
+                    <form-item label="">
+                        <p>选择文件大小为: {{file_info.file_size}}GB，总行数为: {{file_info.total_lines}}，超过1GB</p>
+                    </form-item>
+                    <form-item label="LastLines:">
+                        <i-input v-model="last_lines"></i-input>
+                    </form-item>
+                </template>
+                <form-item label="Around Lines:">
+                    <i-input v-model="around_lines"></i-input>
+                </form-item>
+                <form-item label="">
+                    <Checkbox v-model="is_case_sensitive">Case Sensitive</Checkbox>
+                </form-item>
+                <form-item label="keyword:">
+                    <i-input type="text" v-model="keyword"></i-input>
+                </form-item>
+                <form-item label="">
+                    <i-button @click="on_slk_search" html-type="button" type="primary" long>
+                        Search
+                    </i-button>
+                </form-item>
+            </i-form>
+        </i-col>
+    </Row>
+    <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;">
+        <i-col span="22" offset="1">
+            <pre style="background-color: lavender">{{query_info}}</pre>
+        </i-col>
+        <i-col span="22" offset="1">
+            <pre style="background-color: rgba(168, 230, 138, 0.38);">{{log_output}}</pre>
         </i-col>
     </Row>
 </div>
