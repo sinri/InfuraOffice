@@ -18,4 +18,7 @@ $config = [
     'log' => [
         'dir' => __DIR__ . '/../log',
     ],
+    'jsshagent' => [
+        'proxy' => 'http://127.0.0.1:9999/'
+    ]
 ];

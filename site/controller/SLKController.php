@@ -11,13 +11,12 @@ namespace sinri\InfuraOffice\site\controller;
 
 use sinri\enoch\core\LibRequest;
 use sinri\enoch\helper\CommonHelper;
-use sinri\InfuraOffice\cli\handler\ShellCommandHandler;
+use sinri\InfuraOffice\entity\JSSHAgentTaskStatusEntity;
 use sinri\InfuraOffice\entity\UserEntity;
-use sinri\InfuraOffice\library\DaemonQueryLibrary;
+use sinri\InfuraOffice\library\JSSHAgentLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
-use sinri\InfuraOffice\toolkit\BaseController;
 
-class SLKController extends BaseController
+class SLKController extends SLKv1Controller
 {
     public function __construct($initData = null)
     {
@@ -50,25 +49,6 @@ class SLKController extends BaseController
                 $patterns = preg_split('/\s*[\r\n]\s*/', $serverEntity->slk_paths);
             }
 
-            $files = [];
-            /*
-            // this is the old method
-            foreach ($patterns as $pattern) {
-                $pattern = trim($pattern);
-                if (strlen($pattern) <= 0) continue;
-
-                $command = "sudo find / -path " . escapeshellarg($pattern);
-                $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
-
-                $daemonQueryLibrary = new DaemonQueryLibrary();
-                $result = @$daemonQueryLibrary->query($query);
-
-                $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-                $list = explode("\n", $output);
-                $list = array_filter($list);
-                $files = array_merge($files, $list);
-            }
-            */
             // try to fix Issue #1
             $command = '';
             foreach ($patterns as $pattern) {
@@ -78,10 +58,22 @@ class SLKController extends BaseController
 echo -e 'import glob\nlist=glob.glob("{$pattern}")\nfor item in list:\n\tprint(item)'|python -;
 PYTHON_COMMAND;
             }
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, false);
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-            $result = @$daemonQueryLibrary->query($query);
-            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
+
+            $proxy = new JSSHAgentLibrary();
+            $taskIndex = $proxy->newTask($serverEntity->connect_ip, $serverEntity->ssh_user, $command);
+            if (empty($taskIndex)) throw new \Exception("Cannot raise task");
+            sleep(1);
+            $entity = $proxy->checkTask($taskIndex);
+            while (!in_array(
+                $entity->status, [
+                    JSSHAgentTaskStatusEntity::STATUS_FINISHED,
+                    JSSHAgentTaskStatusEntity::STATUS_FETCHED,
+                ]
+            )) {
+                sleep(1);
+                $entity = $proxy->checkTask($taskIndex);
+            }
+            $output = $entity->output;
             $list = explode("\n", $output);
             $files = array_filter($list);
 
@@ -91,7 +83,29 @@ PYTHON_COMMAND;
         }
     }
 
-    public function readSLKLogs()
+    public function getFileInfoAsync()
+    {
+        try {
+            $server_name = LibRequest::getRequest("target_server", '');
+            $target_file = LibRequest::getRequest("target_file", '');
+
+            $proxy = new JSSHAgentLibrary();
+
+            $command1 = 'sudo ls -al ' . escapeshellarg($target_file) . '|awk \'{print $5}\'';
+            $taskIndex1 = $proxy->newTaskForRegisteredServer($server_name, $command1);
+            if (empty($taskIndex1)) throw new \Exception("Cannot raise task 1");
+
+            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+            $taskIndex2 = $proxy->newTaskForRegisteredServer($server_name, $command2);
+            if (empty($taskIndex2)) throw new \Exception("Cannot raise task 2");
+
+            $this->_sayOK(['task_index_for_file_size' => $taskIndex1, 'task_index_for_file_lines' => $taskIndex2]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function readSLKLogsAsync()
     {
         try {
             $server_name = LibRequest::getRequest("target_server", '');
@@ -101,16 +115,10 @@ PYTHON_COMMAND;
             $around_lines = LibRequest::getRequest("around_lines", '0');
             $is_case_sensitive = LibRequest::getRequest("is_case_sensitive", 'NO');
             $keyword = LibRequest::getRequest("keyword", '');
+            $total_lines = LibRequest::getRequest("total_lines", '0');
 
-            // cat -n '/var/log/tomcat7/catalina.out'|awk '{if($1>=26726 && $1<=27726) print $0}'|grep -C 10 -m 2000 ''
-            // cat -n '/var/log/tomcat7/catalina.out'|awk '{if($1>=28773 && $1<=29773) print $0}'|grep -C 10 -m 2000 'xx'
+            $proxy = new JSSHAgentLibrary();
 
-            // get total lines
-            $command = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-            $result = @$daemonQueryLibrary->query($query);
-            $total_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
             $total_lines = intval($total_lines, 10);
 
             if (empty($range_start)) $range_start = 0;
@@ -134,78 +142,24 @@ PYTHON_COMMAND;
             $command = 'sudo cat -n ' . escapeshellarg($target_file)
                 . '|awk \'{if($1>=' . $range_start . ' && $1<=' . $range_end . ') print $0}\''
                 . '|grep -C ' . intval($around_lines) . ($is_case_sensitive ? ' -i ' : '') . ' -m 2000 ' . escapeshellarg($keyword);
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
 
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-            $result = @$daemonQueryLibrary->query($query);
 
-            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-            $list = explode("\n", $output);
+            $taskIndex = $proxy->newTaskForRegisteredServer($server_name, $command);
+            if (empty($taskIndex)) throw new \Exception("Cannot raise task");
 
-            $this->_sayOK(['output' => $output, 'lines' => $list, 'total_lines' => $total_lines, 'command' => $command]);
+            $this->_sayOK(['task_index' => $taskIndex]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }
     }
 
-    public function getFileInfo()
+    public function checkAsyncTaskResult()
     {
         try {
-            $server_name = LibRequest::getRequest("target_server", '');
-            $target_file = LibRequest::getRequest("target_file", '');
-
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-
-            $command1 = 'sudo ls -al ' . escapeshellarg($target_file) . '|awk \'{print $5}\'';
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command1, true);
-            $result = @$daemonQueryLibrary->query($query);
-            $file_size = $daemonQueryLibrary->parseResponse($result, $parse_error);
-
-            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command2, true);
-            $result = @$daemonQueryLibrary->query($query);
-            $file_lines = $daemonQueryLibrary->parseResponse($result, $parse_error);
-
-            $this->_sayOK(['file_size' => $file_size, 'total_lines' => $file_lines, 'command' => $command1 . ';' . $command2]);
-        } catch (\Exception $exception) {
-            $this->_sayFail($exception->getMessage());
-        }
-    }
-
-    public function readSLKLogsForLargeFile()
-    {
-        /**
-         * grep -n [-i] -m 2000 -C [around] [search] [file]
-         * tail -n [lines] | grep -n [-i] -m 2000 -C [around] [search] [file]
-         */
-
-        try {
-            $server_name = LibRequest::getRequest("target_server", '');
-            $target_file = LibRequest::getRequest("target_file", '');
-            $last_lines = LibRequest::getRequest("last_lines", '0');
-            $around_lines = LibRequest::getRequest("around_lines", '0');
-            $is_case_sensitive = LibRequest::getRequest("is_case_sensitive", 'NO');
-            $keyword = LibRequest::getRequest("keyword", '');
-
-            $last_lines = intval($last_lines, 10);
-            $around_lines = intval($around_lines, 10);
-
-            $daemonQueryLibrary = new DaemonQueryLibrary();
-
-            $command = "sudo ";
-            if ($last_lines > 0) {
-                $command .= "tail -n " . $last_lines . ' ' . escapeshellarg($target_file) . " | ";
-                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword);
-            } else {
-                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword) . ' ' . escapeshellarg($target_file);
-            }
-
-            $query = ShellCommandHandler::buildQueryForSync($server_name, $command, true);
-            $result = @$daemonQueryLibrary->query($query);
-            $output = $daemonQueryLibrary->parseResponse($result, $parse_error);
-            $list = explode("\n", $output);
-
-            $this->_sayOK(['output' => $output, 'lines' => $list, 'total_lines' => count($list), 'command' => $command]);
+            $task_index = LibRequest::getRequest("task_index", '');
+            $proxy = new JSSHAgentLibrary();
+            $entity = $proxy->checkTask($task_index);
+            $this->_sayOK($entity);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }

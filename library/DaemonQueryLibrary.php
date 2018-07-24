@@ -33,7 +33,7 @@ class DaemonQueryLibrary
      * @return array|string
      * @throws \Exception
      */
-    public function query($content, $timeoutInSeconds = 1)
+    public function query($content, $timeoutInSeconds = 50)
     {
         return $this->socketAgent->runClient(function ($client) use ($content, $timeoutInSeconds) {
             $pairName = stream_socket_get_name($client, true);
