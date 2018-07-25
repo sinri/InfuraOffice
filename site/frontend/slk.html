@@ -36,40 +36,47 @@
     <Row type="flex" justify="center" align="middle">
         <i-col span="22" offset="1" style="margin: 5px 0;">
             <i-form :label-width="120" inline>
-                <form-item label="Server:">
-                    <i-select style="width: 300px;" v-model="target_server" @on-change="on_server_changed" filterable clearable>
-                        <i-option v-for="item in server_list" :value="item.key">{{item.label}}</i-option>
-                    </i-select>
-                </form-item>
-                <form-item label="File:">
-                    <i-select style="width: 300px;" v-model="target_file" :loading="file_select_loading" filterable clearable
-                              @on-change="get_file_info">
-                        <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
-                    </i-select>
-                </form-item>
-                <form-item label="From:">
-                    <i-input style="width: 300px;" v-model="range_start"></i-input>
-                </form-item>
-                <form-item label="To:">
-                    <i-input style="width: 300px;" v-model="range_end"></i-input>
-                </form-item>
-                <form-item label="LastLines:">
-                    <i-input style="width: 300px;" v-model="last_lines"></i-input>
-                </form-item>
-                <form-item label="Around Lines:">
-                    <i-input style="width: 300px;" v-model="around_lines"></i-input>
-                </form-item>
-                <form-item label="keyword:">
-                    <i-input  style="width: 300px;" type="text" v-model="keyword"></i-input>
-                </form-item>
-                <form-item label="">
-                    <Checkbox v-model="is_case_sensitive">Case Sensitive</Checkbox>
-                </form-item>
                 <div>
+                    <form-item label="Server:">
+                        <i-select style="width: 300px;" v-model="target_server" @on-change="on_server_changed" filterable clearable>
+                            <i-option v-for="item in server_list" :value="item.key">{{item.label}}</i-option>
+                        </i-select>
+                    </form-item>
+                    <form-item label="File:">
+                        <i-select style="width: 300px;" v-model="target_file" :loading="file_select_loading" filterable clearable
+                                @on-change="get_file_info">
+                            <i-option v-for="item in file_list" :value="item.key">{{item.label}}</i-option>
+                        </i-select>
+                    </form-item>
                     <form-item label="">
-                        <i-button @click="on_slk_search" html-type="button" type="primary">
-                            Search
-                        </i-button>
+                        <span v-if="file_info.file_size">File size: {{ file_info.file_size }}KB, file total lines: {{ file_info.total_lines }}</span>
+                        <span v-else-if="target_file">Fetching file info ....</span>
+                        <span v-else>No file selected</span>
+                    </form-item>
+                </div>
+                <div>
+                    <form-item label="From:">
+                        <i-input style="width: 300px;" v-model="range_start"></i-input>
+                    </form-item>
+                    <form-item label="To:">
+                        <i-input style="width: 300px;" v-model="range_end"></i-input>
+                    </form-item>
+                    <form-item label="LastLines:">
+                        <i-input style="width: 300px;" v-model="last_lines"></i-input>
+                    </form-item>
+                    <form-item label="Around Lines:">
+                        <i-input style="width: 300px;" v-model="around_lines"></i-input>
+                    </form-item>
+                </div>
+                <div>
+                    <form-item label="keyword:">
+                        <i-input style="width: 300px;" type="text" v-model="keyword"></i-input>
+                    </form-item>
+                    <form-item label="">
+                        <Checkbox style="width: 300px;" v-model="is_case_sensitive">Case Sensitive</Checkbox>
+                    </form-item>
+                    <form-item label="">
+                        <i-button @click="on_slk_search" html-type="button" type="primary" :loading="is_loading">Search</i-button>
                     </form-item>
                 </div>
             </i-form>
@@ -83,11 +90,11 @@
             </Alert>
         </i-col>
     </Row>
-    <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;" v-if="result.output">
-        <i-col span="22" offset="1">
+    <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;" >
+        <i-col span="22" offset="1" v-if="query_info">
             <pre style="background-color: lavender">{{query_info}}</pre>
         </i-col>
-        <i-col span="22" offset="1">
+        <i-col span="22" offset="1" v-if="result.output">
             <pre style="background-color: rgba(168, 230, 138, 0.38);">{{ result.output }}</pre>
         </i-col>
     </Row>
