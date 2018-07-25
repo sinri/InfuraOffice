@@ -16,3 +16,15 @@ pre {
 #app_slk .ivu-form-item {
     margin-bottom: 12px;
 }
+
+.icon-rotate {
+    font-size: 20px;
+    vertical-align: top;
+    margin-left: 8px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg);}
+    50%  { transform: rotate(180deg);}
+    to   { transform: rotate(360deg);}
+}

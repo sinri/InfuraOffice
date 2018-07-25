@@ -31,6 +31,13 @@ $(document).ready(function () {
             is_case_sensitive: false,
             log_output: '',
             query_info: 'Not Searched Yet',
+            result: {
+                type: 'info',
+                output: '',
+                return_value: '',
+                status: '',
+                outputLines: '',
+            }
         },
         methods: {
             logout: function () {
@@ -73,6 +80,7 @@ $(document).ready(function () {
                 $.ajax({
                     url: '../api/SLKController/listSLKFiles',
                     method: 'post',
+                    async: false,
                     data: {
                         server_name: server_name,
                     },
@@ -100,21 +108,21 @@ $(document).ready(function () {
                 })
             },
             get_file_info: function (value) {
-                if (!value) return;
+                if (!value) return false;
                 const data = {
                     target_server: this.target_server,
                     target_file: value
                 }
                 this.axios({
-                    url: '../api/SLKController/getFileInfo',
+                    url: '../api/SLKController/getFileInfoAsync',
                     method: 'post',
                     data
                 }).then(res => {
                     if (res.code === 'OK') {
-                        const file_size = (res.data.file_size / (1024*1024*1024)).toFixed(2);
+                        const file_size = (res.data.task_index_for_file_size / (1024*1024*1024)).toFixed(2);
                         this.file_info = {
                             file_size,
-                            total_lines: res.data.total_lines
+                            total_lines: res.data.task_index_for_file_lines
                         }
                         const int = Number.parseInt(file_size, 10);
                         this.is_over_1GB = !!int;
@@ -123,6 +131,7 @@ $(document).ready(function () {
             },
             on_server_changed: function (server_name) {
                 console.log(server_name);
+                if (!server_name) return false;
                 this.load_server_slk_files(server_name);
             },
             on_slk_search: function () {
@@ -134,35 +143,92 @@ $(document).ready(function () {
                     this.$Message.warning("please select File");
                     return;
                 }
-                let url = this.is_over_1GB ? 'readSLKLogsForLargeFile' : 'readSLKLogs';
+                let url = 'readSLKLogsAsync';
                 url = `../api/SLKController/${url}`;
-                const formdata = Object.assign({
+                const formdata = {
                     target_server: this.target_server,
                     target_file: this.target_file,
                     around_lines: this.around_lines,
                     is_case_sensitive: this.is_case_sensitive,
                     keyword: this.keyword,
-                }, this.is_over_1GB ? {
-                    last_lines: this.last_lines
-                } : {
                     range_start: this.range_start,
-                    range_end: this.range_end
-                });
+                    range_end: this.range_end,
+                    total_lines: this.file_info.total_lines
+                };
                 this.axios({ url: url, method: 'post', data: formdata})
                     .then(response => {
                         if (response.code !== 'OK') {
                             this.$Message.error(response.data);
+                            
                             this.query_info = response.data;
                             this.log_output = '';
                         } else {
                             console.log(response.data);
-                            this.log_output = response.data.output;
-                            this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
-                                'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
-                                "\n" +
-                                "Command: " + response.data.command;
+                            this.register_slow_queryTask(response.data.task_index);
+                            // this.log_output = response.data.output;
+                            // this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
+                            //     'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
+                            //     "\n" +
+                            //     "Command: " + response.data.command;
                         }
                     }).catch(err => {
+                        this.query_info = "ajax failed";
+                        this.log_output = '';
+                    })
+            },
+            register_slow_queryTask: function (task_index) {
+                let query_time = 0;
+                const begin = (new Date()).getTime();
+                const finish_status = ['FINISHED', 'FETCHED'];
+                // 立即执行一次
+                this.check_result_task(task_index).then(res => {
+                    const { status, output, outputLines } = res;
+                    const type = finish_status.includes(status) ? 'success' : 'info';
+                    this.result = Object.assign(this.result, {type, status, output});
+                    if (finish_status.includes(status)) {
+                        const end = (new Date()).getTime();
+                        query_time = end - begin;
+                        this.query_info = 'Found ' + outputLines.length + ' lines ' +
+                            'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                        setTimeout(() => {
+                            this.result = Object.assign(this.result, {status: ''});
+                        }, 4000);
+                        return;
+                    }
+                    let clock = setInterval(() => {
+                        this.check_result_task(task_index).then(response => {
+                            const { status, output, outputLines } = response;
+                            const type = finish_status.includes(status) ? 'success' : 'info';
+                            this.result = Object.assign(this.result, {type, status, output});
+                            if (finish_status.includes(status)) {
+                                clearInterval(clock);
+                                clock = null;
+                                const end = (new Date()).getTime();
+                                query_time = end - begin;
+                                this.query_info = 'Found ' + outputLines.length + ' lines ' +
+                                    'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                                setTimeout(() => {
+                                    this.result = Object.assign(this.result, {status: ''});
+                                }, 4000);
+                            }
+                        })
+                    }, 2000)
+                })
+            },
+            check_result_task: function(task_index) {
+                const url = '../api/SLKController/checkAsyncTaskResult';
+                return this.axios({url, method: 'post', data: {task_index}})
+                    .then(response => {
+                        if (response.code !== 'OK') {
+                            this.result = {type: 'error', status: 'ERROR'};
+                            this.$Message.error(response.data);
+                            this.query_info = response.data;
+                            this.log_output = '';
+                        } else {
+                            return response.data;
+                        }
+                    }).catch(err => {
+                        this.result = {type: 'error', status: 'ERROR'};
                         this.query_info = "ajax failed";
                         this.log_output = '';
                     })
