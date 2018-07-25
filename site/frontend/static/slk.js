@@ -12,7 +12,7 @@ $(document).ready(function () {
         data: {
             is_loading: false,
             has_error: false,
-            error_message: '',
+            error_Notice: '',
             target_server: '',
             server_list: [],
             target_file: '',
@@ -31,6 +31,7 @@ $(document).ready(function () {
             is_case_sensitive: false,
             log_output: '',
             query_info: 'Not Searched Yet',
+            finish_status: ['FINISHED', 'FETCHED', 'NOT_EXIST'],
             result: {
                 type: 'info',
                 output: '',
@@ -56,7 +57,7 @@ $(document).ready(function () {
                     let servers = [];
 
                     if (response.code !== 'OK') {
-                        this.$Message.error(response.data);
+                        this.$Notice.error({desc: response.data});
                     } else {
                         for (let i = 0; i < response.data.list.length; i++) {
                             let server_item = response.data.list[i];
@@ -70,7 +71,7 @@ $(document).ready(function () {
                         //this.target_server_list = [];
                     }
                 }).fail(() => {
-                    this.$Message.error("infura_server_select ajax failed");
+                    this.$Notice.error({desc: "infura_server_select ajax failed"});
                 }).always(() => {
                     //console.log("guhehe");
                 });
@@ -88,7 +89,7 @@ $(document).ready(function () {
                 }).done((response) => {
                     console.log(response);
                     if (response.code !== 'OK') {
-                        this.$Message.error(response.data);
+                        this.$Notice.error({desc: response.data});
                         this.file_list = [];
                     } else {
                         let l = [];
@@ -101,7 +102,7 @@ $(document).ready(function () {
                         this.file_list = l;
                     }
                 }).fail(() => {
-                    this.$Message.error("infura_server_select ajax failed");
+                    this.$Notice.error({desc: "infura_server_select ajax failed"});
                     this.file_list = [];
                 }).always(() => {
                     this.file_select_loading = false;
@@ -109,6 +110,7 @@ $(document).ready(function () {
             },
             get_file_info: function (value) {
                 if (!value) return false;
+                this.file_info = { file_size: '', total_lines: '' }
                 const data = {
                     target_server: this.target_server,
                     target_file: value
@@ -119,13 +121,46 @@ $(document).ready(function () {
                     data
                 }).then(res => {
                     if (res.code === 'OK') {
-                        const file_size = (res.data.task_index_for_file_size / (1024*1024*1024)).toFixed(2);
-                        this.file_info = {
-                            file_size,
-                            total_lines: res.data.task_index_for_file_lines
-                        }
-                        const int = Number.parseInt(file_size, 10);
-                        this.is_over_1GB = !!int;
+                        // const file_size = (res.data.task_index_for_file_size / (1024*1024*1024)).toFixed(2);
+                        // this.file_info = {
+                        //     file_size,
+                        //     total_lines: res.data.task_index_for_file_lines
+                        // }
+                        // const int = Number.parseInt(file_size, 10);
+                        // this.is_over_1GB = !!int;
+                        const { task_index_for_file_lines, task_index_for_file_size } =  res.data;
+                        this.check_result_task(task_index_for_file_lines).then(res => {
+                            if (this.finish_status.includes(res.status)) {
+                                this.$set(this.file_info, 'total_lines', res.output);
+                            } else {
+                                let clock_lines = setInterval(async () => {
+                                    this.check_result_task(task_index_for_file_lines).then(response => {
+                                        if (this.finish_status.includes(response.status)) {
+                                            this.$set(this.file_info, 'total_lines', response.output);
+                                            clearInterval(clock_lines);
+                                            clock_lines = null;
+                                        }
+                                    });
+                                }, 400)
+                            }
+                        });
+                        this.check_result_task(task_index_for_file_size).then(res => {
+                            if (this.finish_status.includes(res.status)) {
+                                const file_size = (+res.output / 1024).toFixed(2);
+                                this.$set(this.file_info, 'file_size', file_size);
+                            } else {
+                                let clock_size = setInterval(async () => {
+                                    this.check_result_task(task_index_for_file_size).then(response => {
+                                        if (this.finish_status.includes(response.status)) {
+                                            const file_size = (+response.output / 1024).toFixed(2);
+                                            this.$set(this.file_info, 'file_size', file_size);
+                                            clearInterval(clock_size);
+                                            clock_size = null;
+                                        }
+                                    });
+                                }, 400)
+                            }
+                        });
                     }
                 })
             },
@@ -136,13 +171,21 @@ $(document).ready(function () {
             },
             on_slk_search: function () {
                 if (!this.target_server) {
-                    this.$Message.warning("please select Server");
+                    this.$Notice.warning({desc: "please select Server"});
                     return;
                 }
                 if (!this.target_file) {
-                    this.$Message.warning("please select File");
+                    this.$Notice.warning({desc: "please select File"});
                     return;
                 }
+                if (!this.file_info.total_lines) {
+                    this.$Notice.warning({desc: "please select File or wait for File info fetched"});
+                    return;
+                }
+                // 清空上一条数据
+                this.result = Object.assign(this.result, { type: 'info', output: '', return_value: '', status: '', outputLines: '', });
+                this.query_info = '';
+                this.is_loading = true;
                 let url = 'readSLKLogsAsync';
                 url = `../api/SLKController/${url}`;
                 const formdata = {
@@ -158,10 +201,9 @@ $(document).ready(function () {
                 this.axios({ url: url, method: 'post', data: formdata})
                     .then(response => {
                         if (response.code !== 'OK') {
-                            this.$Message.error(response.data);
-                            
+                            this.$Notice.error({desc: response.data});
                             this.query_info = response.data;
-                            this.log_output = '';
+                            this.is_loading = false;
                         } else {
                             console.log(response.data);
                             this.register_slow_queryTask(response.data.task_index);
@@ -174,45 +216,53 @@ $(document).ready(function () {
                     }).catch(err => {
                         this.query_info = "ajax failed";
                         this.log_output = '';
+                        this.is_loading = false;
                     })
             },
             register_slow_queryTask: function (task_index) {
                 let query_time = 0;
                 const begin = (new Date()).getTime();
-                const finish_status = ['FINISHED', 'FETCHED'];
                 // 立即执行一次
                 this.check_result_task(task_index).then(res => {
                     const { status, output, outputLines } = res;
-                    const type = finish_status.includes(status) ? 'success' : 'info';
+                    const type = this.finish_status.includes(status) ? 'success' : 'info';
                     this.result = Object.assign(this.result, {type, status, output});
-                    if (finish_status.includes(status)) {
+                    if (this.finish_status.includes(status)) {
                         const end = (new Date()).getTime();
                         query_time = end - begin;
                         this.query_info = 'Found ' + outputLines.length + ' lines ' +
                             'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                        this.is_loading = false;
                         setTimeout(() => {
                             this.result = Object.assign(this.result, {status: ''});
                         }, 4000);
                         return;
                     }
-                    let clock = setInterval(() => {
-                        this.check_result_task(task_index).then(response => {
+                    let clock = setInterval(async () => {
+                        await this.check_result_task(task_index).then(response => {
                             const { status, output, outputLines } = response;
-                            const type = finish_status.includes(status) ? 'success' : 'info';
+                            const type = this.finish_status.includes(status) ? 'success' : 'info';
                             this.result = Object.assign(this.result, {type, status, output});
-                            if (finish_status.includes(status)) {
+                            if (this.finish_status.includes(status)) {
                                 clearInterval(clock);
                                 clock = null;
-                                const end = (new Date()).getTime();
-                                query_time = end - begin;
-                                this.query_info = 'Found ' + outputLines.length + ' lines ' +
-                                    'from ' + this.target_file + ', cost ' + query_time + 'ms';
-                                setTimeout(() => {
-                                    this.result = Object.assign(this.result, {status: ''});
-                                }, 4000);
+                                if (status === 'NOT_EXIST') {
+                                    this.query_info = 'NOT_EXIST';
+                                    this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                } else {
+                                    const end = (new Date()).getTime();
+                                    const lines = outputLines ? outputLines.length : 0;
+                                    query_time = end - begin;
+                                    this.is_loading = false;
+                                    setTimeout(() => {
+                                        this.result = Object.assign(this.result, {status: ''});
+                                    }, 4000);
+                                    this.query_info = 'Found ' + lines + ' lines ' +
+                                        'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                                }
                             }
                         })
-                    }, 2000)
+                    }, 1000)
                 })
             },
             check_result_task: function(task_index) {
@@ -221,16 +271,16 @@ $(document).ready(function () {
                     .then(response => {
                         if (response.code !== 'OK') {
                             this.result = {type: 'error', status: 'ERROR'};
-                            this.$Message.error(response.data);
+                            this.$Notice.error({desc: response.data});
+                            this.is_loading = false;
                             this.query_info = response.data;
-                            this.log_output = '';
                         } else {
                             return response.data;
                         }
                     }).catch(err => {
                         this.result = {type: 'error', status: 'ERROR'};
                         this.query_info = "ajax failed";
-                        this.log_output = '';
+                        this.is_loading = false;
                     })
             },
             axios: function (option) {
@@ -239,7 +289,7 @@ $(document).ready(function () {
                     $.ajax(options).then(res => {
                         resolve(res);
                     }).catch(err => {
-                        this.$Message.error("ajax failed");
+                        this.$Notice.error({desc: "ajax failed"});
                         console.error(err);
                         reject(err);
                     })
