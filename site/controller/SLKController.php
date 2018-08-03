@@ -15,7 +15,7 @@ use sinri\InfuraOffice\entity\JSSHAgentTaskStatusEntity;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\JSSHAgentLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
-use sinri\InfuraOffice\toolkit\BaseController;
+
 
 class SLKController extends BaseController
 {
@@ -56,7 +56,7 @@ class SLKController extends BaseController
                 if (strlen($pattern) <= 0) continue;
                 //$command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
                 $command .= <<<PYTHON_COMMAND
-echo -e 'import glob\nlist=glob.glob("{$pattern}")\nfor item in list:\n\tprint(item)'|python -;
+echo "import glob\\nlist=glob.glob(\"{$pattern}\")\\nfor item in list:\\n\\tprint(item)"|python -;
 PYTHON_COMMAND;
             }
 
