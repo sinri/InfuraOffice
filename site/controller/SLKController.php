@@ -15,6 +15,7 @@ use sinri\InfuraOffice\entity\JSSHAgentTaskStatusEntity;
 use sinri\InfuraOffice\entity\UserEntity;
 use sinri\InfuraOffice\library\JSSHAgentLibrary;
 use sinri\InfuraOffice\library\ServerLibrary;
+use sinri\InfuraOffice\toolkit\BaseController;
 
 
 class SLKController extends BaseController
