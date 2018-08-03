@@ -141,7 +141,7 @@ $(document).ready(function () {
                                             clock_lines = null;
                                         }
                                     });
-                                }, 400)
+                                }, 1000)
                             }
                         });
                         this.check_result_task(task_index_for_file_size).then(res => {
@@ -158,7 +158,7 @@ $(document).ready(function () {
                                             clock_size = null;
                                         }
                                     });
-                                }, 400)
+                                }, 500)
                             }
                         });
                     }
@@ -178,10 +178,10 @@ $(document).ready(function () {
                     this.$Notice.warning({desc: "please select File"});
                     return;
                 }
-                if (!this.file_info.total_lines) {
-                    this.$Notice.warning({desc: "please select File or wait for File info fetched"});
-                    return;
-                }
+                // if (!this.file_info.total_lines) {
+                //     this.$Notice.warning({desc: "please select File or wait for File info fetched"});
+                //     return;
+                // }
                 // 清空上一条数据
                 this.result = Object.assign(this.result, { type: 'info', output: '', return_value: '', status: '', outputLines: '', });
                 this.query_info = '';
@@ -196,7 +196,7 @@ $(document).ready(function () {
                     keyword: this.keyword,
                     range_start: this.range_start,
                     range_end: this.range_end,
-                    total_lines: this.file_info.total_lines
+                    total_lines: this.file_info.total_lines > 0 ? this.file_info.total_lines : 0,
                 };
                 this.axios({ url: url, method: 'post', data: formdata})
                     .then(response => {
