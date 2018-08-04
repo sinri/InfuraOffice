@@ -50,7 +50,7 @@
                     </form-item>
                     <form-item label="">
                         <span v-if="file_info.file_size">
-                            File size: {{ file_info.file_size/1024 }}MB
+                            File size: {{ file_info.file_size/1024/1024 }}GB
                             <!--file total lines: {{ file_info.total_lines }}-->
                         </span>
                         <span v-else-if="target_file">Fetching file info ....</span>
@@ -94,6 +94,9 @@
         </i-col>
     </Row>
     <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;" >
+        <i-col span="22" offset="1">
+            <pre style="background-color: khaki">The line number would be relative if you set up the last lines parameter.</pre>
+        </i-col>
         <i-col span="22" offset="1" v-if="query_info">
             <pre style="background-color: lavender">{{query_info}}</pre>
         </i-col>

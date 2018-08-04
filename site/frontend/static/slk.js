@@ -25,7 +25,7 @@ $(document).ready(function () {
             file_select_loading: false,
             range_start: '',
             range_end: '',
-            last_lines: '',
+            last_lines: 10000,
             around_lines: 10,
             keyword: '',
             is_case_sensitive: false,
