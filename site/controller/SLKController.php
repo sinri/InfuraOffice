@@ -42,6 +42,7 @@ class SLKController extends BaseController
     {
         try {
             $server_name = LibRequest::getRequest("server_name");
+            //$should_add_e_for_echo=LibRequest::getRequest("should_add_e_for_echo","NO");
 
             $serverEntity = (new ServerLibrary())->readEntityByName($server_name);
             CommonHelper::assertNotEmpty($serverEntity, 'no such server');
@@ -51,14 +52,24 @@ class SLKController extends BaseController
                 $patterns = preg_split('/\s*[\r\n]\s*/', $serverEntity->slk_paths);
             }
 
+            // For `echo` the `-e` parameter
+            // needed for Debian 7
+            // caused problem for Debian 9
+            // the fucking python must use new lines and spaces, too not friendly
+            // I will try perl
+
+            // perl -e "@files = glob('/var/log/*');foreach $files(@files){print $files;print \"\n\";}"
+            // echo -e "import glob\\nlist=glob.glob(\"{$pattern}\")\\nfor item in list:\\n\\tprint(item)"|python -;
+
+
             // try to fix Issue #1
             $command = '';
             foreach ($patterns as $pattern) {
                 if (strlen($pattern) <= 0) continue;
                 //$command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
-                $command .= <<<PYTHON_COMMAND
-echo -e "import glob\\nlist=glob.glob(\"{$pattern}\")\\nfor item in list:\\n\\tprint(item)"|python -;
-PYTHON_COMMAND;
+                $command .= <<<PERL_COMMAND
+perl -e "@files = glob('{$pattern}');foreach \$files(@files){print \$files;print \\"\\n\\";}"
+PERL_COMMAND;
             }
 
             $proxy = new JSSHAgentLibrary();
