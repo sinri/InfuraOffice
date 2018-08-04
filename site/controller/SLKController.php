@@ -68,7 +68,7 @@ class SLKController extends BaseController
                 if (strlen($pattern) <= 0) continue;
                 //$command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
                 $command .= <<<PERL_COMMAND
-perl -e "@files = glob('{$pattern}');foreach \$files(@files){print \$files;print \\"\\n\\";}"
+perl -e "@files = glob('{$pattern}');foreach \$files(@files){print \$files;print \\"\\n\\";}";
 PERL_COMMAND;
             }
 
