@@ -97,9 +97,10 @@ PYTHON_COMMAND;
             $taskIndex1 = $proxy->newTaskForRegisteredServer($server_name, $command1);
             if (empty($taskIndex1)) throw new \Exception("Cannot raise task 1");
 
-            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
-            $taskIndex2 = $proxy->newTaskForRegisteredServer($server_name, $command2);
-            if (empty($taskIndex2)) throw new \Exception("Cannot raise task 2");
+            $taskIndex2 = "TooLargeFileNoMoreCount";
+//            $command2 = 'sudo wc -l ' . escapeshellarg($target_file) . '|awk \'{print $1}\'';
+//            $taskIndex2 = $proxy->newTaskForRegisteredServer($server_name, $command2);
+//            if (empty($taskIndex2)) throw new \Exception("Cannot raise task 2");
 
             $this->_sayOK(['task_index_for_file_size' => $taskIndex1, 'task_index_for_file_lines' => $taskIndex2]);
         } catch (\Exception $exception) {
@@ -108,6 +109,43 @@ PYTHON_COMMAND;
     }
 
     public function readSLKLogsAsync()
+    {
+        /**
+         * grep -n [-i] -m 2000 -C [around] [search] [file]
+         * tail -n [lines] | grep -n [-i] -m 2000 -C [around] [search] [file]
+         */
+
+        try {
+            $server_name = LibRequest::getRequest("target_server", '');
+            $target_file = LibRequest::getRequest("target_file", '');
+            $last_lines = LibRequest::getRequest("last_lines", '0');
+            $around_lines = LibRequest::getRequest("around_lines", '0');
+            $is_case_sensitive = LibRequest::getRequest("is_case_sensitive", 'NO');
+            $keyword = LibRequest::getRequest("keyword", '');
+
+            $last_lines = intval($last_lines, 10);
+            $around_lines = intval($around_lines, 10);
+
+            $command = "sudo ";
+            if ($last_lines > 0) {
+                $command .= "tail -n " . $last_lines . ' ' . escapeshellarg($target_file) . " | ";
+                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword);
+            } else {
+                $command .= "grep -n " . ($is_case_sensitive ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword) . ' ' . escapeshellarg($target_file);
+            }
+
+            $proxy = new JSSHAgentLibrary();
+
+            $taskIndex = $proxy->newTaskForRegisteredServer($server_name, $command);
+            if (empty($taskIndex)) throw new \Exception("Cannot raise task");
+
+            $this->_sayOK(['task_index' => $taskIndex]);
+        } catch (\Exception $exception) {
+            $this->_sayFail($exception->getMessage());
+        }
+    }
+
+    public function readSLKLogsAsync_old()
     {
         try {
             $server_name = LibRequest::getRequest("target_server", '');

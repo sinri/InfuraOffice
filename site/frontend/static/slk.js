@@ -110,11 +110,11 @@ $(document).ready(function () {
             },
             get_file_info: function (value) {
                 if (!value) return false;
-                this.file_info = { file_size: '', total_lines: '' }
+                this.file_info = {file_size: '', total_lines: ''};
                 const data = {
                     target_server: this.target_server,
                     target_file: value
-                }
+                };
                 this.axios({
                     url: '../api/SLKController/getFileInfoAsync',
                     method: 'post',
@@ -129,21 +129,21 @@ $(document).ready(function () {
                         // const int = Number.parseInt(file_size, 10);
                         // this.is_over_1GB = !!int;
                         const { task_index_for_file_lines, task_index_for_file_size } =  res.data;
-                        this.check_result_task(task_index_for_file_lines).then(res => {
-                            if (this.finish_status.includes(res.status)) {
-                                this.$set(this.file_info, 'total_lines', res.output);
-                            } else {
-                                let clock_lines = setInterval(async () => {
-                                    this.check_result_task(task_index_for_file_lines).then(response => {
-                                        if (this.finish_status.includes(response.status)) {
-                                            this.$set(this.file_info, 'total_lines', response.output);
-                                            clearInterval(clock_lines);
-                                            clock_lines = null;
-                                        }
-                                    });
-                                }, 1000)
-                            }
-                        });
+                        // this.check_result_task(task_index_for_file_lines).then(res => {
+                        //     if (this.finish_status.includes(res.status)) {
+                        //         this.$set(this.file_info, 'total_lines', res.output);
+                        //     } else {
+                        //         let clock_lines = setInterval(async () => {
+                        //             this.check_result_task(task_index_for_file_lines).then(response => {
+                        //                 if (this.finish_status.includes(response.status)) {
+                        //                     this.$set(this.file_info, 'total_lines', response.output);
+                        //                     clearInterval(clock_lines);
+                        //                     clock_lines = null;
+                        //                 }
+                        //             });
+                        //         }, 1000)
+                        //     }
+                        // });
                         this.check_result_task(task_index_for_file_size).then(res => {
                             if (this.finish_status.includes(res.status)) {
                                 const file_size = (+res.output / 1024).toFixed(2);
@@ -196,7 +196,8 @@ $(document).ready(function () {
                     keyword: this.keyword,
                     range_start: this.range_start,
                     range_end: this.range_end,
-                    total_lines: this.file_info.total_lines > 0 ? this.file_info.total_lines : 0,
+                    //total_lines: this.file_info.total_lines > 0 ? this.file_info.total_lines : 0,
+                    last_lines: this.last_lines,
                 };
                 this.axios({ url: url, method: 'post', data: formdata})
                     .then(response => {
