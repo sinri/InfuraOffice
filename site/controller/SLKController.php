@@ -57,7 +57,7 @@ class SLKController extends BaseController
                 if (strlen($pattern) <= 0) continue;
                 //$command .= "sudo find / -path " . escapeshellarg($pattern) . ' 2>&1;';
                 $command .= <<<PYTHON_COMMAND
-echo "import glob\\nlist=glob.glob(\"{$pattern}\")\\nfor item in list:\\n\\tprint(item)"|python -;
+echo -e "import glob\\nlist=glob.glob(\"{$pattern}\")\\nfor item in list:\\n\\tprint(item)"|python -;
 PYTHON_COMMAND;
             }
 
