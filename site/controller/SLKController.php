@@ -139,7 +139,7 @@ PYTHON_COMMAND;
             $taskIndex = $proxy->newTaskForRegisteredServer($server_name, $command);
             if (empty($taskIndex)) throw new \Exception("Cannot raise task");
 
-            $this->_sayOK(['task_index' => $taskIndex]);
+            $this->_sayOK(['task_index' => $taskIndex, "command" => $command]);
         } catch (\Exception $exception) {
             $this->_sayFail($exception->getMessage());
         }

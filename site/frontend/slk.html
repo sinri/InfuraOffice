@@ -49,7 +49,10 @@
                         </i-select>
                     </form-item>
                     <form-item label="">
-                        <span v-if="file_info.file_size">File size: {{ file_info.file_size }}KB, file total lines: {{ file_info.total_lines }}</span>
+                        <span v-if="file_info.file_size">
+                            File size: {{ file_info.file_size/1024 }}MB
+                            <!--file total lines: {{ file_info.total_lines }}-->
+                        </span>
                         <span v-else-if="target_file">Fetching file info ....</span>
                         <span v-else>No file selected</span>
                     </form-item>

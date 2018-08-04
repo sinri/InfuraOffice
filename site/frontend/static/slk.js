@@ -257,7 +257,7 @@ $(document).ready(function () {
                                     this.is_loading = false;
                                     setTimeout(() => {
                                         this.result = Object.assign(this.result, {status: ''});
-                                    }, 4000);
+                                    }, 400);
                                     this.query_info = 'Found ' + lines + ' lines ' +
                                         'from ' + this.target_file + ', cost ' + query_time + 'ms';
                                 }
