@@ -243,18 +243,19 @@ $(document).ready(function () {
                         await this.check_result_task(task_index).then(response => {
                             const { status, output, outputLines } = response;
                             const type = this.finish_status.includes(status) ? 'success' : 'info';
-                            this.result = Object.assign(this.result, {type, status, output});
                             if (this.finish_status.includes(status)) {
                                 clearInterval(clock);
                                 clock = null;
                                 if (status === 'NOT_EXIST') {
                                     this.query_info = 'NOT_EXIST';
                                     this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                    //this.result = Object.assign(this.result, {type, status, output});
                                 } else if (status === 'FETCHED') {
                                     console.log("FETCHED....Nothing to do here...");
                                     //this.query_info = 'NOT_EXIST';
                                     //this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
                                 } else {
+                                    this.result = Object.assign(this.result, {type, status, output});
                                     const end = (new Date()).getTime();
                                     const lines = outputLines ? outputLines.length : 0;
                                     query_time = end - begin;
@@ -265,6 +266,8 @@ $(document).ready(function () {
                                     this.query_info = 'Found ' + lines + ' lines ' +
                                         'from ' + this.target_file + ', cost ' + query_time + 'ms';
                                 }
+                            } else {
+                                this.result = Object.assign(this.result, {type, status, output});
                             }
                         })
                     }, 1000)
