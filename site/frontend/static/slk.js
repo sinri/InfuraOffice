@@ -28,7 +28,7 @@ $(document).ready(function () {
             last_lines: 10000,
             around_lines: 10,
             keyword: '',
-            is_case_sensitive: false,
+            is_case_sensitive: true,
             log_output: '',
             query_info: 'Not Searched Yet',
             finish_status: ['FINISHED', 'FETCHED', 'NOT_EXIST'],
