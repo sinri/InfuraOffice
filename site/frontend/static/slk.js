@@ -250,6 +250,10 @@ $(document).ready(function () {
                                 if (status === 'NOT_EXIST') {
                                     this.query_info = 'NOT_EXIST';
                                     this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                } else if (status === 'FETCHED') {
+                                    console.log("FETCHED....Nothing to do here...");
+                                    //this.query_info = 'NOT_EXIST';
+                                    //this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
                                 } else {
                                     const end = (new Date()).getTime();
                                     const lines = outputLines ? outputLines.length : 0;
