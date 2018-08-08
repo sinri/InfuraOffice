@@ -192,7 +192,7 @@ $(document).ready(function () {
                     target_server: this.target_server,
                     target_file: this.target_file,
                     around_lines: this.around_lines,
-                    is_case_sensitive: this.is_case_sensitive,
+                    is_case_sensitive: this.is_case_sensitive ? 'YES' : 'NO',
                     keyword: this.keyword,
                     range_start: this.range_start,
                     range_end: this.range_end,
