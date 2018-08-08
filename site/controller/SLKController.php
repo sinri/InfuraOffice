@@ -140,9 +140,9 @@ PERL_COMMAND;
             $command = "sudo ";
             if ($last_lines > 0) {
                 $command .= "tail -n " . $last_lines . ' ' . escapeshellarg($target_file) . " | ";
-                $command .= "grep -n " . ($is_case_sensitive === 'YES' ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword);
+                $command .= "grep -n " . ($is_case_sensitive !== 'YES' ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword);
             } else {
-                $command .= "grep -n " . ($is_case_sensitive === 'YES' ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword) . ' ' . escapeshellarg($target_file);
+                $command .= "grep -n " . ($is_case_sensitive !== 'YES' ? '-i' : '') . " -m 2000 -C " . $around_lines . ' ' . escapeshellarg($keyword) . ' ' . escapeshellarg($target_file);
             }
 
             $proxy = new JSSHAgentLibrary();
