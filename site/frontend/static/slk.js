@@ -207,7 +207,9 @@ $(document).ready(function () {
                             this.is_loading = false;
                         } else {
                             console.log(response.data);
-                            this.register_slow_queryTask(response.data.task_index);
+                            setTimeout(() => {
+                                this.register_slow_queryTask(response.data.task_index);
+                            },2000);
                             // this.log_output = response.data.output;
                             // this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
                             //     'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
@@ -223,7 +225,7 @@ $(document).ready(function () {
             register_slow_queryTask: function (task_index) {
                 let query_time = 0;
                 const begin = (new Date()).getTime();
-                // 立即执行一次
+                // 立即执行一次, tho 2 seconds passed
                 this.check_result_task(task_index).then(res => {
                     const { status, output, outputLines } = res;
                     const type = this.finish_status.includes(status) ? 'success' : 'info';
@@ -239,6 +241,9 @@ $(document).ready(function () {
                         }, 4000);
                         return;
                     }
+                    // Fetch the interval seconds between [2,7]
+                    let interval=Math.random() * (7000 - 2000) + 2000;
+                    
                     let clock = setInterval(async () => {
                         await this.check_result_task(task_index).then(response => {
                             const { status, output, outputLines } = response;
@@ -270,7 +275,7 @@ $(document).ready(function () {
                                 this.result = Object.assign(this.result, {type, status, output});
                             }
                         })
-                    }, 1000)
+                    }, interval)
                 })
             },
             check_result_task: function(task_index) {
