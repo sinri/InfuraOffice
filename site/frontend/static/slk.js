@@ -25,10 +25,10 @@ $(document).ready(function () {
             file_select_loading: false,
             range_start: '',
             range_end: '',
-            last_lines: '',
+            last_lines: 10000,
             around_lines: 10,
             keyword: '',
-            is_case_sensitive: false,
+            is_case_sensitive: true,
             log_output: '',
             query_info: 'Not Searched Yet',
             finish_status: ['FINISHED', 'FETCHED', 'NOT_EXIST'],
@@ -110,11 +110,11 @@ $(document).ready(function () {
             },
             get_file_info: function (value) {
                 if (!value) return false;
-                this.file_info = { file_size: '', total_lines: '' }
+                this.file_info = {file_size: '', total_lines: ''};
                 const data = {
                     target_server: this.target_server,
                     target_file: value
-                }
+                };
                 this.axios({
                     url: '../api/SLKController/getFileInfoAsync',
                     method: 'post',
@@ -129,21 +129,21 @@ $(document).ready(function () {
                         // const int = Number.parseInt(file_size, 10);
                         // this.is_over_1GB = !!int;
                         const { task_index_for_file_lines, task_index_for_file_size } =  res.data;
-                        this.check_result_task(task_index_for_file_lines).then(res => {
-                            if (this.finish_status.includes(res.status)) {
-                                this.$set(this.file_info, 'total_lines', res.output);
-                            } else {
-                                let clock_lines = setInterval(async () => {
-                                    this.check_result_task(task_index_for_file_lines).then(response => {
-                                        if (this.finish_status.includes(response.status)) {
-                                            this.$set(this.file_info, 'total_lines', response.output);
-                                            clearInterval(clock_lines);
-                                            clock_lines = null;
-                                        }
-                                    });
-                                }, 400)
-                            }
-                        });
+                        // this.check_result_task(task_index_for_file_lines).then(res => {
+                        //     if (this.finish_status.includes(res.status)) {
+                        //         this.$set(this.file_info, 'total_lines', res.output);
+                        //     } else {
+                        //         let clock_lines = setInterval(async () => {
+                        //             this.check_result_task(task_index_for_file_lines).then(response => {
+                        //                 if (this.finish_status.includes(response.status)) {
+                        //                     this.$set(this.file_info, 'total_lines', response.output);
+                        //                     clearInterval(clock_lines);
+                        //                     clock_lines = null;
+                        //                 }
+                        //             });
+                        //         }, 1000)
+                        //     }
+                        // });
                         this.check_result_task(task_index_for_file_size).then(res => {
                             if (this.finish_status.includes(res.status)) {
                                 const file_size = (+res.output / 1024).toFixed(2);
@@ -158,7 +158,7 @@ $(document).ready(function () {
                                             clock_size = null;
                                         }
                                     });
-                                }, 400)
+                                }, 500)
                             }
                         });
                     }
@@ -178,10 +178,10 @@ $(document).ready(function () {
                     this.$Notice.warning({desc: "please select File"});
                     return;
                 }
-                if (!this.file_info.total_lines) {
-                    this.$Notice.warning({desc: "please select File or wait for File info fetched"});
-                    return;
-                }
+                // if (!this.file_info.total_lines) {
+                //     this.$Notice.warning({desc: "please select File or wait for File info fetched"});
+                //     return;
+                // }
                 // 清空上一条数据
                 this.result = Object.assign(this.result, { type: 'info', output: '', return_value: '', status: '', outputLines: '', });
                 this.query_info = '';
@@ -192,11 +192,12 @@ $(document).ready(function () {
                     target_server: this.target_server,
                     target_file: this.target_file,
                     around_lines: this.around_lines,
-                    is_case_sensitive: this.is_case_sensitive,
+                    is_case_sensitive: this.is_case_sensitive ? 'YES' : 'NO',
                     keyword: this.keyword,
                     range_start: this.range_start,
                     range_end: this.range_end,
-                    total_lines: this.file_info.total_lines
+                    //total_lines: this.file_info.total_lines > 0 ? this.file_info.total_lines : 0,
+                    last_lines: this.last_lines,
                 };
                 this.axios({ url: url, method: 'post', data: formdata})
                     .then(response => {
@@ -206,7 +207,9 @@ $(document).ready(function () {
                             this.is_loading = false;
                         } else {
                             console.log(response.data);
-                            this.register_slow_queryTask(response.data.task_index);
+                            setTimeout(() => {
+                                this.register_slow_queryTask(response.data.task_index);
+                            },2000);
                             // this.log_output = response.data.output;
                             // this.query_info = 'Found ' + response.data.lines.length + ' lines ' +
                             //     'from ' + this.target_file + ", total " + response.data.total_lines + " lines by wc" +
@@ -222,7 +225,7 @@ $(document).ready(function () {
             register_slow_queryTask: function (task_index) {
                 let query_time = 0;
                 const begin = (new Date()).getTime();
-                // 立即执行一次
+                // 立即执行一次, tho 2 seconds passed
                 this.check_result_task(task_index).then(res => {
                     const { status, output, outputLines } = res;
                     const type = this.finish_status.includes(status) ? 'success' : 'info';
@@ -238,31 +241,41 @@ $(document).ready(function () {
                         }, 4000);
                         return;
                     }
+                    // Fetch the interval seconds between [2,7]
+                    let interval=Math.random() * (7000 - 2000) + 2000;
+                    
                     let clock = setInterval(async () => {
                         await this.check_result_task(task_index).then(response => {
                             const { status, output, outputLines } = response;
                             const type = this.finish_status.includes(status) ? 'success' : 'info';
-                            this.result = Object.assign(this.result, {type, status, output});
                             if (this.finish_status.includes(status)) {
                                 clearInterval(clock);
                                 clock = null;
                                 if (status === 'NOT_EXIST') {
                                     this.query_info = 'NOT_EXIST';
                                     this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                    //this.result = Object.assign(this.result, {type, status, output});
+                                } else if (status === 'FETCHED') {
+                                    console.log("FETCHED....Nothing to do here...");
+                                    //this.query_info = 'NOT_EXIST';
+                                    //this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
                                 } else {
+                                    this.result = Object.assign(this.result, {type, status, output});
                                     const end = (new Date()).getTime();
                                     const lines = outputLines ? outputLines.length : 0;
                                     query_time = end - begin;
                                     this.is_loading = false;
                                     setTimeout(() => {
                                         this.result = Object.assign(this.result, {status: ''});
-                                    }, 4000);
+                                    }, 400);
                                     this.query_info = 'Found ' + lines + ' lines ' +
                                         'from ' + this.target_file + ', cost ' + query_time + 'ms';
                                 }
+                            } else {
+                                this.result = Object.assign(this.result, {type, status, output});
                             }
                         })
-                    }, 1000)
+                    }, interval)
                 })
             },
             check_result_task: function(task_index) {

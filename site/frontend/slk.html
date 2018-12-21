@@ -49,18 +49,21 @@
                         </i-select>
                     </form-item>
                     <form-item label="">
-                        <span v-if="file_info.file_size">File size: {{ file_info.file_size }}KB, file total lines: {{ file_info.total_lines }}</span>
+                        <span v-if="file_info.file_size">
+                            File size: {{ file_info.file_size/1024/1024 }}GB
+                            <!--file total lines: {{ file_info.total_lines }}-->
+                        </span>
                         <span v-else-if="target_file">Fetching file info ....</span>
                         <span v-else>No file selected</span>
                     </form-item>
                 </div>
                 <div>
-                    <form-item label="From:">
-                        <i-input style="width: 300px;" v-model="range_start"></i-input>
-                    </form-item>
-                    <form-item label="To:">
-                        <i-input style="width: 300px;" v-model="range_end"></i-input>
-                    </form-item>
+                    <!--<form-item label="From:">-->
+                    <!--<i-input style="width: 300px;" v-model="range_start"></i-input>-->
+                    <!--</form-item>-->
+                    <!--<form-item label="To:">-->
+                    <!--<i-input style="width: 300px;" v-model="range_end"></i-input>-->
+                    <!--</form-item>-->
                     <form-item label="LastLines:">
                         <i-input style="width: 300px;" v-model="last_lines"></i-input>
                     </form-item>
@@ -91,6 +94,9 @@
         </i-col>
     </Row>
     <Row type="flex" justify="center" align="middle" style="border-top: 1px solid lightgrey;" >
+        <i-col span="22" offset="1">
+            <pre style="background-color: khaki">The line number would be relative if you set up the last lines parameter.</pre>
+        </i-col>
         <i-col span="22" offset="1" v-if="query_info">
             <pre style="background-color: lavender">{{query_info}}</pre>
         </i-col>
