@@ -226,57 +226,62 @@ $(document).ready(function () {
                 let query_time = 0;
                 const begin = (new Date()).getTime();
                 // 立即执行一次, tho 2 seconds passed
-                this.check_result_task(task_index).then(res => {
-                    const { status, output, outputLines } = res;
-                    const type = this.finish_status.includes(status) ? 'success' : 'info';
-                    this.result = Object.assign(this.result, {type, status, output});
-                    if (this.finish_status.includes(status)) {
-                        const end = (new Date()).getTime();
-                        query_time = end - begin;
-                        this.query_info = 'Found ' + outputLines.length + ' lines ' +
-                            'from ' + this.target_file + ', cost ' + query_time + 'ms';
-                        this.is_loading = false;
-                        setTimeout(() => {
-                            this.result = Object.assign(this.result, {status: ''});
-                        }, 4000);
-                        return;
-                    }
-                    // Fetch the interval seconds between [2,7]
-                    let interval=Math.random() * (7000 - 2000) + 2000;
-                    
-                    let clock = setInterval(async () => {
-                        await this.check_result_task(task_index).then(response => {
-                            const { status, output, outputLines } = response;
-                            const type = this.finish_status.includes(status) ? 'success' : 'info';
-                            if (this.finish_status.includes(status)) {
-                                clearInterval(clock);
-                                clock = null;
-                                if (status === 'NOT_EXIST') {
-                                    this.query_info = 'NOT_EXIST';
-                                    this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
-                                    //this.result = Object.assign(this.result, {type, status, output});
-                                } else if (status === 'FETCHED') {
-                                    console.log("FETCHED....Nothing to do here...");
-                                    //this.query_info = 'NOT_EXIST';
-                                    //this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                try {
+                    this.check_result_task(task_index).then(res => {
+                        const { status, output, outputLines } = res;
+                        const type = this.finish_status.includes(status) ? 'success' : 'info';
+                        this.result = Object.assign(this.result, {type, status, output});
+                        if (this.finish_status.includes(status)) {
+                            const end = (new Date()).getTime();
+                            query_time = end - begin;
+                            this.query_info = 'Found ' + (outputLines||[]).length + ' lines ' +
+                                'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                            this.is_loading = false;
+                            setTimeout(() => {
+                                this.result = Object.assign(this.result, {status: ''});
+                            }, 4000);
+                            return;
+                        }
+                        // Fetch the interval seconds between [2,7]
+                        let interval=Math.random() * (7000 - 2000) + 2000;
+                        
+                        let clock = setInterval(async () => {
+                            await this.check_result_task(task_index).then(response => {
+                                const { status, output, outputLines } = response;
+                                const type = this.finish_status.includes(status) ? 'success' : 'info';
+                                if (this.finish_status.includes(status)) {
+                                    clearInterval(clock);
+                                    clock = null;
+                                    if (status === 'NOT_EXIST') {
+                                        this.query_info = 'NOT_EXIST';
+                                        this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                        //this.result = Object.assign(this.result, {type, status, output});
+                                    } else if (status === 'FETCHED') {
+                                        console.log("FETCHED....Nothing to do here...");
+                                        //this.query_info = 'NOT_EXIST';
+                                        //this.result = Object.assign(this.result, {type: 'warning', status: 'NOT_EXIST'});
+                                    } else {
+                                        this.result = Object.assign(this.result, {type, status, output});
+                                        const end = (new Date()).getTime();
+                                        const lines = outputLines ? outputLines.length : 0;
+                                        query_time = end - begin;
+                                        this.is_loading = false;
+                                        setTimeout(() => {
+                                            this.result = Object.assign(this.result, {status: ''});
+                                        }, 400);
+                                        this.query_info = 'Found ' + lines + ' lines ' +
+                                            'from ' + this.target_file + ', cost ' + query_time + 'ms';
+                                    }
                                 } else {
                                     this.result = Object.assign(this.result, {type, status, output});
-                                    const end = (new Date()).getTime();
-                                    const lines = outputLines ? outputLines.length : 0;
-                                    query_time = end - begin;
-                                    this.is_loading = false;
-                                    setTimeout(() => {
-                                        this.result = Object.assign(this.result, {status: ''});
-                                    }, 400);
-                                    this.query_info = 'Found ' + lines + ' lines ' +
-                                        'from ' + this.target_file + ', cost ' + query_time + 'ms';
                                 }
-                            } else {
-                                this.result = Object.assign(this.result, {type, status, output});
-                            }
-                        })
-                    }, interval)
-                })
+                            })
+                        }, interval)
+                    })
+                } catch (error) {
+                    console.error(error);
+                    this.is_loading = false;
+                }
             },
             check_result_task: function(task_index) {
                 const url = '../api/SLKController/checkAsyncTaskResult';
