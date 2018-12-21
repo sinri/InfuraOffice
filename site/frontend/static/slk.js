@@ -280,6 +280,7 @@ $(document).ready(function () {
                     })
                 } catch (error) {
                     console.error(error);
+                    this.is_loading = false;
                 }
             },
             check_result_task: function(task_index) {
