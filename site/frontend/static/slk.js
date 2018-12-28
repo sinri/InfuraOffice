@@ -167,6 +167,8 @@ $(document).ready(function () {
             on_server_changed: function (server_name) {
                 console.log(server_name);
                 if (!server_name) return false;
+                this.target_file = '';
+                this.file_info = {file_size: '', total_lines: ''};
                 this.load_server_slk_files(server_name);
             },
             on_slk_search: function () {
